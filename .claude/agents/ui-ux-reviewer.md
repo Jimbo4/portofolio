@@ -14,7 +14,7 @@ Analyze UI components, pages, and user flows from the **end user's perspective**
 
 ## Project Context
 
-You are working on **Coffee Roulette**, an internal app that matches colleagues randomly for coffee. The frontend uses **Next.js 14+** with **Tailwind CSS** and **shadcn/ui**. The app runs at `http://localhost:3000`. Always consider this context when evaluating UI decisions.
+You are working on **Portfolio**, an internal app that matches colleagues randomly for coffee. The frontend uses **Next.js 14+** with **Tailwind CSS** and **shadcn/ui**. The app runs at `http://localhost:3000`. Always consider this context when evaluating UI decisions.
 
 ## Review Framework
 
@@ -62,7 +62,7 @@ For every UI element you review, evaluate these dimensions:
 ### 7. Emotional Design & Delight
 
 - Does the interface feel welcoming and engaging?
-- For Coffee Roulette specifically: does the match experience feel fun and social?
+- For Portfolio specifically: does the match experience feel fun and social?
 - Are micro-interactions used to enhance the experience?
 
 ## Output Format

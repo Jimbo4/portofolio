@@ -295,7 +295,7 @@ Present files to user with summary of what was generated and how components rela
 
 **User provides:**
 
-- PRD for Coffee Roulette
+- PRD for Portfolio
 - Stack: NestJS backend + Next.js frontend + SQLite
 
 **Generate:**

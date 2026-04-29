@@ -2,10 +2,10 @@
 
 ## Example: Backend (NestJS + PostgreSQL)
 
-Generated from Coffee Roulette PRD with stack: NestJS 10+, PostgreSQL, TypeORM, JWT.
+Generated from Portfolio PRD with stack: NestJS 10+, PostgreSQL, TypeORM, JWT.
 
 ```markdown
-# Coffee Roulette – API
+# Portfolio – API
 
 ## Overview
 Backend REST API for matching colleagues for coffee breaks. Handles authentication, user management, automatic weekly matching (cron), and on-demand match requests.
@@ -189,7 +189,7 @@ Request → Guard (JWT) → Controller → Service → Repository → Response
 Generated from same PRD with stack: Next.js 14, React 18, Tailwind, shadcn/ui.
 
 ```markdown
-# Coffee Roulette – Web
+# Portfolio – Web
 
 ## Overview
 Frontend web interface for coffee matching app. Handles authentication, match display, profile management, and availability toggling.

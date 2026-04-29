@@ -1,6 +1,6 @@
 # Innovation Highway - Claude Code Course
 
-A hands-on template project for learning how to use **Claude Code** effectively in real-world software development. This repository contains a fully configured monorepo (Coffee Roulette app) that showcases Claude Code's most powerful features: **CLAUDE.md** configuration files, **Skills** (slash commands), and **Agents** (specialized sub-agents).
+A hands-on template project for learning how to use **Claude Code** effectively in real-world software development. This repository contains a fully configured monorepo (Portfolio app) that showcases Claude Code's most powerful features: **CLAUDE.md** configuration files, **Skills** (slash commands), and **Agents** (specialized sub-agents).
 
 Use this project as a playground to experiment with Claude Code's capabilities and learn how to integrate them into your own workflow.
 
@@ -11,7 +11,7 @@ Use this project as a playground to experiment with Claude Code's capabilities a
 - [What is Claude Code?](#what-is-claude-code)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [The Template Project: Coffee Roulette](#the-template-project-coffee-roulette)
+- [The Template Project: Portfolio](#the-template-project-coffee-roulette)
 - [Project Structure](#project-structure)
 - [CLAUDE.md - Giving Context to Claude](#claudemd---giving-context-to-claude)
 - [Skills - Custom Slash Commands](#skills---custom-slash-commands)
@@ -92,9 +92,9 @@ Claude will automatically detect and read the `CLAUDE.md` files in your project,
 
 ---
 
-## The Template Project: Coffee Roulette
+## The Template Project: Portfolio
 
-The codebase used for this course is **Coffee Roulette** — an internal company app that randomly matches colleagues for a coffee chat. It features weekly automatic matching and on-demand instant matching.
+The codebase used for this course is **Portfolio** — an internal company app that randomly matches colleagues for a coffee chat. It features weekly automatic matching and on-demand instant matching.
 
 | Layer    | Technology           | Version          |
 | -------- | -------------------- | ---------------- |
@@ -344,7 +344,7 @@ DATABASE_PATH=./db.sqlite
 
 # Web
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
-NEXT_PUBLIC_APP_NAME=Coffee Roulette
+NEXT_PUBLIC_APP_NAME=Portfolio
 ```
 
 ---

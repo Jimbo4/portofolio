@@ -1,6 +1,6 @@
 # PRD Examples
 
-## Example 1: Coffee Roulette (Full PRD)
+## Example 1: Portfolio (Full PRD)
 
 ### Executive Summary
 

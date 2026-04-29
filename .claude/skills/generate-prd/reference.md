@@ -84,7 +84,7 @@ Code:
 
 ## User Flow to Technical Flow
 
-### Example: Coffee Roulette Login Flow
+### Example: Portfolio Login Flow
 
 **PRD User Flow:**
 ```

@@ -1,4 +1,4 @@
-# Coffee Roulette – Web
+# Portfolio – Web
 
 ## Overview
 
@@ -56,7 +56,7 @@ npx shadcn-ui add [component]  # Add shadcn components
 **Required Env vars:**
 
 - `NEXT_PUBLIC_API_URL` - Backend API Base URL (default: `http://localhost:3001/api`)
-- `NEXT_PUBLIC_APP_NAME` - App name for meta tags (default: `Coffee Roulette`)
+- `NEXT_PUBLIC_APP_NAME` - App name for meta tags (default: `Portfolio`)
 
 ## Architecture
 

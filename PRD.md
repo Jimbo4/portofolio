@@ -1,10 +1,10 @@
-# Coffee Roulette - PRD
+# Portfolio - PRD
 
 ## Executive Summary
 
 **Problem:** I colleghi che lavorano in un'azienda tendono a interagire sempre con le stesse persone, creando silos informali che riducono la coesione del team e limitano lo scambio di idee tra reparti.
 
-**Solution:** Coffee Roulette è uno strumento interno che abbina automaticamente i colleghi per incontri informali a cadenza settimanale, con la possibilità di richiedere un match istantaneo on-demand.
+**Solution:** Portfolio è uno strumento interno che abbina automaticamente i colleghi per incontri informali a cadenza settimanale, con la possibilità di richiedere un match istantaneo on-demand.
 
 **Value:** Aumentare la connessione interpersonale all'interno dell'azienda, favorire la cultura aziendale e rompere i silos comunicativi, senza richiedere sforzo organizzativo da parte dei dipendenti.
 
@@ -94,7 +94,7 @@ Con la crescita del team e l'incremento del lavoro ibrido/remoto, le occasioni i
 
 ### Priorità Alta (MVP)
 
-1. **Come dipendente**, voglio iscrivermi a Coffee Roulette con il mio account aziendale, così da partecipare agli abbinamenti.
+1. **Come dipendente**, voglio iscrivermi a Portfolio con il mio account aziendale, così da partecipare agli abbinamenti.
 
 2. **Come dipendente**, voglio ricevere ogni settimana una notifica con il nome e il profilo del collega con cui sono stato abbinato, così da poter organizzare un caffè.
 
@@ -120,7 +120,7 @@ Con la crescita del team e l'incremento del lavoro ibrido/remoto, le occasioni i
 
 ## Solution Overview
 
-Coffee Roulette è una web application interna che:
+Portfolio è una web application interna che:
 
 1. **Gestisce un pool di dipendenti** iscritti volontariamente al programma
 2. **Genera abbinamenti casuali settimanali** evitando ripetizioni recenti tra le stesse coppie
