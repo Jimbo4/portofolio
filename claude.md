@@ -1,33 +1,41 @@
-# Portfolio
+# Portfolio – Jacopo Marcolini
 
 ## Objective
 
-Internal app to randomly match colleagues for a coffee. Automatic weekly match + on-demand instant match capability.
+Personal portfolio website for Jacopo Marcolini, Design Lead & Product Owner.
+Showcases professional identity, case studies, CV, and contact information.
 
-## Monorepo Structure
+## Project Structure
 
 ```
-coffee-roulette/
-├── api/          # NestJS Backend
-└── web/          # Next.js Frontend
+portfolio/
+└── web/          # Next.js Frontend — the entire project
 ```
 
-Each folder has its own `claude.md` with specific rules. ALWAYS read the `claude.md` of the folder you are working in.
+No backend. All content is static or MDX/JSON file-based.
+ALWAYS read `web/claude.md` before working in the `web/` folder.
 
-## Global Stack
+## Stack
 
-| Layer    | Tech                 | Version          |
-| -------- | -------------------- | ---------------- |
-| Backend  | NestJS               | 10+              |
-| Frontend | Next.js              | 14+              |
-| Database | SQLite               | 3                |
-| Auth     | JWT                  | Access + Refresh |
-| UI       | Tailwind + shadcn/ui | Latest           |
+| Layer   | Tech                 | Version |
+| ------- | -------------------- | ------- |
+| Frontend | Next.js             | 14+     |
+| UI      | Tailwind + shadcn/ui | Latest  |
+| Content | MDX / JSON files     | —       |
+| Deploy  | Vercel               | —       |
+
+## Sections
+
+| Section      | Route                    | Description                          |
+| ------------ | ------------------------ | ------------------------------------ |
+| Home         | `/`                      | Hero + brief intro                   |
+| About        | `/about`                 | Bio, CV download, contact info       |
+| Case Studies | `/case-studies`          | Grid of design/product case studies  |
+| Case Study   | `/case-studies/[slug]`   | Single case study detail             |
 
 ## Global Conventions
 
 - Package manager: `npm` (never yarn or pnpm)
-- DB column naming: `snake_case`
 - Function naming: `camelCase`
 - Class/component naming: `PascalCase`
 - Code language: English
@@ -36,33 +44,22 @@ Each folder has its own `claude.md` with specific rules. ALWAYS read the `claude
 ## Global Boundaries
 
 - ✅ **Always:** Follow naming conventions, write in English
-- ⚠️ **Ask first:** Cross-project changes (api ↔ web)
-- 🚫 **Never:** Commit secrets, modify .env files, install different package managers
-
-## API ↔ Web Communication
-
-- API Base URL: `http://localhost:3001/api`
-- Frontend dev: `http://localhost:3000`
-- All API endpoints are prefixed with `/api`
+- ⚠️ **Ask first:** Add new sections or change information architecture
+- 🚫 **Never:** Add a backend, commit secrets, install different package managers
 
 ## Agent Workflow
 
-When the user explicitly asks to "start with the implementation" or "implement the PRP doc", or similar phrases related to starting implementation from requirements:
+When the user explicitly asks to "start with the implementation" or "implement the PRP doc":
 
 1. **Step 1: Plan with PRP Orchestrator**
-   - You MUST call the `prp-orchestrator` agent first.
-   - Do NOT attempt to implementation yourself.
-   - The `prp-orchestrator` will analyze the requirements (PRD) and produce a structured Task Plan (PRP) where each task is assigned to a specific domain expert (e.g., Backend Developer, Frontend Developer, DB Expert).
+   - Call the `prp-orchestrator` agent first.
+   - Do NOT implement directly.
 
 2. **Step 2: Delegate to Specialist Agents**
-   - Once the `prp-orchestrator` provides the plan, you must NOT implement the tasks yourself.
-   - You MUST explicitly call the corresponding subagent for each task defined in the PRP.
-   - Example: If the PRP lists a backend task, call the `backend-developer` agent. If it lists a UI task, call `frontend-developer` or `ui-designer`.
-   - Pass the specific task details to the subagent using the `runSubagent` tool.
+   - Call `frontend-developer` or `ui-designer` per task defined in the PRP.
 
 3. **Step 3: Review & iterate**
-   - After subagents complete their work, review the output and ensure integration.
+   - Verify output and integration after subagents complete work.
 
 4. **Step 4: Final Report**
    - Return a comprehensive final report listing all tasks completed from the PRP.
-   - Provide a concise summary of the implementation details, architectural decisions, and next steps.
