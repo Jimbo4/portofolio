@@ -31,14 +31,54 @@ export interface WorkKpi {
   caption: string;
 }
 
+export interface WorkLink {
+  label: string;
+  href: string;
+}
+
+/** Cover shown on cards and on the case study hero */
+export type WorkCover =
+  | { kind: "art"; art: WorkArt }
+  | {
+      kind: "image";
+      /** 4:5 image for carousel and grid cards */
+      card: string;
+      /** 2:1 image for the case study hero */
+      hero: string;
+      alt: string;
+    };
+
 export interface Work {
   slug: string;
   name: string;
   tags: string[];
+  /** "YYYY-MM", used to sort works newest first */
+  date: string;
   year: string;
+  role?: string;
   blurb: string;
   description: string;
-  art: WorkArt;
+  cover: WorkCover;
   pillar: PillarId;
-  kpis: [WorkKpi, WorkKpi];
+  kpis?: [WorkKpi, WorkKpi];
+  links?: WorkLink[];
+  /** Design-file placeholder: no MDX body, rendered with the generic template */
+  isPlaceholder: boolean;
+}
+
+/**
+ * Frontmatter of content/case-studies/<slug>.mdx.
+ * The slug comes from the file name, the year from `date`.
+ */
+export interface CaseStudyFrontmatter {
+  name: string;
+  pillar: PillarId;
+  date: string;
+  tags: string[];
+  role: string;
+  blurb: string;
+  description: string;
+  cover: { card: string; hero: string; alt: string };
+  kpis?: [WorkKpi, WorkKpi];
+  links?: WorkLink[];
 }

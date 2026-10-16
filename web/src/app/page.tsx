@@ -5,7 +5,7 @@ import { ToolsMarquee } from "@/components/features/ToolsMarquee";
 import { WorksCarousel } from "@/components/features/WorksCarousel";
 import { pillars, profile, tools } from "@/lib/config";
 import { pillarTheme } from "@/lib/pillarTheme";
-import { works } from "@/lib/works";
+import { getAllWorks } from "@/lib/case-studies";
 
 const contactLinks = [
   { label: "LinkedIn", href: profile.linkedin },
@@ -69,7 +69,7 @@ export default function HomePage() {
             projects
           </SectionTitle>
         </div>
-        <WorksCarousel works={works} />
+        <WorksCarousel works={getAllWorks()} />
         <p className="mt-8 text-center font-mono text-[11px] tracking-[.32em] text-muted-2">
           [ &nbsp; DRAG TO EXPLORE &nbsp; ]
         </p>

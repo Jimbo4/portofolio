@@ -3,7 +3,7 @@ import { BackLink } from "@/components/features/BackLink";
 import { CaseStudyCard } from "@/components/features/CaseStudyCard";
 import { PillarIcon } from "@/components/features/PillarIcon";
 import { pillars } from "@/lib/config";
-import { getWorksByPillar } from "@/lib/works";
+import { getWorksByPillar } from "@/lib/case-studies";
 
 export const metadata: Metadata = {
   title: "Case Studies",
