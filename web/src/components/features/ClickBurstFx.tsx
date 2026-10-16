@@ -4,9 +4,12 @@ import { useEffect, useRef } from "react";
 
 /** Canvas renders at 1/PIXEL_SCALE resolution and is upscaled crisply. Set to 1 for smooth shapes. */
 const PIXEL_SCALE = 3;
-const SIZE = { min: 30, max: 46 };
+/** Mostly small shapes, with a 1-in-4 chance of a big one */
+const SIZE = { small: [20, 70], big: [110, 260], bigChance: 0.25 } as const;
 const LIFE_MS = { min: 1800, max: 2600 };
 const POP_MS = 220;
+/** More than this many clicks inside the window shows the easter egg */
+const RAPID_CLICKS = { count: 10, windowMs: 3000, message: "Slow down, cowboy!" };
 
 /** Base forms in a 64×64 box centered on (32, 32). */
 const SHAPES = [
@@ -24,7 +27,8 @@ const SHAPES = [
 ];
 
 interface Floater {
-  path: Path2D;
+  /** A base form, or a line of text for the rapid-click message */
+  shape: { kind: "path"; path: Path2D } | { kind: "text"; text: string; font: string };
   color: string;
   x: number;
   y: number;
@@ -42,7 +46,10 @@ const random = (min: number, max: number) => min + Math.random() * (max - min);
 const easeOutBack = (t: number) => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2);
 const pastel = () => `hsl(${Math.round(random(0, 360))}, ${Math.round(random(70, 90))}%, ${Math.round(random(74, 82))}%)`;
 
-/** Each click spawns a random pastel base form that drifts, spins slowly and fades. Off for reduced motion. */
+/**
+ * Each click spawns a random pastel base form of random size that drifts in any
+ * direction, spins slowly and fades. Rapid clicking shows a message. Off for reduced motion.
+ */
 export function ClickBurstFx() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -54,6 +61,8 @@ export function ClickBurstFx() {
 
     const paths = SHAPES.map((d) => new Path2D(d));
     const floaters: Floater[] = [];
+    const serifFont = getComputedStyle(document.documentElement).getPropertyValue("--font-fraunces").trim() || "Georgia";
+    let clickTimes: number[] = [];
     let frameId = 0;
     let lastT = performance.now();
 
@@ -64,28 +73,66 @@ export function ClickBurstFx() {
       ctx.setTransform(1 / PIXEL_SCALE, 0, 0, 1 / PIXEL_SCALE, 0, 0);
     };
 
-    const spawn = (x: number, y: number) => {
-      const now = performance.now();
+    const startLoop = (now: number) => {
+      if (frameId) return;
+      lastT = now;
+      frameId = requestAnimationFrame(frame);
+    };
+
+    /** Even drift in any direction; big shapes move and spin slower. */
+    const drift = (size: number) => {
       const heading = random(0, Math.PI * 2);
-      const speed = random(14, 34);
+      const speed = random(18, 48) * (size > 100 ? 0.6 : 1);
+      return { vx: Math.cos(heading) * speed, vy: Math.sin(heading) * speed };
+    };
+
+    const spawnShape = (x: number, y: number, now: number) => {
+      const [min, max] = Math.random() < SIZE.bigChance ? SIZE.big : SIZE.small;
+      const size = random(min, max);
       floaters.push({
-        path: paths[Math.floor(Math.random() * paths.length)],
+        shape: { kind: "path", path: paths[Math.floor(Math.random() * paths.length)] },
         color: pastel(),
         x,
         y,
-        vx: Math.cos(heading) * speed,
-        // Gentle upward bias, like a released balloon
-        vy: Math.sin(heading) * speed - 22,
+        ...drift(size),
         angle: random(-0.5, 0.5),
-        spin: random(-0.7, 0.7),
-        size: random(SIZE.min, SIZE.max),
+        spin: random(-0.7, 0.7) * (size > 100 ? 0.5 : 1),
+        size,
         bornAt: now,
-        life: random(LIFE_MS.min, LIFE_MS.max),
+        life: random(LIFE_MS.min, LIFE_MS.max) * (size > 100 ? 1.3 : 1),
       });
-      if (!frameId) {
-        lastT = now;
-        frameId = requestAnimationFrame(frame);
+    };
+
+    const spawnMessage = (x: number, y: number, now: number) => {
+      const font = `italic 800 40px ${serifFont}, Georgia, serif`;
+      ctx.font = font;
+      // Keep the whole line on screen, even when clicking near an edge
+      const half = ctx.measureText(RAPID_CLICKS.message).width / 2 + 16;
+      const clampedX = Math.min(Math.max(x, half), Math.max(half, window.innerWidth - half));
+      floaters.push({
+        shape: { kind: "text", text: RAPID_CLICKS.message, font },
+        color: "#E84B2A",
+        x: clampedX,
+        y: Math.max(48, y - 40),
+        ...drift(0),
+        angle: random(-0.12, 0.12),
+        spin: random(-0.08, 0.08),
+        size: 64,
+        bornAt: now,
+        life: 2600,
+      });
+    };
+
+    const handleClick = (x: number, y: number) => {
+      const now = performance.now();
+      spawnShape(x, y, now);
+      clickTimes = clickTimes.filter((t) => now - t < RAPID_CLICKS.windowMs);
+      clickTimes.push(now);
+      if (clickTimes.length > RAPID_CLICKS.count) {
+        spawnMessage(x, y, now);
+        clickTimes = [];
       }
+      startLoop(now);
     };
 
     // Runs only while shapes are alive
@@ -110,9 +157,16 @@ export function ClickBurstFx() {
         ctx.translate(f.x, f.y);
         ctx.rotate(f.angle);
         ctx.scale(scale, scale);
-        ctx.translate(-32, -32);
         ctx.fillStyle = f.color;
-        ctx.fill(f.path);
+        if (f.shape.kind === "path") {
+          ctx.translate(-32, -32);
+          ctx.fill(f.shape.path);
+        } else {
+          ctx.font = f.shape.font;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(f.shape.text, 0, 0);
+        }
         ctx.restore();
         floaters[alive++] = f;
       }
@@ -120,7 +174,7 @@ export function ClickBurstFx() {
       frameId = alive > 0 ? requestAnimationFrame(frame) : 0;
     };
 
-    const onClick = (event: MouseEvent) => spawn(event.clientX, event.clientY);
+    const onClick = (event: MouseEvent) => handleClick(event.clientX, event.clientY);
 
     resize();
     window.addEventListener("resize", resize);
