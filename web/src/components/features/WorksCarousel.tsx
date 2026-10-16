@@ -7,10 +7,15 @@ import { CaseStudyCard } from "./CaseStudyCard";
 /** Three copies of the list: the user always scrolls inside the middle one. */
 const COPIES = 3;
 const DRAG_THRESHOLD_PX = 6;
+/** Velocity kept per 16ms frame while gliding after a drag */
+const FRICTION = 0.95;
+/** Below this speed (px/ms) the glide stops */
+const MIN_VELOCITY = 0.02;
 
 export function WorksCarousel({ works }: { works: Work[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({ isDown: false, startX: 0, startScroll: 0, didDrag: false });
+  const dragRef = useRef({ isDown: false, startX: 0, startScroll: 0, didDrag: false, lastX: 0, lastT: 0, velocity: 0 });
+  const glideFrameRef = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
 
   /** Distance between the same card in two consecutive copies. */
@@ -23,6 +28,11 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     return firstOfNextCopy.offsetLeft - first.offsetLeft;
   }, [works.length]);
 
+  const stopGlide = () => {
+    cancelAnimationFrame(glideFrameRef.current);
+    glideFrameRef.current = 0;
+  };
+
   // Start in the middle copy, and stay there when the viewport resizes
   useEffect(() => {
     const track = trackRef.current;
@@ -33,7 +43,10 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     centerOnMiddleCopy();
     const observer = new ResizeObserver(centerOnMiddleCopy);
     observer.observe(track);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(glideFrameRef.current);
+    };
   }, [getLoopWidth]);
 
   // Teleport by one copy when drifting into the outer copies → seamless loop
@@ -52,14 +65,18 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     dragRef.current.startScroll += shift;
   };
 
-  // Mouse drag-to-scroll (touch and trackpads scroll natively)
+  // Mouse drag-to-scroll with momentum (touch and trackpads scroll natively)
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== "mouse" || !trackRef.current) return;
+    stopGlide();
     dragRef.current = {
       isDown: true,
       startX: event.clientX,
       startScroll: trackRef.current.scrollLeft,
       didDrag: false,
+      lastX: event.clientX,
+      lastT: event.timeStamp,
+      velocity: 0,
     };
   };
 
@@ -72,12 +89,42 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       drag.didDrag = true;
       setIsDragging(true);
     }
-    if (drag.didDrag) track.scrollLeft = drag.startScroll - delta;
+    if (!drag.didDrag) return;
+    track.scrollLeft = drag.startScroll - delta;
+
+    // Smoothed pointer velocity in px/ms, scroll direction
+    const dt = event.timeStamp - drag.lastT;
+    if (dt > 0) {
+      const instant = -(event.clientX - drag.lastX) / dt;
+      drag.velocity = drag.velocity * 0.6 + instant * 0.4;
+    }
+    drag.lastX = event.clientX;
+    drag.lastT = event.timeStamp;
   };
 
-  const endDrag = () => {
-    dragRef.current.isDown = false;
+  const glide = (velocity: number) => {
+    let v = velocity;
+    let lastT = performance.now();
+    const step = (now: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      const dt = now - lastT;
+      lastT = now;
+      track.scrollLeft += v * dt;
+      v *= Math.pow(FRICTION, dt / 16);
+      glideFrameRef.current = Math.abs(v) > MIN_VELOCITY ? requestAnimationFrame(step) : 0;
+    };
+    glideFrameRef.current = requestAnimationFrame(step);
+  };
+
+  const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag.isDown) return;
+    drag.isDown = false;
     setIsDragging(false);
+    // A pause before release means the user stopped: no glide
+    const isFresh = event.timeStamp - drag.lastT < 80;
+    if (drag.didDrag && isFresh && Math.abs(drag.velocity) > MIN_VELOCITY) glide(drag.velocity);
   };
 
   // Swallow the click that ends a drag so cards don't navigate
@@ -103,9 +150,10 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerLeave={endDrag}
+      onWheel={stopGlide}
       onClickCapture={handleClickCapture}
       className={`no-scrollbar relative flex gap-6 overflow-x-auto px-7 pb-7 pt-2 ${
-        isDragging ? "cursor-grabbing select-none snap-none" : "cursor-grab snap-x snap-mandatory"
+        isDragging ? "cursor-grabbing select-none" : "cursor-grab"
       }`}
     >
       {slides.map(({ work, copy, key }) => (

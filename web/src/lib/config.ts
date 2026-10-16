@@ -8,7 +8,7 @@ export const profile = {
   name: "Jacopo Marcolini",
   roles: ["Deployment Strategist", "Product Design Lead"],
   description:
-    "Jacopo Marcolini — Deployment Strategist and Product Design Lead based in Milan. 7+ years across product design, team leadership and generative AI adoption for clients like Mastercard, Leonardo and BPER.",
+    "Jacopo Marcolini — Deployment Strategist and Product Design Lead based in Milan. 7+ years across product design, team leadership and generative AI adoption for enterprise clients.",
   email: "jacopomma@gmail.com",
   linkedin: "https://www.linkedin.com/in/jacopo-marcolini",
   github: "https://github.com/Jimbo4",
@@ -30,7 +30,7 @@ export const pillars: Pillar[] = [
     id: "design",
     title: "Product Design",
     description:
-      "From discovery to shipped UI. User research, prototyping and design systems, with enough code to build what I design.",
+      "From discovery to shipped UI. User research, prototyping and design systems, to coding and building what I designed.",
     tagline: "Research, interface craft and design systems, from first interview to production.",
     skills: [
       "UX Research",
@@ -51,7 +51,7 @@ export const pillars: Pillar[] = [
     id: "lead",
     title: "Team Leadership",
     description:
-      "Leading teams of 10 and growing R&D from 3 to 30 people. Roadmaps, budgets up to ~1M EUR and quality standards from kickoff to launch.",
+      "I've grown the R&D teams from 3 to 30 people, leading 10 people in my own group. Owner of roadmaps, budgets up to ~1M EUR and quality standards from kickoff to launch.",
     tagline: "Teams, roadmaps and delivery: programs that ship on time and on budget.",
     skills: [
       "Multidisciplinary Teams",
@@ -91,7 +91,7 @@ export const pillars: Pillar[] = [
     id: "grow",
     title: "Business & Growth",
     description:
-      "Connecting product with business. Presales and solution design for clients like Mastercard and Leonardo, and go-to-market for my own startup, Matcha.",
+      "Connecting product with business. Presales and solution design for big corporate clients and go-to-market for smaller personal projects.",
     tagline: "Presales, solution design and go-to-market, where product meets revenue.",
     skills: [
       "Technical Presales",

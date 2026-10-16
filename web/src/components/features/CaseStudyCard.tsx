@@ -24,7 +24,7 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
       tabIndex={isClone ? -1 : undefined}
       aria-label={isClone ? undefined : `${work.name}, ${work.blurb}`}
       className={`group flex flex-col gap-3.5 transition-transform duration-300 hover:-translate-y-1 ${
-        isSlide ? "w-[min(400px,80vw)] shrink-0 snap-start" : "mb-7 break-inside-avoid"
+        isSlide ? "w-[min(400px,80vw)] shrink-0" : "mb-7 break-inside-avoid"
       }`}
     >
       <div

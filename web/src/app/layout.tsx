@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
-import { PixelClickFx } from "@/components/features/PixelClickFx";
+import { ClickBurstFx } from "@/components/features/ClickBurstFx";
 import { SiteFooter } from "@/components/features/SiteFooter";
 import { SiteNav } from "@/components/features/SiteNav";
 import { profile } from "@/lib/config";
@@ -73,7 +73,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteNav />
         <main>{children}</main>
         <SiteFooter />
-        <PixelClickFx />
+        <ClickBurstFx />
       </body>
     </html>
   );
