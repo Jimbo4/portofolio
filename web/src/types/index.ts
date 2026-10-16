@@ -9,13 +9,18 @@ export interface Pillar {
   skills: string[];
 }
 
+export interface CustomIcon {
+  viewBox: string;
+  path: string;
+  /** Path relies on the evenodd fill rule for its cut-outs */
+  isEvenOdd?: boolean;
+}
+
 export interface Tool {
   name: string;
-  /** simple-icons export name, e.g. "siFigma". Omit to render a letter tile. */
-  icon?: string;
-  /** Fallback letters when no brand icon is available */
-  letters?: string;
-  /** Tailwind classes for the tile background and icon/letter color */
+  /** simple-icons export name (e.g. "siFigma") or a key of lib/customIcons */
+  icon: string;
+  /** Tailwind classes for the tile background and icon fill */
   tileClass: string;
 }
 

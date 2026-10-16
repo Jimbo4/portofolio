@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { BackLink } from "@/components/features/BackLink";
 import { CaseStudyCard } from "@/components/features/CaseStudyCard";
-import { PillLabel } from "@/components/features/PillLabel";
 import { PillarIcon } from "@/components/features/PillarIcon";
 import { pillars } from "@/lib/config";
 import { getWorksByPillar } from "@/lib/works";
@@ -18,7 +17,6 @@ export default function CaseStudiesPage() {
       <BackLink href="/" label="Back" />
 
       <div className="mb-14 mt-6 flex flex-col items-start gap-[18px]">
-        <PillLabel>Case Studies</PillLabel>
         <h1 className="mt-2 font-serif text-[clamp(48px,7vw,104px)] font-extrabold italic leading-[.96] tracking-[-0.03em]">
           Selected work
         </h1>
