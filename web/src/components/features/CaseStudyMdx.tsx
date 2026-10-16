@@ -22,7 +22,7 @@ interface FigureProps {
 /** Image with optional caption. Width and height are the source file's pixels. */
 export function Figure({ src, alt, width, height, caption, sizes = "(max-width: 768px) 100vw, 1184px" }: FigureProps) {
   return (
-    <figure className="m-0 flex flex-col gap-2.5">
+    <figure className="m-0 mt-8 flex flex-col gap-2.5">
       <Image
         src={src}
         alt={alt}
@@ -46,13 +46,13 @@ const screensLayout = {
 /** Phone screens in a grid. */
 export function Screens({ layout = "row", children }: { layout?: keyof typeof screensLayout; children: React.ReactNode }) {
   return (
-    <div className={`mt-10 grid [&_img]:rounded-[22px] ${screensLayout[layout] ?? screensLayout.row}`}>{children}</div>
+    <div className={`mt-10 grid [&_img]:rounded-[22px] [&>figure]:mt-0 ${screensLayout[layout] ?? screensLayout.row}`}>{children}</div>
   );
 }
 
 /** Grid of square-ish visuals such as social posts. */
 export function Gallery({ children }: { children: React.ReactNode }) {
-  return <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">{children}</div>;
+  return <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4 [&>figure]:mt-0">{children}</div>;
 }
 
 /** Discipline-by-discipline breakdown of the work, inspired by agency case studies. */

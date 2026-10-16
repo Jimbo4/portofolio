@@ -26,7 +26,8 @@ export function WorkCover({ cover, variant, sizes, priority = false }: WorkCover
       sizes={sizes}
       priority={priority}
       draggable={false}
-      className="object-cover"
+      // Card images carry the title at the top, so shorter frames crop from the bottom
+      className={variant === "card" ? "object-cover object-top" : "object-cover"}
     />
   );
 }

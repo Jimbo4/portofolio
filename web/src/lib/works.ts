@@ -73,21 +73,4 @@ export const placeholderWorks: Work[] = [
       { value: "3,200", caption: "Daily Operators" },
     ],
   },
-  {
-    slug: "prompt-lab",
-    name: "Prompt Lab",
-    tags: ["AI", "Training"],
-    date: "2026-01",
-    year: "2026",
-    blurb: "An enablement program that turned into a partnership.",
-    description:
-      "A hands-on generative AI program for corporate teams, from prompt basics to production agents.",
-    cover: { kind: "art", art: "metrix" },
-    pillar: "ai",
-    isPlaceholder: true,
-    kpis: [
-      { value: "400+", caption: "Training Hours" },
-      { value: "600+", caption: "People Trained" },
-    ],
-  },
 ];

@@ -142,5 +142,4 @@ export const tools: Tool[] = [
   { name: "GitHub Copilot", icon: "siGithubcopilot", tileClass: "bg-[#5E2BE6] fill-white" },
   { name: "n8n", icon: "siN8n", tileClass: "bg-[#EA4B71] fill-white" },
   { name: "Lovable", icon: "lovable", tileClass: "bg-gradient-to-br from-[#FF1F8F] to-[#FF6A1F] fill-white" },
-  { name: "Instagram", icon: "siInstagram", tileClass: "bg-gradient-to-br from-[#FEDA75] via-[#D62976] to-[#4F5BD5] fill-white" },
 ];

@@ -39,7 +39,8 @@ web/
 ├── public/
 │   ├── images/case-studies/<slug>/ # hero.webp, card.webp, body images
 │   └── videos/case-studies/<slug>/ # optional videos
-├── scripts/case-study-cover.html   # Abstract cover generator (not part of the build)
+├── scripts/                        # Visual tooling, not part of the build: visuals/<slug>.html, render-visual.sh,
+│                                   # pdf-contact-sheet.py, case-study-cover.html (old abstract covers)
 └── src/
     ├── app/
     │   ├── page.tsx                  # Home: hero, philosophy pillars, projects carousel, skills, tools, contact
@@ -78,7 +79,10 @@ Each project is meant to be done in its own chat. Everything needed is in this s
   Cross-check every relevant bullet for the project or role; ask before adding anything it doesn't support.
 - **Portfolio, not CV**: the year is a single year ("2026"), never a period like "2026 – present".
 - **Copy in English**, first person, plain and concrete. Product taglines may stay in their original language.
+  Keep a plain portfolio tone without marketing phrasing, and avoid "X, not Y" or "not X, but Y" constructions.
 - **Vary the layout between sections**: never use the same block for two sections of one page (see blocks below).
+  Reuse layouts that already exist in the portfolio first; create a new one only occasionally, when it is clearly more
+  engaging.
 - Each new real project replaces a placeholder: ask the user which one to remove from `src/lib/works.ts`.
 
 ### Intake questions
@@ -141,7 +145,7 @@ Markdown `##`, paragraphs, bullet lists, `**bold**` and links are styled automat
 
 | Block | Use for | Look |
 | --- | --- | --- |
-| `<Figure src alt width height caption? sizes?>` | Any image; width/height are the file's pixels | Rounded image + caption |
+| `<Figure src alt width height caption? sizes?>` | Any image; width/height are the file's pixels | Rounded image + caption, top margin when standalone |
 | `<Screens layout="row">` | Up to 5 phone screens | 2 cols mobile, 5 desktop |
 | `<Screens layout="pair">` | Two large screens | 2 cols, max 760px |
 | `<Gallery>` | Social posts, 4:5 visuals | 2 cols mobile, 4 desktop |
@@ -163,14 +167,22 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
   (720 wide for posts, 660 for phone screens; keep source size when already ≤ 750 wide).
 - Video: 720p H.264, `-vf scale=720:-2 -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k`,
   plus a JPG poster. Check music licenses in the source project before publishing.
-- **Hero and card**:
-  - If the project has a brand kit (fonts, palette, cut-outs), compose an original HTML graphic in that style and render
-    it with headless Chrome at 2400×1200 (hero) and 1200×1500 (card). Use visuals that don't repeat the ones further
-    down the page.
-  - Otherwise use `scripts/case-study-cover.html` (params `format`, `pillar`, `title`, `label`, `seed`, `screens`;
-    the render command is in its header comment). Hero = abstract background + title; card = same background with up to
-    two screens. Change `seed` for a different variation.
-  - When replacing an image that has already been published, give it a new file name: next/image caches by URL.
+- **Hero and card** follow the Matcha model (look at `public/images/case-studies/matcha/` first):
+  - Each project gets its own visual identity (fonts, palette, shapes), used **only in its images**; the rest of the
+    page stays in the portfolio identity. If the project has a brand kit, use it; otherwise invent one that fits.
+  - The only text is the project title, large. The hero may add one short payoff, only if needed. No fake UI cards,
+    labels, dates or captions.
+  - Hero (2400×1200): title plus the identity's shapes or a semi-transparent 3D render (three.js runs in headless
+    Chrome). Card (1200×1500, exported at 960×1200): title on top plus real screens or the same 3D render or shapes.
+  - Compose them as HTML in `scripts/visuals/<slug>.html` (one `<section id>` per image, picked with `?v=`) and render
+    with `scripts/render-visual.sh <html> <view> <W>x<H> <out.webp> [output width]`. The case study's body images can
+    live in the same file.
+  - When replacing an image that has already been published, give it a new file name (`hero-v2.webp`): next/image
+    caches by URL.
+  - `scripts/case-study-cover.html` (abstract pillar gradients) is the old approach, kept only as a fallback.
+- **Reading source decks**: `pdftotext -layout` (ships with Git for Windows) for text; `scripts/pdf-contact-sheet.py`
+  renders every page into one PNG to study the style (needs PyMuPDF in a throwaway venv, see its header). Never show
+  company logos, photos of people, or names of colleagues and participants.
 - Never copy secrets, `.env` files or legal documents from source projects.
 
 ### Verify and ship
@@ -187,9 +199,10 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
 | Slug | Year | Pillar | Notes |
 | --- | --- | --- | --- |
 | `matcha` | 2026-03 | design | Personal project (co-founder, CXO & CMO). Source: `C:\Users\JacopoMarcolini\Desktop\workspace\202606_matcha` (trailer, b2c posts, matcha-codebase, deliverables). No KPIs. Only the public price (€10 per person, drink included), never the venue split. Links: matchadating.it, Instagram @matchadating_it. Hero composed in the Play Store feature graphic style. |
-| `paywall-design-system` | 2025-04 | design | Solo design work for a mobile app publisher's freemium apps (fashion resale, cloud gaming), iOS + Android. No KPIs. Only two screenshots exist. Hero from `case-study-cover.html` (pillar design, seed 3). |
+| `paywall-design-system` | 2025-04 | design | Solo design work for a mobile app publisher's freemium apps (fashion resale, cloud gaming), iOS + Android. No KPIs. Only two screenshots exist. Covers in `scripts/visuals/paywall-design-system.html`: peach, deep violet ink, tangerine/lilac/butter stickers, Bricolage Grotesque. |
+| `ai-training-program` | 2026-01 | ai | All generative AI training programs told as one activity (no program or client named; the two universities are named with the user's ok). Sources: hub proposal, a client workshop deck and a university talk in OneDrive `bid/202604_prevendita` (16, 18, 20). KPIs from cv_master (400+ hours, 600+ people); 25+ companies and 90+ validated use cases from the proposal, in prose. No phase durations or agenda details: it is a generalization. Solo or leading a team of tutors. Visuals in `scripts/visuals/ai-training-program.html`: navy, blue-violet-pink-orange gradient, Poppins, three.js glass sparkles on hero and card. No logos, people or client survey data. |
 
-Remaining placeholders in `src/lib/works.ts`: Metrix, Forma Studio, FlowOS, Northwind, Prompt Lab.
+Remaining placeholders in `src/lib/works.ts`: Metrix, Forma Studio, FlowOS, Northwind.
 
 ## Conventions
 

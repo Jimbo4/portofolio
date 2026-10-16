@@ -44,11 +44,18 @@ interface Floater {
 const random = (min: number, max: number) => min + Math.random() * (max - min);
 /** easeOutBack: quick pop with a small overshoot */
 const easeOutBack = (t: number) => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2);
+/** Links, buttons, form fields and anything styled as clickable already react to a click. */
+const INTERACTIVE_SELECTOR =
+  'a[href], button, input, select, textarea, label, summary, video, [role="button"], [role="link"], [role="tab"], [contenteditable="true"]';
+const hasOwnClickEffect = (target: Element) =>
+  target.closest(INTERACTIVE_SELECTOR) !== null || getComputedStyle(target).cursor === "pointer";
+
 const pastel = () => `hsl(${Math.round(random(0, 360))}, ${Math.round(random(70, 90))}%, ${Math.round(random(74, 82))}%)`;
 
 /**
- * Each click spawns a random pastel base form of random size that drifts in any
- * direction, spins slowly and fades. Rapid clicking shows a message. Off for reduced motion.
+ * Each click on a spot with no click behavior of its own (links, buttons and other controls are skipped) spawns a
+ * random pastel base form of random size that drifts in any direction, spins slowly and fades. Rapid clicking shows
+ * a message. Off for reduced motion.
  */
 export function ClickBurstFx() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -177,7 +184,10 @@ export function ClickBurstFx() {
       frameId = alive > 0 ? requestAnimationFrame(frame) : 0;
     };
 
-    const onClick = (event: MouseEvent) => handleClick(event.clientX, event.clientY);
+    const onClick = (event: MouseEvent) => {
+      if (event.target instanceof Element && hasOwnClickEffect(event.target)) return;
+      handleClick(event.clientX, event.clientY);
+    };
 
     resize();
     window.addEventListener("resize", resize);
