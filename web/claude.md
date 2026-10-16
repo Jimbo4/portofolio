@@ -4,182 +4,208 @@
 
 Personal portfolio website for Jacopo Marcolini, Design Lead & Product Owner.
 Static Next.js site — no backend, no authentication, no API client needed.
+Repo: github.com/Jimbo4/portofolio, work happens on `main`.
 
 ## Stack
 
-| Tech         | Version | Notes                                                                |
-| ------------ | ------- | -------------------------------------------------------------------- |
-| Next.js      | 14+     | App Router, SSG preferred for all pages                              |
-| React        | 18+     | Server Components by default, Client Components only for interaction |
-| Tailwind CSS | 3+      | Utility-first, mobile-first                                          |
-| shadcn/ui    | Latest  | Headless components + Radix UI                                       |
-| TypeScript   | 5+      | Strict mode enabled                                                  |
-| MDX          | —       | Case study content files                                             |
+| Tech         | Version | Notes                                                                    |
+| ------------ | ------- | ------------------------------------------------------------------------ |
+| Next.js      | 16.4    | App Router, Turbopack, `cacheComponents` on, every page prerendered      |
+| React        | 19      | Server Components by default, Client Components only for interaction     |
+| Tailwind CSS | 4       | Tokens and `@utility` classes in `src/app/globals.css` (no config file)  |
+| TypeScript   | 5       | Strict mode                                                              |
+| MDX          | —       | Case studies: `gray-matter` + `next-mdx-remote/rsc`                      |
+
+shadcn/ui is not installed. Ask before adding it or any other dependency.
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+
-- npm 9+
-
-### Setup
-
 ```bash
 npm install
-npm run dev   # Port 3000
+npm run dev     # Dev server on :3000 (the user's own, may serve stale CSS after globals.css edits)
+npm run build   # Production build, must pass before every commit
+npm run lint    # ESLint, must pass before every commit
+npm run start   # Serve the production build
 ```
 
-### Running
-
-```bash
-npm run dev          # Dev server with hot reload (port 3000)
-npm run build        # Optimized production build
-npm run start        # Serve production build
-npm run lint         # ESLint + type checking
-npm run lint:fix     # Auto-fix linting issues
-npx shadcn-ui add [component]  # Add shadcn components
-```
+Preview for verification: `.claude/launch.json` has `web-prod` (`next start -p 3100`). Run `npm run build` first and
+restart `web-prod` after every build, otherwise it serves the previous build.
 
 ## Architecture
 
 ```
 web/
-├── src/
-│   ├── app/                          # Next.js 14 App Router
-│   │   ├── page.tsx                  # Home: hero + intro + CTAs
-│   │   ├── about/
-│   │   │   └── page.tsx              # About: bio, CV download, contact
-│   │   ├── case-studies/
-│   │   │   ├── page.tsx              # Case studies grid
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx          # Single case study detail
-│   │   ├── layout.tsx                # Root layout (nav, footer, fonts)
-│   │   └── globals.css               # Tailwind imports + design tokens
-│   ├── components/
-│   │   ├── ui/                       # shadcn components (auto-generated)
-│   │   └── features/                 # Portfolio-specific components
-│   │       ├── CaseStudyCard.tsx     # Card on list page
-│   │       ├── CaseStudyNav.tsx      # Prev/next navigation
-│   │       ├── ContactLinks.tsx      # Email + LinkedIn + etc.
-│   │       └── CvDownloadButton.tsx  # CV PDF download CTA
-│   ├── lib/
-│   │   ├── case-studies.ts           # MDX content loader utilities
-│   │   └── utils.ts                  # Helper functions (cn, etc.)
-│   └── types/
-│       └── index.ts                  # CaseStudy, Tag, etc.
-├── content/
-│   └── case-studies/                 # One .mdx file per case study
-│       └── project-slug.mdx
-└── public/
-    ├── cv/                           # CV PDF
-    └── images/
-        └── case-studies/             # Cover + body images per project
+├── content/case-studies/           # One .mdx per real case study (slug = file name)
+├── public/
+│   ├── images/case-studies/<slug>/ # hero.webp, card.webp, body images
+│   └── videos/case-studies/<slug>/ # optional videos
+├── scripts/case-study-cover.html   # Abstract cover generator (not part of the build)
+└── src/
+    ├── app/
+    │   ├── page.tsx                  # Home: hero, philosophy pillars, projects carousel, skills, tools, contact
+    │   ├── case-studies/page.tsx     # Works grouped by pillar, anchors #design #lead #ai #grow
+    │   ├── case-studies/[slug]/      # Detail page: header, meta, cover, MDX body (or placeholder template)
+    │   ├── layout.tsx                # Fonts (Fraunces, Inter, JetBrains Mono), nav, footer
+    │   └── globals.css               # Design tokens + utilities
+    ├── components/features/
+    │   ├── CaseStudyCard.tsx         # Card for carousel ("slide") and grid ("masonry")
+    │   ├── CaseStudyMdx.tsx          # Blocks available inside case study MDX
+    │   ├── PlaceholderCaseStudy.tsx  # Generic body for placeholder works (delete when none remain)
+    │   ├── WorkCover.tsx             # Image cover or generated WorkArt
+    │   └── WorksCarousel.tsx         # Infinite free-scrolling carousel (renders works ×3)
+    ├── lib/
+    │   ├── case-studies.ts           # Loader: MDX works + placeholders, sorted newest first
+    │   ├── works.ts                  # Remaining design-file placeholders
+    │   ├── config.ts                 # Personal data, pillars, tools (the only place for personal data)
+    │   └── pillarTheme.ts            # Theme classes per pillar
+    └── types/index.ts                # Work, CaseStudyFrontmatter, PillarId, …
 ```
 
-## Pages & Routes
+Pillars (`PillarId`): `design` Product Design (blue), `lead` Team Leadership (orange), `ai` AI Enablement (purple),
+`grow` Business & Growth (yellow).
 
-| Route                    | Type             | Description                        |
-| ------------------------ | ---------------- | ---------------------------------- |
-| `/`                      | Server Component | Hero + intro + CTAs                |
-| `/about`                 | Server Component | Bio + CV download + contact links  |
-| `/case-studies`          | Server Component | Grid of case study cards           |
-| `/case-studies/[slug]`   | Server Component | Full case study (MDX rendered)     |
+## Adding a case study
 
-No authentication. No protected routes. All pages are public.
+Each project is meant to be done in its own chat. Everything needed is in this section; read it all before starting.
 
-## Content: Case Studies
+### Content rules (non-negotiable)
 
-Case studies live in `content/case-studies/` as MDX files.
+- **No client or employer-client names**, in copy or in images. Use generic phrasing ("a major European bank", "a
+  mobile app publisher"). App or brand names visible in screenshots must be covered or removed (only exception so far:
+  "Quazara" in the paywall screenshots, allowed by the user). Titles describe the project, they don't name the company.
+- **Never invent metrics, KPIs or testimonials.** KPIs only when the user gives real numbers; otherwise omit `kpis`.
+- **Use cv_master to fill gaps**: `C:\Users\JacopoMarcolini\Desktop\workspace\202608_curvit\curvit\cv_master.md`.
+  Cross-check every relevant bullet for the project or role; ask before adding anything it doesn't support.
+- **Portfolio, not CV**: the year is a single year ("2026"), never a period like "2026 – present".
+- **Copy in English**, first person, plain and concrete. Product taglines may stay in their original language.
+- **Vary the layout between sections**: never use the same block for two sections of one page (see blocks below).
+- Each new real project replaces a placeholder: ask the user which one to remove from `src/lib/works.ts`.
 
-### Frontmatter shape
+### Intake questions
+
+Ask these in one message, proposing a default for each so the user only corrects what's wrong:
+
+1. Title (descriptive, no company name) and slug
+2. Pillar (`design` | `lead` | `ai` | `grow`)
+3. Date as `YYYY-MM` (used for ordering, newest first)
+4. Client described generically, and what the product is
+5. Scope: how many products/apps, which categories, which platforms
+6. Role: solo or with a team, who they worked with
+7. Process and decisions worth telling (offer assumptions read from the images or materials)
+8. Principles or methods to highlight (Laws of UX, lawsofux.com, is a good source)
+9. Real numbers, if any
+10. Visuals available: screenshots, video, codebase or brand kit to generate assets from; links that can be published
+
+### Page structure
+
+Modeled on glueglue.com/it/works case studies. Each `##` heading in MDX is a section:
+
+1. **Intro**: what the product is, in two short paragraphs
+2. **Challenge**: the context and a bullet list of what the work had to achieve (bold lead-in per bullet)
+3. **Media** between text sections (screens, gallery, video)
+4. **Process**: how it came together, broken down by discipline or step
+5. **Principles / decisions** (optional): why the design works
+6. **Outcome**: what now exists, no invented results
+
+### Frontmatter (`CaseStudyFrontmatter`)
 
 ```yaml
 ---
-title: "Project Title"
-description: "One-line summary shown on the card"
-tags: ["UX", "Product Strategy", "Design System"]
-date: "2024-03"
-coverImage: "/images/case-studies/project-slug/cover.jpg"
+name: Paywall Design System
+pillar: design
+date: "2025-04"
+tags: ["Mobile App", "Monetization", "Design System"]
+role: Product Designer
+blurb: One subscription page, designed to convert across a family of freemium apps.   # card text
+description: >-                                                                         # detail page intro
+  A reusable paywall system for …
+cover:
+  card: /images/case-studies/<slug>/card.webp   # 4:5, 960×1200
+  hero: /images/case-studies/<slug>/hero.webp   # 2:1, 2400×1200, also the OpenGraph image
+  alt: Describe what the hero shows
+links:                     # optional, only links the user approved
+  - label: example.com
+    href: https://example.com
+kpis:                      # optional, exactly 2, real numbers only
+  - { value: "<number>", caption: "<what it measures>" }
+  - { value: "<number>", caption: "<what it measures>" }
 ---
 ```
 
-### Content loader pattern
+The loader validates the frontmatter and fails the build on missing or malformed fields. There is no `status` field.
 
-```typescript
-// lib/case-studies.ts
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
+### MDX blocks (`src/components/features/CaseStudyMdx.tsx`)
 
-const CONTENT_DIR = path.join(process.cwd(), 'content/case-studies');
+MDX runs with JavaScript expressions blocked: **every prop is a plain string** (`width="750"`, never `width={750}`).
+Markdown `##`, paragraphs, bullet lists, `**bold**` and links are styled automatically.
 
-export function getAllCaseStudies(): CaseStudy[] {
-  const files = fs.readdirSync(CONTENT_DIR);
-  return files
-    .filter((f) => f.endsWith('.mdx'))
-    .map((f) => {
-      const slug = f.replace('.mdx', '');
-      const raw = fs.readFileSync(path.join(CONTENT_DIR, f), 'utf-8');
-      const { data } = matter(raw);
-      return { slug, ...data } as CaseStudy;
-    })
-    .sort((a, b) => b.date.localeCompare(a.date));
-}
+| Block | Use for | Look |
+| --- | --- | --- |
+| `<Figure src alt width height caption? sizes?>` | Any image; width/height are the file's pixels | Rounded image + caption |
+| `<Screens layout="row">` | Up to 5 phone screens | 2 cols mobile, 5 desktop |
+| `<Screens layout="pair">` | Two large screens | 2 cols, max 760px |
+| `<Gallery>` | Social posts, 4:5 visuals | 2 cols mobile, 4 desktop |
+| `<Disciplines><Discipline label>` | Work broken down by discipline | Boxed white cards, 2 cols |
+| `<Steps><Step label>` | A process in order | Numbered rows 01, 02… with dividers |
+| `<Principles><Principle label>` | Named principles, laws, decisions | Open 3-col grid, heavy top rule, italic names |
+| `<VideoFeature title src poster label>` | A vertical video next to its story | White panel, text + 9:16 player |
 
-export function getCaseStudyBySlug(slug: string) {
-  const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
-  const raw = fs.readFileSync(filePath, 'utf-8');
-  return matter(raw);
-}
-```
+Text inside `Discipline`, `Step`, `Principle` and `VideoFeature` goes on its own indented lines. If no block fits a
+new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStudyComponents`) instead of repeating one.
 
-## Key Components
+### Assets
 
-| Component           | Path                                    | Description                              |
-| ------------------- | --------------------------------------- | ---------------------------------------- |
-| `CaseStudyCard`     | `components/features/CaseStudyCard`     | Card with title, description, tags, cover |
-| `CaseStudyNav`      | `components/features/CaseStudyNav`      | Previous / next case study links         |
-| `ContactLinks`      | `components/features/ContactLinks`      | Email, LinkedIn, other social links      |
-| `CvDownloadButton`  | `components/features/CvDownloadButton`  | Button linking to `/cv/jacopo-cv.pdf`    |
+- Folders: `public/images/case-studies/<slug>/` and `public/videos/case-studies/<slug>/`. Use kebab-case file names.
+- Tools: ffmpeg is installed via winget (`Gyan.FFmpeg`), binary at
+  `C:/Users/JacopoMarcolini/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0.2-full_build/bin/`.
+  Headless Chrome at `C:/Program Files/Google/Chrome/Application/chrome.exe` renders HTML compositions to PNG.
+- Images: convert to WebP, `ffmpeg -i in.png -vf "scale=720:-1:flags=lanczos" -c:v libwebp -quality 82 out.webp`
+  (720 wide for posts, 660 for phone screens; keep source size when already ≤ 750 wide).
+- Video: 720p H.264, `-vf scale=720:-2 -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k`,
+  plus a JPG poster. Check music licenses in the source project before publishing.
+- **Hero and card**:
+  - If the project has a brand kit (fonts, palette, cut-outs), compose an original HTML graphic in that style and render
+    it with headless Chrome at 2400×1200 (hero) and 1200×1500 (card). Use visuals that don't repeat the ones further
+    down the page.
+  - Otherwise use `scripts/case-study-cover.html` (params `format`, `pillar`, `title`, `label`, `seed`, `screens`;
+    the render command is in its header comment). Hero = abstract background + title; card = same background with up to
+    two screens. Change `seed` for a different variation.
+  - When replacing an image that has already been published, give it a new file name: next/image caches by URL.
+- Never copy secrets, `.env` files or legal documents from source projects.
+
+### Verify and ship
+
+1. `npm run lint` and `npm run build` in `web/`
+2. Restart `web-prod`, open `/case-studies/<slug>`, `/case-studies` and the home carousel; check mobile (375px) for
+   horizontal overflow. If the browser pane is hidden, screenshots after scrolling can come out blank: enlarge the
+   viewport with `resize_window` instead of scrolling.
+3. Show the result to the user, then commit only with their go-ahead; push only when asked. Commit messages end with
+   the attribution line given in the session.
+
+## Published case studies
+
+| Slug | Year | Pillar | Notes |
+| --- | --- | --- | --- |
+| `matcha` | 2026-03 | design | Personal project (co-founder, CXO & CMO). Source: `C:\Users\JacopoMarcolini\Desktop\workspace\202606_matcha` (trailer, b2c posts, matcha-codebase, deliverables). No KPIs. Only the public price (€10 per person, drink included), never the venue split. Links: matchadating.it, Instagram @matchadating_it. Hero composed in the Play Store feature graphic style. |
+| `paywall-design-system` | 2025-04 | design | Solo design work for a mobile app publisher's freemium apps (fashion resale, cloud gaming), iOS + Android. No KPIs. Only two screenshots exist. Hero from `case-study-cover.html` (pillar design, seed 3). |
+
+Remaining placeholders in `src/lib/works.ts`: Metrix, Forma Studio, FlowOS, Northwind, Prompt Lab.
 
 ## Conventions
 
-### File & Component Naming
-
 - **Components:** PascalCase → `CaseStudyCard.tsx`
-- **Hooks:** camelCase with `use` prefix → `useCaseStudies.ts`
-- **Utils:** camelCase → `formatDate.ts`
-- **Types:** PascalCase interfaces → `export interface CaseStudy { ... }`
-- **Pages:** kebab-case folders → `app/case-studies/[slug]/page.tsx`
-- **Content files:** kebab-case slugs → `design-system-overhaul.mdx`
-
-### React Best Practices
-
-- **Server Components by default:** `"use client"` only for interactive components
-- **Static generation:** All case study pages statically generated at build time via `generateStaticParams`
-- **Images:** Always use Next.js `<Image>` with explicit width/height
-- **Error boundaries:** `error.tsx` in route folders that load external content
-
-### TypeScript
-
-- **Strict mode:** Always enabled, no `any`
-- **Content types:** Keep `CaseStudy` type aligned with MDX frontmatter shape
-
-### Styling
-
-- **Tailwind only:** No CSS modules, no styled-components, no inline styles
-- **Custom design tokens:** In `globals.css` only (colors, typography scale)
-- **Responsive:** Mobile-first, use Tailwind breakpoints (`sm:`, `md:`, `lg:`)
+- **Utils / functions:** camelCase
+- **Content files:** kebab-case slugs → `paywall-design-system.mdx`
+- **Images:** always Next.js `<Image>` with explicit width/height (or `fill` inside a sized frame)
+- **Tailwind only:** no CSS modules, no inline styles; tokens only in `globals.css`
+- **Mobile-first**, no horizontal page scroll
+- **No `any`** in TypeScript
 
 ## Boundaries
 
-### ✅ Always (do autonomously)
+### ✅ Always
 
-- Use TypeScript strict mode, no `any`
-- shadcn components for standard UI
-- Tailwind for all styling
-- Server Components for data-loading pages
+- TypeScript strict, Tailwind only, Server Components for data-loading pages
 - Next.js `<Image>` for all images
 - Mobile-first responsive layout
 
@@ -187,7 +213,7 @@ export function getCaseStudyBySlug(slug: string) {
 
 - Add new npm dependencies
 - Add new sections or routes
-- Modify Tailwind config (colors, spacing scale)
+- Change tokens in `globals.css` (colors, spacing scale)
 - Change content file format (MDX → something else)
 
 ### 🚫 Never
@@ -195,23 +221,5 @@ export function getCaseStudyBySlug(slug: string) {
 - Add a backend, API routes that hit a database, or authentication
 - Inline CSS or styled-components
 - `any` type in TypeScript
-- Hardcode personal data in components — keep in content files or a single `lib/config.ts`
-
-## Production Checklist
-
-Before deploy:
-
-- [ ] All images optimized, using `<Image>` with correct dimensions
-- [ ] CV PDF in `public/cv/` and download link correct
-- [ ] OG meta tags set per page
-- [ ] Lighthouse score > 90 performance, > 95 accessibility
-- [ ] Test on mobile (Chrome DevTools device mode)
-- [ ] Vercel environment set up, domain configured
-
-## Resources
-
-- [Next.js 14 Docs](https://nextjs.org/docs) - App Router reference
-- [shadcn/ui Docs](https://ui.shadcn.com) - Component library
-- [Tailwind CSS Docs](https://tailwindcss.com/docs) - Utility classes
-- [MDX Docs](https://mdxjs.com) - Content authoring
-- [gray-matter](https://github.com/jonschlinkert/gray-matter) - Frontmatter parsing
+- Hardcode personal data in components — keep it in content files or `lib/config.ts`
+- Name clients, or publish metrics the user didn't provide

@@ -14,6 +14,7 @@ portfolio/
 
 No backend. All content is static or MDX/JSON file-based.
 ALWAYS read `web/claude.md` before working in the `web/` folder.
+To add a new project/case study, follow the "Adding a case study" section of `web/claude.md` (one chat per project).
 
 ## Stack
 
