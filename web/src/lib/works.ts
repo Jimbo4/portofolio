@@ -6,23 +6,6 @@ import type { Work } from "@/types";
  */
 export const placeholderWorks: Work[] = [
   {
-    slug: "klever-wallet",
-    name: "Klever Wallet",
-    tags: ["Crypto", "App"],
-    date: "2024-01",
-    year: "2024",
-    blurb: "Reducing friction without compromising security.",
-    description:
-      "A self-custody wallet rebuilt around a single principle: the safe path should also be the obvious path.",
-    cover: { kind: "art", art: "klever" },
-    pillar: "design",
-    isPlaceholder: true,
-    kpis: [
-      { value: "+38%", caption: "Activation" },
-      { value: "−52%", caption: "Drop-off at KYC" },
-    ],
-  },
-  {
     slug: "metrix",
     name: "Metrix",
     tags: ["Web", "SaaS"],
@@ -37,23 +20,6 @@ export const placeholderWorks: Work[] = [
     kpis: [
       { value: "100K+", caption: "Total Users" },
       { value: "50K+", caption: "Monthly Visitors" },
-    ],
-  },
-  {
-    slug: "vox-swap",
-    name: "Vox Swap",
-    tags: ["Web", "DeFi", "Web3"],
-    date: "2023-01",
-    year: "2023",
-    blurb: "From internal tool to a platform used by partners.",
-    description:
-      "Productized an internal liquidity tool into a partner platform with role-aware permissions.",
-    cover: { kind: "art", art: "vox" },
-    pillar: "design",
-    isPlaceholder: true,
-    kpis: [
-      { value: "12", caption: "Partner Integrations" },
-      { value: "$420M", caption: "Volume Routed" },
     ],
   },
   {

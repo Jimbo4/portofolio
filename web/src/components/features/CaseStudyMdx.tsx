@@ -36,9 +36,18 @@ export function Figure({ src, alt, width, height, caption, sizes = "(max-width: 
   );
 }
 
-/** Row of phone screens: two columns on mobile, five on desktop. */
-export function Screens({ children }: { children: React.ReactNode }) {
-  return <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-5 [&_img]:rounded-[22px]">{children}</div>;
+const screensLayout = {
+  /** Two large screens side by side */
+  pair: "max-w-[760px] grid-cols-2 gap-6",
+  /** Two columns on mobile, five on desktop */
+  row: "grid-cols-2 gap-4 md:grid-cols-5",
+};
+
+/** Phone screens in a grid. */
+export function Screens({ layout = "row", children }: { layout?: keyof typeof screensLayout; children: React.ReactNode }) {
+  return (
+    <div className={`mt-10 grid [&_img]:rounded-[22px] ${screensLayout[layout] ?? screensLayout.row}`}>{children}</div>
+  );
 }
 
 /** Grid of square-ish visuals such as social posts. */

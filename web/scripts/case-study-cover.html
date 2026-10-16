@@ -1,0 +1,122 @@
+<!doctype html>
+<!--
+  Abstract case study cover in the portfolio's identity (pillar gradients, Fraunces italic, JetBrains Mono).
+  Used when a project has no brand visual of its own. Not part of the site build.
+
+  Query params:
+    format   hero (2400x1200, default) | card (1200x1500)
+    pillar   design | lead | ai | grow   (sets the palette, default design)
+    title    project title, shown on the hero and on cards without screens
+    label    small mono label, e.g. "Case study · 2025"
+    seed     any integer, moves the shapes to get a new variation of the same palette
+    screens  card only: comma-separated image URLs shown as tilted phone screens
+
+  Render with headless Chrome, e.g.:
+    chrome --headless=new --hide-scrollbars --allow-file-access-from-files --virtual-time-budget=4000
+      --force-device-scale-factor=1 --window-size=2400,1200 --screenshot=hero.png
+      "file:///.../case-study-cover.html?format=hero&pillar=design&seed=3&title=..."
+  then convert to WebP with ffmpeg into public/images/case-studies/<slug>/.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,800&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; }
+  body { position: relative; background: var(--deep); }
+  .orb { position: absolute; border-radius: 50%; filter: blur(var(--blur)); }
+  .ring { position: absolute; border-radius: 50%; border: 2px solid var(--line); }
+  .grain { position: absolute; inset: 0; opacity: .22; mix-blend-mode: overlay; pointer-events: none; }
+  .label { position: absolute; font-family: "JetBrains Mono", monospace; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--text-soft); }
+  .title { position: absolute; font-family: "Fraunces", Georgia, serif; font-style: italic; font-weight: 800; font-variation-settings: "opsz" 144; letter-spacing: -0.03em; line-height: .95; color: var(--text); }
+  .screen { position: absolute; overflow: hidden; border-radius: 44px; box-shadow: 0 50px 90px rgba(0, 0, 0, .35), 0 0 0 10px #111; }
+  .screen img { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<script>
+  const params = new URLSearchParams(location.search);
+  const format = params.get("format") === "card" ? "card" : "hero";
+  const [W, H] = format === "card" ? [1200, 1500] : [2400, 1200];
+  document.documentElement.style.cssText = `width:${W}px;height:${H}px`;
+  document.body.style.cssText = `width:${W}px;height:${H}px`;
+
+  // Same stops as the icon-* utilities in src/app/globals.css
+  const PALETTES = {
+    design: { light: "#5aa9ff", mid: "#2563eb", deep: "#0f1e5a", text: "#ffffff" },
+    lead: { light: "#ff7a4d", mid: "#e84b2a", deep: "#7a1f0c", text: "#ffffff" },
+    ai: { light: "#b690ff", mid: "#6d3fd6", deep: "#2e1b6e", text: "#ffffff" },
+    grow: { light: "#ffe45c", mid: "#ffbf00", deep: "#b37800", text: "#1a1a18" },
+  };
+  const palette = PALETTES[params.get("pillar")] || PALETTES.design;
+  const root = document.body.style;
+  root.setProperty("--deep", palette.deep);
+  root.setProperty("--text", palette.text);
+  root.setProperty("--text-soft", palette.text === "#ffffff" ? "rgba(255,255,255,.72)" : "rgba(26,26,24,.7)");
+  root.setProperty("--line", palette.text === "#ffffff" ? "rgba(255,255,255,.14)" : "rgba(26,26,24,.12)");
+  root.setProperty("--blur", `${Math.round(W / 16)}px`);
+
+  // Deterministic random so a seed always renders the same variation
+  let state = Number(params.get("seed") || 1) * 9301 + 49297;
+  const rand = () => ((state = (state * 9301 + 49297) % 233280) / 233280);
+
+  function add(className, css, parent = document.body) {
+    const el = document.createElement("div");
+    el.className = className;
+    el.style.cssText = css;
+    parent.appendChild(el);
+    return el;
+  }
+
+  // Soft light orbs: one big glow, two mid accents, one paper-warm highlight
+  const orbs = [
+    { color: palette.mid, size: 1.0 },
+    { color: palette.light, size: 0.62 },
+    { color: palette.light, size: 0.42 },
+    { color: "#f5f2ee", size: 0.22 },
+  ];
+  orbs.forEach((orb, i) => {
+    const d = Math.max(W, H) * orb.size;
+    const x = W * (0.15 + rand() * 0.8) - d / 2;
+    const y = H * (i === 0 ? 0.1 + rand() * 0.3 : rand()) - d / 2;
+    add("orb", `left:${x}px;top:${y}px;width:${d}px;height:${d}px;background:${orb.color};opacity:${i === 3 ? 0.35 : 0.9}`);
+  });
+
+  // Concentric rings: a quiet structural motif behind the content
+  const cx = W * (0.55 + rand() * 0.35), cy = H * (0.2 + rand() * 0.5);
+  [0.28, 0.42, 0.58, 0.76].forEach((r) => {
+    const d = Math.max(W, H) * r;
+    add("ring", `left:${cx - d / 2}px;top:${cy - d / 2}px;width:${d}px;height:${d}px`);
+  });
+
+  // Film grain
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `<svg class="grain" width="${W}" height="${H}"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`,
+  );
+
+  const pad = format === "card" ? 80 : 120;
+  const label = params.get("label");
+  if (label) add("label", `left:${pad}px;top:${pad}px;font-size:${format === "card" ? 26 : 30}px`).textContent = label;
+
+  const screens = (params.get("screens") || "").split(",").filter(Boolean);
+  const title = params.get("title");
+  if (format === "card" && screens.length) {
+    // Up to two phone screens, slightly fanned
+    const w = 520;
+    const layout = screens.length === 1 ? [[(W - w) / 2, 250, 0]] : [[110, 240, -6], [570, 330, 5]];
+    screens.slice(0, 2).forEach((src, i) => {
+      const [x, y, rot] = layout[i];
+      add("screen", `left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg);z-index:${i + 1}`).innerHTML =
+        `<img src="${src}">`;
+    });
+  } else if (title) {
+    const size = format === "card" ? 150 : 210;
+    add("title", `left:${pad}px;right:${pad}px;bottom:${pad - 20}px;font-size:${size}px`).textContent = title;
+  }
+</script>
+</body>
+</html>
