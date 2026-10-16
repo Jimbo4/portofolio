@@ -148,6 +148,7 @@ Markdown `##`, paragraphs, bullet lists, `**bold**` and links are styled automat
 | `<Figure src alt width height caption? sizes?>` | Any image; width/height are the file's pixels | Rounded image + caption, top margin when standalone |
 | `<Screens layout="row">` | Up to 5 phone screens | 2 cols mobile, 5 desktop |
 | `<Screens layout="pair">` | Two large screens | 2 cols, max 760px |
+| `<Screens layout="trio">` | Three visuals, e.g. exercise sheets | 1 col mobile, 3 from 640px |
 | `<Gallery>` | Social posts, 4:5 visuals | 2 cols mobile, 4 desktop |
 | `<Disciplines><Discipline label>` | Work broken down by discipline | Boxed white cards, 2 cols |
 | `<Steps><Step label>` | A process in order | Numbered rows 01, 02… with dividers |
@@ -199,7 +200,7 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
 | Slug | Year | Pillar | Notes |
 | --- | --- | --- | --- |
 | `matcha` | 2026-03 | design | Personal project (co-founder, CXO & CMO). Source: `C:\Users\JacopoMarcolini\Desktop\workspace\202606_matcha` (trailer, b2c posts, matcha-codebase, deliverables). No KPIs. Only the public price (€10 per person, drink included), never the venue split. Links: matchadating.it, Instagram @matchadating_it. Hero composed in the Play Store feature graphic style. |
-| `paywall-design-system` | 2025-04 | design | Solo design work for a mobile app publisher's freemium apps (fashion resale, cloud gaming), iOS + Android. No KPIs. Only two screenshots exist. Covers in `scripts/visuals/paywall-design-system.html`: peach, deep violet ink, tangerine/lilac/butter stickers, Bricolage Grotesque. |
+| `paywall-design-system` | 2025-04 | design | Solo design work for a mobile app publisher's freemium apps (fashion resale, cloud gaming), iOS + Android. No KPIs. Only two screenshots exist. Covers in `scripts/visuals/paywall-design-system.html`: black liquid chrome with silver reflections from a WebGL fragment shader, brushed-silver Inter Tight title, no icons. |
 | `ai-training-program` | 2026-01 | ai | All generative AI training programs told as one activity (no program or client named; the two universities are named with the user's ok). Sources: hub proposal, a client workshop deck and a university talk in OneDrive `bid/202604_prevendita` (16, 18, 20). KPIs from cv_master (400+ hours, 600+ people); 25+ companies and 90+ validated use cases from the proposal, in prose. No phase durations or agenda details: it is a generalization. Solo or leading a team of tutors. Visuals in `scripts/visuals/ai-training-program.html`: navy, blue-violet-pink-orange gradient, Poppins, three.js glass sparkles on hero and card. No logos, people or client survey data. |
 
 Remaining placeholders in `src/lib/works.ts`: Metrix, Forma Studio, FlowOS, Northwind.

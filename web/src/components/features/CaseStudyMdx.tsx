@@ -39,6 +39,8 @@ export function Figure({ src, alt, width, height, caption, sizes = "(max-width: 
 const screensLayout = {
   /** Two large screens side by side */
   pair: "max-w-[760px] grid-cols-2 gap-6",
+  /** Three visuals, stacked on mobile */
+  trio: "grid-cols-1 gap-6 sm:grid-cols-3",
   /** Two columns on mobile, five on desktop */
   row: "grid-cols-2 gap-4 md:grid-cols-5",
 };
