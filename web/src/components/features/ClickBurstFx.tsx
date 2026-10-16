@@ -8,8 +8,8 @@ const PIXEL_SCALE = 3;
 const SIZE = { small: [20, 70], big: [110, 260], bigChance: 0.25 } as const;
 const LIFE_MS = { min: 1800, max: 2600 };
 const POP_MS = 220;
-/** More than this many clicks inside the window shows the easter egg */
-const RAPID_CLICKS = { count: 10, windowMs: 3000, message: "Slow down, cowboy!" };
+/** More than this many clicks inside the window shows the easter egg, then shapes pause for cooldownMs */
+const RAPID_CLICKS = { count: 10, windowMs: 3000, cooldownMs: 2000, message: "Slow down, cowboy!" };
 
 /** Base forms in a 64×64 box centered on (32, 32). */
 const SHAPES = [
@@ -63,6 +63,7 @@ export function ClickBurstFx() {
     const floaters: Floater[] = [];
     const serifFont = getComputedStyle(document.documentElement).getPropertyValue("--font-fraunces").trim() || "Georgia";
     let clickTimes: number[] = [];
+    let blockedUntil = 0;
     let frameId = 0;
     let lastT = performance.now();
 
@@ -111,7 +112,7 @@ export function ClickBurstFx() {
       const clampedX = Math.min(Math.max(x, half), Math.max(half, window.innerWidth - half));
       floaters.push({
         shape: { kind: "text", text: RAPID_CLICKS.message, font },
-        color: "#E84B2A",
+        color: "#1A1A18",
         x: clampedX,
         y: Math.max(48, y - 40),
         ...drift(0),
@@ -125,12 +126,14 @@ export function ClickBurstFx() {
 
     const handleClick = (x: number, y: number) => {
       const now = performance.now();
+      if (now < blockedUntil) return;
       spawnShape(x, y, now);
       clickTimes = clickTimes.filter((t) => now - t < RAPID_CLICKS.windowMs);
       clickTimes.push(now);
       if (clickTimes.length > RAPID_CLICKS.count) {
         spawnMessage(x, y, now);
         clickTimes = [];
+        blockedUntil = now + RAPID_CLICKS.cooldownMs;
       }
       startLoop(now);
     };
