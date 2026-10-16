@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/* ─────────── Design tokens ─────────── */
+@theme {
+  --color-paper: #f5f2ee;
+  --color-paper-2: #ede8e1;
+  --color-paper-3: #faf8f5;
+  --color-ink: #1a1a18;
+  --color-ink-2: #2a2a26;
+  --color-muted: #6b6b67;
+  --color-muted-2: #9a968f;
+  --color-line: rgba(26, 26, 24, 0.1);
+  --color-line-soft: rgba(26, 26, 24, 0.06);
+  --color-accent: #e84b2a;
+  --color-accent-ink: #b8341a;
+  --color-card: #ffffff;
+
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: 18px;
+
+  --animate-marquee: marquee 60s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* ─────────── Gradient surfaces ─────────── */
+@utility icon-orange {
+  background: radial-gradient(140% 100% at 30% 20%, #ff7a4d 0%, #e84b2a 50%, #b8341a 100%);
+}
+@utility icon-blue {
+  background: radial-gradient(140% 100% at 30% 20%, #5aa9ff 0%, #2563eb 55%, #0f1e5a 100%);
+}
+@utility icon-green {
+  background: radial-gradient(140% 100% at 30% 20%, #b7e36c 0%, #5ba82e 55%, #2e5e1f 100%);
+}
+@utility icon-purple {
+  background: radial-gradient(140% 100% at 30% 20%, #b690ff 0%, #6d3fd6 55%, #2e1b6e 100%);
+}
+/* Glossy highlight + shade layered over pillar icons */
+@utility icon-gloss {
+  background:
+    radial-gradient(120% 80% at 20% 10%, rgba(255, 255, 255, 0.35), transparent 50%),
+    radial-gradient(120% 80% at 80% 90%, rgba(0, 0, 0, 0.18), transparent 50%);
+}
+
+@utility art-klever {
+  background: radial-gradient(120% 90% at 30% 20%, #7a2bd9, #2a0a55 55%, #0a0314);
+}
+@utility art-metrix {
+  background: radial-gradient(120% 90% at 30% 20%, #ff8a4d, #e84b2a 55%, #7a1f0c);
+}
+@utility art-vox {
+  background: radial-gradient(120% 90% at 30% 20%, #5aa9ff, #1e3fb0 55%, #0b1746);
+}
+@utility art-forma {
+  background: radial-gradient(120% 90% at 30% 20%, #6fe4d3, #119a8a 55%, #063c36);
+}
+@utility art-flow {
+  background: radial-gradient(120% 90% at 30% 20%, #3a3a3a, #121212 55%, #000);
+}
+
+@utility hero-glow {
+  background:
+    radial-gradient(1100px 480px at 50% 0%, #ece5da 0%, transparent 60%),
+    var(--color-paper);
+}
+
+@utility striped-placeholder {
+  background: repeating-linear-gradient(135deg, #ede8e1 0 12px, #e5e0d8 12px 24px);
+}
+
+@utility marquee-fade {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ─────────── Base ─────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Offset anchor targets for the fixed nav */
+  section[id] {
+    scroll-margin-top: 68px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
