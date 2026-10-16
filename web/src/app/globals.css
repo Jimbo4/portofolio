@@ -40,8 +40,8 @@
 @utility icon-blue {
   background: radial-gradient(140% 100% at 30% 20%, #5aa9ff 0%, #2563eb 55%, #0f1e5a 100%);
 }
-@utility icon-green {
-  background: radial-gradient(140% 100% at 30% 20%, #b7e36c 0%, #5ba82e 55%, #2e5e1f 100%);
+@utility icon-yellow {
+  background: radial-gradient(140% 100% at 30% 20%, #ffe45c 0%, #ffbf00 55%, #b37800 100%);
 }
 @utility icon-purple {
   background: radial-gradient(140% 100% at 30% 20%, #b690ff 0%, #6d3fd6 55%, #2e1b6e 100%);
