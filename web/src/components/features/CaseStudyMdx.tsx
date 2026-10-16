@@ -71,6 +71,42 @@ export function Discipline({ label, children }: { label: string; children: React
   );
 }
 
+/** Plain-text child paragraphs inherit the block's own type style instead of the body text style. */
+const inheritParagraphs =
+  "[&_p]:m-0 [&_p]:max-w-none [&_p]:[font-size:inherit] [&_p]:[line-height:inherit] [&_p]:[color:inherit]";
+
+/** Numbered rows for a process: number, step name and description side by side. */
+export function Steps({ children }: { children: React.ReactNode }) {
+  return <ol className="mt-8 flex list-none flex-col border-b border-line p-0 [counter-reset:step]">{children}</ol>;
+}
+
+export function Step({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <li className="grid gap-3 border-t border-line py-7 [counter-increment:step] md:grid-cols-[72px_240px_1fr] md:gap-8">
+      <span
+        aria-hidden="true"
+        className="font-mono text-[13px] tracking-[.14em] text-accent before:content-[counter(step,decimal-leading-zero)]"
+      />
+      <h3 className="font-serif text-[22px] font-semibold leading-[1.2] tracking-[-0.01em]">{label}</h3>
+      <div className={`text-base leading-[1.7] text-ink-2 ${inheritParagraphs}`}>{children}</div>
+    </li>
+  );
+}
+
+/** Open three-column grid of named principles, headed by a heavy rule instead of a card. */
+export function Principles({ children }: { children: React.ReactNode }) {
+  return <div className="mt-10 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">{children}</div>;
+}
+
+export function Principle({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3 border-t-2 border-ink pt-5">
+      <h3 className="font-serif text-[30px] font-extrabold italic leading-[1.05] tracking-[-0.02em]">{label}</h3>
+      <div className={`text-[14.5px] leading-[1.6] text-muted ${inheritParagraphs}`}>{children}</div>
+    </div>
+  );
+}
+
 interface VideoFeatureProps {
   title: string;
   src: string;
@@ -124,5 +160,9 @@ export const caseStudyComponents: MDXComponents = {
   Gallery,
   Disciplines,
   Discipline,
+  Steps,
+  Step,
+  Principles,
+  Principle,
   VideoFeature,
 };
