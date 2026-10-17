@@ -24,8 +24,8 @@ export function WorksCarousel({ works }: { works: Work[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ isDown: false, startX: 0, startScroll: 0, didDrag: false, lastX: 0, lastT: 0, velocity: 0 });
   const glideFrameRef = useRef(0);
-  // Fractional drift position, card pitch in px and the time of the last user interaction
-  const autoRef = useRef({ pos: 0, pitch: 0, lastInteraction: -Infinity, isVisible: false });
+  // Fractional drift position, card pitch in px, the time of the last user interaction and whether a mouse is over the track
+  const autoRef = useRef({ pos: 0, pitch: 0, lastInteraction: -Infinity, isVisible: false, isHovered: false });
   const [isDragging, setIsDragging] = useState(false);
 
   const markInteraction = () => {
@@ -87,6 +87,7 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       const sinceResume = now - auto.lastInteraction - RESUME_DELAY_MS;
       const isIdle =
         auto.isVisible &&
+        !auto.isHovered && // a mouse over the cards holds them still
         sinceResume > 0 &&
         auto.pitch > 0 &&
         !dragRef.current.isDown &&
@@ -203,6 +204,19 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     if (drag.didDrag && isFresh && Math.abs(drag.velocity) > MIN_VELOCITY) glide(drag.velocity);
   };
 
+  const handlePointerEnter = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse") autoRef.current.isHovered = true;
+  };
+
+  // Leaving with the mouse ends a drag and lets the drift ease back in right away
+  const handlePointerLeave = (event: React.PointerEvent<HTMLDivElement>) => {
+    endDrag(event);
+    const auto = autoRef.current;
+    if (event.pointerType !== "mouse" || !auto.isHovered) return;
+    auto.isHovered = false;
+    auto.lastInteraction = Math.min(auto.lastInteraction, performance.now() - RESUME_DELAY_MS);
+  };
+
   const handleWheel = () => {
     stopGlide();
     markInteraction();
@@ -230,7 +244,8 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
-      onPointerLeave={endDrag}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onWheel={handleWheel}
       onTouchStart={markInteraction}
       onKeyDown={markInteraction}

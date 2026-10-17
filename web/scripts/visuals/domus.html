@@ -5,7 +5,7 @@
 <!-- Domus: anonymized rebuild of an all-in-one hospitality platform (guest app, smart TV homepage, front desk panel).
      Fictional product name, properties, suites, guests, staff, channels and data. No client marks, no photos.
      Views: one <section id> per screen or cover, picked with ?v=<id>. ?z=2 zooms a view for crisp phone renders. -->
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,600&display=block" rel="stylesheet">
 <style>
   :root {
     /* identity */
@@ -25,7 +25,8 @@
   .scr { font-family: "Jost", sans-serif; color: var(--ink); background: var(--cream); width: 1440px; height: 900px; overflow: hidden; position: relative; font-size: 15px; }
   .scr.m { width: 390px; height: 844px; font-size: 13px; }
   .scr.tv { width: 1920px; height: 1080px; font-size: 26px; color: #fff; background: var(--ox-d); }
-  .serif { font-family: "Bodoni Moda", serif; font-weight: 400; letter-spacing: -.01em; }
+  .serif { font-family: "Bodoni Moda", serif; font-weight: 600; font-optical-sizing: none; font-variation-settings: "opsz" 18; letter-spacing: -.01em; }
+  .mtitle { font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--ox); }
   .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(91, 36, 32, .06); padding: 20px 22px; }
   .h1 { font-size: 30px; font-weight: 600; letter-spacing: -.01em; }
   .h2 { font-size: 20px; font-weight: 600; }
@@ -75,7 +76,7 @@
   .top { display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
   .omni { display: flex; align-items: center; gap: 10px; height: 44px; width: 420px; border-radius: 22px; background: #fff; color: #b3aca4; padding: 0 18px; font-size: 14px; box-shadow: inset 0 0 0 1px var(--line); }
   .sel { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px; border-radius: 22px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; font-weight: 500; }
-  .ttl { font-size: 32px; font-family: "Bodoni Moda", serif; font-weight: 400; letter-spacing: -.01em; color: var(--ox); }
+  .ttl { font-size: 32px; font-family: "Bodoni Moda", serif; font-weight: 600; font-optical-sizing: none; font-variation-settings: "opsz" 18; letter-spacing: -.01em; color: var(--ox); }
 
   /* mobile */
   .sbar { height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 6px 28px 0; font-weight: 600; font-size: 14px; }
@@ -111,6 +112,21 @@
   .monitor .neck { width: 260px; height: 190px; margin: 0 auto; background: linear-gradient(90deg, #c9c2b8, #ebe6df 50%, #c9c2b8); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); }
   .monitor .foot { width: 560px; height: 26px; margin: 0 auto; border-radius: 6px 6px 14px 14px; background: linear-gradient(#e6e0d8, #bfb8ae); }
   .monitor { filter: drop-shadow(0 60px 70px rgba(58, 23, 20, .28)); }
+  /* flat lay devices, seen from above */
+  .fl { position: absolute; transform-origin: 0 0; }
+  .fl .phone { position: relative; box-shadow: 0 50px 80px -20px rgba(58, 23, 20, .38), 0 14px 30px rgba(58, 23, 20, .14), 0 0 0 2px #3a3230 inset; }
+  .tvflat { background: #141212; border-radius: 16px; padding: 18px; box-shadow: 0 0 0 4px #2c2826, 0 70px 110px -30px rgba(58, 23, 20, .42), 0 18px 40px rgba(58, 23, 20, .16); }
+  .tvflat iframe { display: block; width: 1920px; height: 1080px; border: 0; background: #000; }
+  .lap { width: 1520px; border-radius: 34px 34px 46px 46px; box-shadow: 0 80px 120px -30px rgba(58, 23, 20, .36), 0 20px 40px rgba(58, 23, 20, .12); }
+  .lap .lid { background: #141212; border-radius: 34px 34px 6px 6px; padding: 36px 40px 40px; box-shadow: 0 0 0 4px #b9b6b2; position: relative; }
+  .lap .lid::before { content: ""; position: absolute; left: 50%; top: 0; width: 180px; height: 26px; margin-left: -90px; background: #141212; border-radius: 0 0 14px 14px; }
+  .lap .lid iframe { display: block; width: 1440px; height: 900px; border: 0; background: #fff; border-radius: 8px; }
+  .lap .deck { margin-top: 10px; height: 930px; border-radius: 6px 6px 46px 46px; background: linear-gradient(180deg, #d9d8d6, #e6e5e3 30%, #cfcecb); box-shadow: inset 0 0 0 3px #c4c2bf; padding: 54px 70px 0; position: relative; }
+  .lap .kb { display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 16px; background: #c2c1be; }
+  .lap .kb .r { display: flex; gap: 12px; }
+  .lap .kb i { display: block; height: 74px; border-radius: 10px; background: #222124; box-shadow: inset 0 -3px 0 #0f0f10; }
+  .lap .kb .r.fnr i { height: 44px; }
+  .lap .pad { width: 680px; height: 380px; margin: 40px auto 0; border-radius: 24px; background: linear-gradient(180deg, #dad9d7, #d2d1ce); box-shadow: inset 0 0 0 2px #c0beba; }
   .shot { position: absolute; border: 0; border-radius: 14px; background: #fff; box-shadow: 0 40px 80px rgba(58, 23, 20, .22); }
 </style>
 </head>
@@ -148,41 +164,25 @@
 <section class="view" id="tv-login"></section>
 
 <!-- ============ HERO 2400x1200 ============ -->
+<!-- Covers are flat lays seen from above: an open laptop, a TV panel and a phone lying on the surface -->
 <section class="view" id="hero" style="width:2400px;height:1200px;background:var(--cream)">
   <svg class="abs arches" data-kind="hero" width="2400" height="1200" style="left:0;top:0"></svg>
-  <div class="abs title" style="left:150px;top:400px;font-size:330px">domus</div>
-  <div class="abs payoff" style="left:166px;top:720px;font-size:34px">The connected stay</div>
-  <div class="stage" style="left:1100px;top:0;width:1300px;height:1200px">
-    <div class="dev" style="left:150px;top:205px;transform:rotateY(-8deg) scale(.5);transform-origin:0 0">
-      <div class="tvset"><iframe data-src="tv-home"></iframe></div>
-    </div>
-    <div class="dev" style="left:40px;top:640px;transform:rotateY(14deg) rotateX(3deg) scale(.42);transform-origin:0 0">
-      <div class="monitor"><div class="bz"><iframe data-src="a-home"></iframe></div><div class="chin"></div><div class="neck"></div><div class="foot"></div></div>
-    </div>
-    <div class="dev" style="left:900px;top:520px;transform:rotateY(-14deg) rotateZ(2deg) scale(.82);transform-origin:0 0">
-      <div class="phone"><iframe data-src="m-suite"></iframe></div>
-    </div>
-  </div>
+  <div class="abs title" style="left:150px;top:470px;font-size:330px">domus</div>
+  <div class="fl" style="left:1480px;top:90px;transform:rotate(4deg) scale(.37)"><div class="tvflat"><iframe data-src="tv-home"></iframe></div></div>
+  <div class="fl" style="left:1120px;top:520px;transform:rotate(-7deg) scale(.33)"><div class="lap"><div class="lid"><iframe data-src="a-home"></iframe></div><div class="deck"><div class="kb"></div><div class="pad"></div></div></div></div>
+  <div class="fl" style="left:1990px;top:570px;transform:rotate(9deg) scale(.58)"><div class="phone"><iframe data-src="m-suite"></iframe></div></div>
 </section>
 
 <!-- ============ CARD 1200x1500 ============ -->
 <section class="view" id="card" style="width:1200px;height:1500px;background:var(--cream)">
   <svg class="abs arches" data-kind="card" width="1200" height="1500" style="left:0;top:0"></svg>
   <div class="abs title" style="left:0;right:0;text-align:center;top:150px;font-size:290px">domus</div>
-  <div class="stage" style="left:0;top:0;width:1200px;height:1500px">
-    <div class="dev" style="left:60px;top:640px;transform:rotateY(18deg) rotateZ(-4deg) scale(.84);transform-origin:50% 0">
-      <div class="phone"><iframe data-src="m-door"></iframe></div>
-    </div>
-    <div class="dev" style="left:700px;top:640px;transform:rotateY(-18deg) rotateZ(4deg) scale(.84);transform-origin:50% 0">
-      <div class="phone"><iframe data-src="m-service"></iframe></div>
-    </div>
-    <div class="dev" style="left:380px;top:580px;transform:scale(.94);transform-origin:50% 0">
-      <div class="phone"><iframe data-src="m-climate"></iframe></div>
-    </div>
-  </div>
+  <div class="fl" style="left:80px;top:560px;transform:rotate(-5deg) scale(.33)"><div class="tvflat"><iframe data-src="tv-cast"></iframe></div></div>
+  <div class="fl" style="left:560px;top:800px;transform:rotate(7deg) scale(.32)"><div class="lap"><div class="lid"><iframe data-src="a-apartment-edit"></iframe></div><div class="deck"><div class="kb"></div><div class="pad"></div></div></div></div>
+  <div class="fl" style="left:150px;top:1000px;transform:rotate(-9deg) scale(.5)"><div class="phone"><iframe data-src="m-climate"></iframe></div></div>
 </section>
 
-<!-- ============ SHOWCASE 2400x1350 (body) ============ -->
+<!-- ============ SHOWCASE 2400x1350 (body, not used on the page) ============ -->
 <section class="view" id="showcase" style="width:2400px;height:1350px;background:#e6d7c4">
   <svg class="abs arches" data-kind="soft" width="2400" height="1350" style="left:0;top:0"></svg>
   <div class="abs grid3d" style="left:0;top:0;width:2400px;height:1350px"></div>
@@ -191,20 +191,10 @@
 <!-- ============ ONE STAY 2400x1350 (body): every touchpoint of one stay ============ -->
 <section class="view" id="one-stay" style="width:2400px;height:1350px;background:var(--linen)">
   <svg class="abs arches" data-kind="stay" width="2400" height="1350" style="left:0;top:0"></svg>
-  <div class="stage" style="left:0;top:0;width:2400px;height:1350px">
-    <div class="dev" style="left:110px;top:330px;transform:rotateY(12deg) scale(.56);transform-origin:0 0">
-      <div class="monitor"><div class="bz"><iframe data-src="a-stay"></iframe></div><div class="chin"></div><div class="neck"></div><div class="foot"></div></div>
-    </div>
-    <div class="dev" style="left:1060px;top:170px;transform:rotateY(-4deg) scale(.5);transform-origin:0 0">
-      <div class="tvset"><iframe data-src="tv-service"></iframe></div>
-    </div>
-    <div class="dev" style="left:1440px;top:640px;transform:rotateY(-12deg) rotateZ(2deg) scale(.76);transform-origin:0 0">
-      <div class="phone"><iframe data-src="m-lights"></iframe></div>
-    </div>
-    <div class="dev" style="left:1880px;top:560px;transform:rotateY(-16deg) rotateZ(3deg) scale(.76);transform-origin:0 0">
-      <div class="phone"><iframe data-src="m-orders"></iframe></div>
-    </div>
-  </div>
+  <div class="fl" style="left:170px;top:150px;transform:rotate(-5deg) scale(.52)"><div class="lap"><div class="lid"><iframe data-src="a-stay"></iframe></div><div class="deck"><div class="kb"></div><div class="pad"></div></div></div></div>
+  <div class="fl" style="left:1100px;top:110px;transform:rotate(4deg) scale(.45)"><div class="tvflat"><iframe data-src="tv-service"></iframe></div></div>
+  <div class="fl" style="left:1220px;top:690px;transform:rotate(-6deg) scale(.64)"><div class="phone"><iframe data-src="m-lights"></iframe></div></div>
+  <div class="fl" style="left:1780px;top:660px;transform:rotate(8deg) scale(.64)"><div class="phone"><iframe data-src="m-orders"></iframe></div></div>
 </section>
 
 <script>
@@ -281,7 +271,7 @@ const P = {
 /* ===================== identity marks ===================== */
 // Domus mark: a round-headed doorway with its keystone
 const archMark = (s, c = "#d4553f") => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M8 37V18a12 12 0 0 1 24 0v19" fill="none" stroke="${c}" stroke-width="3.2"/><path d="M14 37V19a6 6 0 0 1 12 0v18" fill="none" stroke="${c}" stroke-width="1.6"/><rect x="18" y="2.5" width="4" height="5" fill="${c}"/></svg>`;
-const word = (s = 1, c = "#d4553f") => `<div class="row g6" style="color:${c}">${archMark(28 * s, c)}<span style="font-family:'Bodoni Moda';font-size:${30 * s}px;letter-spacing:-.03em;line-height:1">domus</span></div>`;
+const word = (s = 1, c = "#d4553f") => `<div class="row g6" style="color:${c}">${archMark(28 * s, c)}<span style="font-family:'Bodoni Moda';font-weight:500;font-variation-settings:'opsz' 18;font-size:${30 * s}px;letter-spacing:-.03em;line-height:1">domus</span></div>`;
 
 /* ===================== fictional data ===================== */
 const PAL = ["#d4553f", "#9b6a45", "#858a5f", "#5b2420", "#c98a2b", "#6f7f8c", "#b4677a", "#4f6b5c"];
@@ -336,8 +326,8 @@ function room(k = 0, w = 400, h = 260) {
 function servArt(key, w, h, big = false) {
   const [, , , icon, [c, bg]] = SERV[key];
   const s = Math.min(w, h);
-  return `<div class="ill" style="width:${w}px;height:${h}px;background:${bg};position:relative;display:grid;place-items:center;border-radius:${big ? 0 : 14}px">
-    <svg class="abs" style="left:0;top:0" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><path d="M${w / 2 - s * .32} ${h + 4}V${h * .5}a${s * .32} ${s * .32} 0 0 1 ${s * .64} 0V${h + 4}" fill="${c}" opacity=".16"/><path d="M${w / 2 - s * .44} ${h + 4}V${h * .46}a${s * .44} ${s * .44} 0 0 1 ${s * .88} 0V${h + 4}" fill="none" stroke="${c}" stroke-opacity=".3" stroke-width="${Math.max(1.5, s * .012)}"/></svg>
+  return `<div class="ill" style="width:${big ? "100%" : w + "px"};height:${h}px;background:${bg};position:relative;display:grid;place-items:center;border-radius:${big ? 0 : 14}px">
+    <svg class="abs" style="left:0;top:0;width:100%;height:100%" viewBox="0 0 ${w} ${h}"><path d="M${w / 2 - s * .32} ${h + 4}V${h * .5}a${s * .32} ${s * .32} 0 0 1 ${s * .64} 0V${h + 4}" fill="${c}" opacity=".16"/><path d="M${w / 2 - s * .44} ${h + 4}V${h * .46}a${s * .44} ${s * .44} 0 0 1 ${s * .88} 0V${h + 4}" fill="none" stroke="${c}" stroke-opacity=".3" stroke-width="${Math.max(1.5, s * .012)}"/></svg>
     <div style="color:${c};position:relative;margin-top:${s * .12}px">${ic(icon, s * .34, 1.4)}</div></div>`;
 }
 // A QR-like pattern (decorative, not encoding anything)
@@ -359,9 +349,10 @@ const chLogo = ([n, c, wt, st], w, h, fs) => `<div style="width:${w}px;height:${
 const sbar = (dark) => `<div class="sbar" style="${dark ? "color:#fff" : ""}"><span>9:41</span><span class="row g6">${ic(P.signal, 16, 2.2)}${ic(P.wifi, 16, 2.2)}${ic(P.battery, 22, 1.6)}</span></div>`;
 const tabbar = (on) => `<div class="tabbar">${[["suites", "Suites", P.bed], ["services", "Services", P.bellc], ["orders", "Orders", P.receipt], ["automation", "Automation", P.bulb], ["you", "You", P.user]].map(([k, l, p]) => `<div class="${k === on ? "on" : ""}">${ic(p, 23, k === on ? 2 : 1.7)}${l}</div>`).join("")}<span class="home-ind"></span></div>`;
 const mhead = (title, back = true, right = "") => `<div class="mhead">${back ? `<span style="color:var(--ox)">${ic(P.chevL, 24)}</span>` : "<span></span>"}<b style="font-size:16px;font-weight:600">${title}</b>${right || `<span style="width:24px"></span>`}</div>`;
-const mob = (on, body, { head, nav = true } = {}) => `<div class="scr m">${sbar()}${head ?? `<div class="mhead">${word(.82)}<div class="row g12" style="color:var(--ox)">${ic(P.bell, 22)}${av("Emma Lindqvist", 32)}</div></div>`}<div class="mbody">${body}</div>${nav ? tabbar(on) : ""}</div>`;
-const autoTop = (on) => `<div class="segm" style="margin:6px 0 18px">${[["lights", "Lights", P.bulb], ["climate", "Climate", P.thermo], ["door", "Door", P.key]].map(([k, l, p]) => `<span class="${k === on ? "on" : ""}">${ic(p, 16)}${l}</span>`).join("")}</div>`;
-const wifiOk = `<div class="row g8 xs" style="color:var(--ok);font-weight:600;margin-bottom:14px">${ic(P.wifi, 15, 2)}Connected to the suite wifi</div>`;
+const mob = (on, body, { head, nav = true } = {}) => `<div class="scr m">${sbar()}${head ?? `<div class="mhead">${word(.82)}</div>`}<div class="mbody">${body}</div>${nav ? tabbar(on) : ""}</div>`;
+// Automation menu as in the app: three round buttons (the current one darker) and the suite wifi notice
+const autoTop = (on) => `<div class="row" style="justify-content:space-between;padding:14px 26px 18px">${[["lights", "Lights", P.bulb], ["climate", "Climate", P.thermo], ["door", "Door", P.unlock]].map(([k, l, p]) => `<div class="col g6" style="align-items:center"><div style="width:66px;height:66px;border-radius:50%;display:grid;place-items:center;color:#fff;background:${k === on ? "var(--ox)" : "var(--terra)"}">${ic(p, 26)}</div><span class="xs" style="font-weight:600;color:${k === on ? "var(--ox)" : "var(--mut)"}">${l}</span></div>`).join("")}</div>
+  <div class="row g10" style="padding:12px 14px;border-radius:12px;background:#f8ecd6;color:#7a5418;font-size:12px;line-height:1.4;align-items:flex-start"><span style="flex:none">${ic(P.wifi, 17)}</span>To access the automation panel, connect your device to the suite wifi.</div>`;
 
 function side(on, sub) {
   const it = (k, l, p, subs) => `<div class="it ${k === on ? "on" : ""}">${ic(p, 19)}${l}</div>${subs && k === on ? subs.map(([sk, sl]) => `<div class="it sub ${sk === sub ? "on" : ""}">${sl}</div>`).join("") : ""}`;
@@ -477,35 +468,27 @@ const builders = {
     <div class="input" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff">${ic(P.mail, 17)}emma.lindqvist@mail.se</div><div class="input" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff">${ic(P.lock, 17)}••••••••••</div>
     <span class="btn" style="height:50px;margin-top:4px">Login</span><div class="row sb sm" style="color:rgba(255,255,255,.8)"><span>Forgot your password?</span><span>Have a <b style="color:#fff">sneak peek</b></span></div><div class="sm" style="text-align:center;color:rgba(255,255,255,.7);margin-top:4px">Don't have an account? <b style="color:#fff">Create</b></div></div></div>`,
 
-  "m-suite": () => mob("suites", `<div class="serif tp" style="font-size:20px;font-style:italic">Welcome to</div><div class="serif" style="font-size:36px;color:var(--ox);line-height:1.05;margin-bottom:12px">Suite Ninfea</div>
-    <div class="card" style="padding:0;overflow:hidden"><div style="height:150px">${room(0, 350, 150)}</div><div class="row sb" style="padding:12px 16px"><div><div class="lbl">Check-in</div><b style="font-weight:500">12 Oct</b></div><span class="mut">${ic(P.chevR, 18)}</span><div><div class="lbl">Check-out</div><b style="font-weight:500">19 Oct</b></div><div><div class="lbl">Guests</div><b style="font-weight:500">2</b></div></div></div>
-    <div class="row g10" style="margin:14px 0">${[[P.key, "Open door"], [P.bulb, "Lights"], [P.thermo, "21.5°"]].map(([p, l], i) => `<div class="card col g8" style="flex:1;padding:14px 10px;align-items:center;${i === 0 ? "background:var(--terra);color:#fff" : ""}"><span style="${i ? "color:var(--terra)" : ""}">${ic(p, 24)}</span><b class="xs" style="font-weight:600">${l}</b></div>`).join("")}</div>
-    <div class="card row g12" style="padding:14px 16px"><div style="width:38px;height:38px;border-radius:50%;background:var(--blush);color:var(--ox);display:grid;place-items:center">${ic(P.wifi, 18)}</div><div style="flex:1"><div class="xs mut">Wifi · Ortensia-Ninfea</div><b class="sm" style="font-weight:500;letter-spacing:.12em">ninfea·4471</b></div><span class="tp">${ic(P.copy, 18)}</span></div>
-    <div class="card" style="margin-top:12px;padding:14px 16px"><b class="sm" style="font-weight:600">How can we help you?</b><div class="row g8" style="margin-top:10px"><span class="btn o" style="flex:1;height:38px">${ic(P.phone, 16)}Call</span><span class="btn" style="flex:1;height:38px;background:#4f8a5b">${ic(P.chat, 16)}WhatsApp</span></div></div>`),
+  "m-suite": () => mob("suites", `<div class="mtitle" style="font-size:14px;letter-spacing:.14em;color:var(--terra)">Welcome to</div><div class="serif" style="font-size:38px;color:var(--ox);line-height:1.05;margin:4px 0 16px">Suite Ninfea</div>
+    <div class="ill" style="height:178px">${room(0, 350, 178)}</div>
+    <div class="row sb" style="padding:16px 0 14px;border-bottom:1px solid var(--line)"><div><div class="lbl">Check-in</div><div style="font-size:16px;font-weight:500;margin-top:2px">12 Oct</div></div><span class="mut">${ic(P.chevR, 18)}</span><div><div class="lbl">Check-out</div><div style="font-size:16px;font-weight:500;margin-top:2px">19 Oct</div></div><div><div class="lbl">Guests</div><div style="font-size:16px;font-weight:500;margin-top:2px">2</div></div></div>
+    <div class="row g12" style="padding:14px 0;border-bottom:1px solid var(--line)"><span class="tp">${ic(P.wifi, 20)}</span><div style="flex:1"><div class="xs mut">Ortensia-Ninfea</div><div style="font-weight:500;letter-spacing:.1em">ninfea·4471</div></div><span class="mut">${ic(P.copy, 18)}</span></div>
+    <div class="mtitle" style="font-size:17px;margin:20px 0 12px">How can we help you?</div><div class="row g10"><span class="btn o" style="flex:1;height:44px">${ic(P.phone, 17)}Call</span><span class="btn" style="flex:1;height:44px">${ic(P.chat, 17)}WhatsApp</span></div>`),
 
-  "m-door": () => mob("automation", `<div class="h1" style="font-size:26px;color:var(--ox)">Automation</div>${autoTop("door")}${wifiOk}
-    ${[["External door", "Main entrance · Via delle Ortensie 14", "Closed"], ["Suite door", "Suite Ninfea · 2nd floor", "Closed"]].map(([t, s, st], i) => `<div class="card col" style="align-items:center;text-align:center;padding:16px 18px;margin-bottom:12px"><div style="width:${i ? 92 : 76}px;height:${i ? 92 : 76}px;border-radius:50%;display:grid;place-items:center;${i ? "background:var(--terra);color:#fff;box-shadow:0 0 0 10px var(--blush)" : "border:1.5px solid var(--terra);color:var(--terra)"}">${ic(i ? P.unlock : P.lock, i ? 38 : 30, 1.6)}</div><b class="h3" style="margin-top:12px">${t}</b><span class="xs mut">${s}</span><span class="btn ${i ? "" : "o"}" style="margin-top:10px;width:100%;height:40px">${ic(P.key, 16)}Open door</span><span class="xs mut" style="margin-top:8px">${t}: <b style="color:var(--ink);font-weight:500">${i ? "opening…" : st}</b></span></div>`).join("")}`),
+  "m-door": () => mob("automation", `${autoTop("door")}
+    <div class="col" style="align-items:center;margin-top:22px"><div style="width:200px;height:200px;border-radius:50%;background:#fff;border:2px solid var(--terra);color:var(--terra);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">${ic(P.unlock, 76, 1.5)}<span style="font-size:21px;font-weight:600">Open door</span></div>
+    <div class="col g8" style="margin-top:26px;align-items:center;font-size:15px"><div><b style="font-weight:600">External door:</b> 4817</div><div><b style="font-weight:600">Suite door:</b> 2905</div></div></div>`),
 
-  "m-lights": () => mob("automation", `<div class="h1" style="font-size:26px;color:var(--ox)">Automation</div>${autoTop("lights")}${wifiOk}
-    <div class="card" style="padding:4px 16px">${[["Living room · ceiling", 1], ["Living room · floor lamp", 1], ["Kitchen", 0], ["Dining table", 1], ["Bedroom · ceiling", 0], ["Bedside lamps", 0], ["Bathroom mirror", 0], ["Entrance", 1]].map(([t, on], i) => `<div class="row g12" style="height:49px;${i ? "border-top:1px solid #f0e9df" : ""}"><span style="color:${on ? "var(--terra)" : "#c9bfb3"}">${ic(P.bulb, 20)}</span><span style="flex:1;font-weight:500">${t}</span><span class="tog ${on ? "on" : ""}"></span></div>`).join("")}</div>
-    <div class="row g10" style="margin-top:14px"><span class="btn o" style="flex:1;height:40px">${ic(P.power, 16)}All off</span><span class="btn" style="flex:1;height:40px">${ic(P.sun, 16)}Welcome scene</span></div>`),
+  "m-lights": () => mob("automation", `${autoTop("lights")}
+    <div style="margin-top:6px">${[["Living room · ceiling", 1], ["Living room · floor lamp", 1], ["Kitchen", 0], ["Dining table", 1], ["Bedroom · ceiling", 0], ["Bedside lamps", 0], ["Entrance", 1]].map(([t, on]) => `<div class="row" style="height:46px;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:14px">${t}</span><span class="tog ${on ? "on" : ""}"></span></div>`).join("")}</div>`),
 
-  "m-climate": () => {
-    const R = 112, a0 = 140, a1 = 400, val = 21.5, mn = 17, mx = 26, at = a0 + ((val - mn) / (mx - mn)) * (a1 - a0);
-    const pt = (a, r) => [160 + r * Math.cos((a * Math.PI) / 180), 150 + r * Math.sin((a * Math.PI) / 180)];
-    const arc = (from, to, r) => { const [x1, y1] = pt(from, r), [x2, y2] = pt(to, r); return `M${x1} ${y1} A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x2} ${y2}`; };
-    const [kx, ky] = pt(at, R);
-    return mob("automation", `<div class="h1" style="font-size:26px;color:var(--ox)">Automation</div>${autoTop("climate")}${wifiOk}
-      <div class="card col" style="align-items:center;padding:16px 10px 18px"><b class="h3">Living room</b><svg width="320" height="250" viewBox="0 0 320 250"><path d="${arc(a0, a1, R)}" stroke="#efe6da" stroke-width="16" fill="none" stroke-linecap="round"/><path d="${arc(a0, at, R)}" stroke="url(#cg)" stroke-width="16" fill="none" stroke-linecap="round"/><defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" stop-color="#e9b48f"/><stop offset="1" stop-color="#d4553f"/></linearGradient></defs>
-        ${Array.from({ length: 37 }, (_, i) => { const a = a0 + (i * (a1 - a0)) / 36, [x1, y1] = pt(a, R - 22), [x2, y2] = pt(a, R - (i % 4 ? 27 : 31)); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d9cfc2" stroke-width="1.5"/>`; }).join("")}
-        <circle cx="${kx}" cy="${ky}" r="13" fill="#fff" stroke="#d4553f" stroke-width="4"/><text x="160" y="160" text-anchor="middle" font-family="Bodoni Moda" font-size="62" fill="#5b2420">21.5°</text><text x="160" y="192" text-anchor="middle" font-family="Jost" font-size="14" fill="#8a8580">Now 20.8° · heating</text><text x="78" y="244" font-family="Jost" font-size="13" fill="#8a8580">17°</text><text x="226" y="244" font-family="Jost" font-size="13" fill="#8a8580">26°</text></svg>
-        <div class="row g24" style="margin-top:-6px"><span class="btn o" style="width:56px;height:56px;padding:0;border-radius:50%">${ic(P.minus, 22)}</span><span class="btn" style="width:56px;height:56px;padding:0;border-radius:50%">${ic(P.plus, 22)}</span></div></div>
-      <div class="row g10" style="margin-top:12px">${[["Bedroom", "19.0°"], ["Bathroom", "23.0°"]].map(([t, x]) => `<div class="card row g10" style="flex:1;padding:12px 14px"><span class="tp">${ic(P.thermo, 18)}</span><div><div class="xs mut">${t}</div><b style="font-weight:500">${x}</b></div></div>`).join("")}</div>`);
-  },
+  "m-climate": () => mob("automation", `${autoTop("climate")}
+    <div class="col" style="align-items:center;margin-top:20px"><div class="mtitle" style="font-size:18px;text-transform:none;letter-spacing:0">Living room</div>
+    <div class="row g24" style="margin-top:20px"><span class="btn o" style="width:58px;height:58px;padding:0;border-radius:50%">${ic(P.minus, 24)}</span><div class="serif" style="font-size:64px;color:var(--ox);width:150px;text-align:center">21.5°</div><span class="btn" style="width:58px;height:58px;padding:0;border-radius:50%">${ic(P.plus, 24)}</span></div>
+    <div class="xs mut" style="margin-top:6px">Between 17° and 26°</div></div>
+    <div style="margin-top:22px;border-top:1px solid var(--line)">${[["Bedroom", "19.0°"], ["Bathroom", "23.0°"]].map(([t, x]) => `<div class="row" style="height:50px;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:14px">${t}</span><b style="font-weight:500;margin-right:10px">${x}</b><span class="mut">${ic(P.chevR, 16)}</span></div>`).join("")}</div>`),
 
-  "m-services": () => mob("services", `<div class="lbl" style="color:var(--terra);letter-spacing:.2em">Our services</div><div class="serif" style="font-size:30px;color:var(--ox);margin:4px 0 12px">For your stay</div>
-    <div class="row g6" style="margin-bottom:14px">${["All", "Food", "Home", "Wellness", "City"].map((t, i) => `<span class="chip ${i === 0 ? "on" : ""}" style="height:30px">${t}</span>`).join("")}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${["chef", "laundry", "beauty", "driver", "trainer", "shopper"].map((k) => `<div class="card" style="padding:0;overflow:hidden">${servArt(k, 165, 104, true)}<div style="padding:10px 12px"><b class="sm" style="font-weight:600">${SERV[k][0]}</b><div class="xs mut">from €${SERV[k][2]}</div></div></div>`).join("")}</div>`),
+  "m-services": () => mob("services", `<div class="mtitle" style="font-size:22px;margin:4px 0 10px">Our services</div>
+    ${["chef", "laundry", "beauty", "driver", "trainer", "shopper"].map((k) => `<div class="row g16" style="padding:10px 0;border-bottom:1px solid var(--line)">${servArt(k, 104, 70)}<div style="flex:1"><div style="font-weight:600;font-size:14px">${SERV[k][0]}</div><div class="xs mut">from €${SERV[k][2]}</div></div><span class="tp">${ic(P.chevR, 18)}</span></div>`).join("")}`),
 
   "m-service": () => `<div class="scr m">${servArt("chef", 390, 330, true)}<div class="abs" style="left:0;right:0;top:0">${sbar()}<div class="mhead"><span class="btn" style="width:40px;height:40px;padding:0;background:#fff;color:var(--ox)">${ic(P.chevL, 20)}</span><span class="btn" style="width:40px;height:40px;padding:0;background:#fff;color:var(--ox)">${ic(P.star, 18)}</span></div></div>
     <div class="abs" style="left:0;right:0;top:300px;bottom:0;background:var(--cream);border-radius:28px 28px 0 0;padding:24px 22px"><div class="row g6"><span class="chip">Food</span><span class="chip">Evening</span></div><div class="serif" style="font-size:32px;color:var(--ox);margin:10px 0 8px">Private chef</div>
@@ -514,8 +497,8 @@ const builders = {
     <div class="row g10">${field("Date", "14 Oct", { icon: P.cal })}${field("Time", "20:00", { icon: P.clock })}</div>
     <div class="row sb" style="margin-top:18px"><div><div class="xs mut">Price</div><div class="serif" style="font-size:28px;color:var(--ox)">€180</div></div><span class="btn" style="height:50px;width:190px">Book now</span></div></div></div>`,
 
-  "m-orders": () => mob("orders", `<div class="h1" style="font-size:26px;color:var(--ox);margin-bottom:14px">Orders</div>
-    ${[["chef", "14 Oct · 20:00", 180, "pay"], ["laundry", "13 Oct · 10:00", 35, "paid"], ["driver", "12 Oct · 13:30", 90, "paid"], ["trainer", "16 Oct · 08:00", 60, "can"]].map(([k, d, pr, st]) => `<div class="card" style="padding:12px;margin-bottom:12px"><div class="row g12">${servArt(k, 58, 58)}<div style="flex:1"><b style="font-weight:600">${SERV[k][0]}</b><div class="xs mut">${d}</div><div style="margin-top:6px">${statusChip(st)}</div></div><div class="serif" style="font-size:22px;color:var(--ox)">€${pr}</div></div>${st === "pay" ? `<span class="btn" style="width:100%;height:40px;margin-top:12px">${ic(P.card, 16)}Pay €${pr}</span>` : ""}</div>`).join("")}`),
+  "m-orders": () => mob("orders", `<div class="mtitle" style="font-size:22px;margin:4px 0 6px">Orders</div>
+    ${[["chef", "14 Oct · 20:00", 180, "pay"], ["laundry", "13 Oct · 10:00", 35, "paid"], ["driver", "12 Oct · 13:30", 90, "paid"], ["trainer", "16 Oct · 08:00", 60, "can"]].map(([k, d, pr, st]) => `<div style="padding:14px 0;border-bottom:1px solid var(--line)"><div class="row g12"><div style="flex:1"><div style="font-weight:600;font-size:15px">${SERV[k][0]}</div><div class="xs mut" style="margin-top:2px">${d}</div></div><div class="col" style="align-items:flex-end;gap:4px"><b style="font-weight:600;font-size:16px">€${pr}</b><span class="xs" style="font-weight:600;color:${{ pay: "#a46c17", paid: "var(--ok)", can: "var(--bad)" }[st]}">${{ pay: "Needs to be paid", paid: "Paid", can: "Canceled" }[st]}</span></div></div>${st === "pay" ? `<span class="btn" style="width:100%;height:42px;margin-top:12px">Pay</span>` : ""}</div>`).join("")}`),
 
   "m-profile": () => mob("you", `<div class="row g12" style="margin:4px 0 16px">${av("Emma Lindqvist", 58)}<div style="flex:1"><div class="h2">Emma Lindqvist</div><span class="xs tp row g4" style="font-weight:600">${ic(P.edit, 13)}edit</span></div></div>
     <div class="card" style="padding:14px 16px;background:var(--ox);color:#fff"><div class="xs" style="opacity:.7;letter-spacing:.14em;text-transform:uppercase">My stay</div><div class="serif" style="font-size:22px;margin-top:4px">Suite Ninfea</div><div class="sm" style="opacity:.8">12 – 19 Oct · Casa Ortensia</div></div>
@@ -527,7 +510,7 @@ const builders = {
   "tv-home": () => `<div class="scr tv" style="background:radial-gradient(circle at 78% 10%,#6e2c26,#3a1714 55%,#2a100e)"><svg class="abs" style="left:1040px;top:-40px;opacity:.14" width="900" height="760" viewBox="0 0 900 760"><path d="M90 760V420a360 360 0 0 1 720 0v340" fill="none" stroke="#ec8a72" stroke-width="34"/><path d="M230 760V430a220 220 0 0 1 440 0v330" fill="none" stroke="#ec8a72" stroke-width="14"/></svg>
     <div class="abs row sb" style="left:110px;right:110px;top:80px;align-items:flex-start"><div>${word(2.1, "#fff")}<div class="row g24" style="margin-top:30px;font-size:26px">${[[P.phone, "+39 345 012 3456"], [P.chat, "+39 345 012 3456"]].map(([p, t]) => `<span class="row g12"><span style="color:var(--terra-l)">${ic(p, 30)}</span>${t}</span>`).join("")}</div><div class="serif" style="font-size:64px;font-style:italic;margin-top:60px;line-height:1">Welcome to Suite Ninfea</div><div style="font-size:26px;color:rgba(255,255,255,.75);margin-top:14px">Casa Ortensia · Enjoy your stay</div></div>
       <div class="col" style="align-items:flex-end;text-align:right;gap:14px;background:rgba(255,255,255,.08);border-radius:22px;padding:26px 30px;font-size:22px;color:rgba(255,255,255,.85)"><span class="row g12" style="font-size:28px;color:#fff;font-weight:500">${ic(P.cast, 34)}Cast to this TV</span><span>Need help to cast?</span><span class="row g10">Press <span style="width:30px;height:30px;border-radius:50%;background:#c8453b;display:inline-block"></span> on your remote</span></div></div>
-    <div class="abs" style="left:110px;right:0;bottom:70px"><div class="tvlbl">SERVICES</div><div class="row g24" style="margin-bottom:46px">${["chef", "laundry", "beauty", "driver", "trainer", "shopper", "breakfast"].map((k, i) => `<div><div class="tvbox ${i === 0 ? "f" : ""}">${servArt(k, 290, 170, true)}</div><div class="tvt">${SERV[k][0]}</div></div>`).join("")}</div>
+    <div class="abs" style="left:110px;right:0;bottom:70px"><div class="tvlbl">SERVICES</div><div class="row g24" style="margin-bottom:46px">${["chef", "laundry", "beauty", "driver", "trainer", "shopper", "breakfast"].map((k, i) => `<div><div class="tvbox ${i === 0 ? "f" : ""}" style="width:290px">${servArt(k, 290, 170, true)}</div><div class="tvt">${SERV[k][0]}</div></div>`).join("")}</div>
     <div class="tvlbl">CHANNELS</div><div class="row g24">${CH.slice(0, 7).map((c, i) => `<div><div class="tvbox" style="width:230px;height:120px">${chLogo(c, 230, 120, 34)}</div><div class="tvt">${i + 1} · ${c[0]}</div></div>`).join("")}</div></div></div>`,
 
   "tv-cast": () => `<div class="scr tv" style="background:var(--ox-d)"><svg class="abs" style="right:-120px;top:-60px;opacity:.12" width="900" height="1200" viewBox="0 0 900 1200"><path d="M120 1200V450a330 330 0 0 1 660 0v750" fill="none" stroke="#ec8a72" stroke-width="40"/><path d="M260 1200V470a190 190 0 0 1 380 0v730" fill="none" stroke="#ec8a72" stroke-width="16"/></svg>
@@ -556,20 +539,24 @@ function drawArches() {
     let s = "";
     if (k === "hero") {
       // an enfilade of doorways receding behind the devices
-      s += `<rect x="0" y="${H - 150}" width="${W}" height="150" fill="#ebe0d1"/>`;
-      s += arch(1760, H - 150, 1180, 1120, `fill="#f0dccd"`);
-      [[1760, 1180, 1120], [1760, 980, 960], [1760, 800, 800], [1760, 640, 650], [1760, 500, 520]].forEach(([cx, w, h], i) => { s += arch(cx, H - 150 - i * 34, w, h, `fill="${["#f0dccd", "#ecd0c0", "#e7c3b2", "#e2b6a4", "#dda996"][i]}" stroke="#d4553f" stroke-opacity="${.18 + i * .06}" stroke-width="3"`); });
+      s += arch(1760, H, 1180, 1120, `fill="#f0dccd"`);
+      [[1760, 1180, 1120], [1760, 980, 960], [1760, 800, 800], [1760, 640, 650], [1760, 500, 520]].forEach(([cx, w, h], i) => { s += arch(cx, H + 10, w, h, `fill="${["#f0dccd", "#ecd0c0", "#e7c3b2", "#e2b6a4", "#dda996"][i]}" stroke="#d4553f" stroke-opacity="${.18 + i * .06}" stroke-width="3"`); });
     } else if (k === "card") {
-      s += `<rect x="0" y="${H - 170}" width="${W}" height="170" fill="#ebe0d1"/>`;
-      [[1000, 1040], [860, 920], [720, 800], [580, 680]].forEach(([w, h], i) => { s += arch(600, H - 170 - i * 28, w, h, `fill="${["#f0dccd", "#ecd0c0", "#e7c3b2", "#e2b6a4"][i]}" stroke="#d4553f" stroke-opacity="${.18 + i * .06}" stroke-width="3"`); });
+      [[1000, 1040], [860, 920], [720, 800], [580, 680]].forEach(([w, h], i) => { s += arch(600, H + 10, w, h, `fill="${["#f0dccd", "#ecd0c0", "#e7c3b2", "#e2b6a4"][i]}" stroke="#d4553f" stroke-opacity="${.18 + i * .06}" stroke-width="3"`); });
     } else if (k === "soft") {
       for (let i = 0; i < 9; i++) s += arch(140 + i * 280, H + 20, 200, 420 + (i % 3) * 120, `fill="${i % 2 ? "#e0cfba" : "#ddcab3"}" stroke="#d4553f" stroke-opacity=".16" stroke-width="3"`);
     } else if (k === "stay") {
-      s += `<rect x="0" y="${H - 170}" width="${W}" height="170" fill="#efe5d8"/>`;
-      s += arch(1540, H - 170, 1100, 1120, `fill="#f2dfd2"`) + arch(1540, H - 170 - 30, 900, 960, `fill="#ecd0c0" stroke="#d4553f" stroke-opacity=".2" stroke-width="3"`);
-      s += arch(520, H - 170, 760, 860, `fill="#efe3d4" stroke="#d4553f" stroke-opacity=".14" stroke-width="3"`);
+      s += arch(1540, H, 1100, 1120, `fill="#f2dfd2"`) + arch(1540, H + 10, 900, 960, `fill="#ecd0c0" stroke="#d4553f" stroke-opacity=".2" stroke-width="3"`);
+      s += arch(520, H, 760, 860, `fill="#efe3d4" stroke="#d4553f" stroke-opacity=".14" stroke-width="3"`);
     }
     svg.innerHTML = s;
+  });
+}
+// Laptop keyboards: rows of keys with relative widths
+function drawKeyboards() {
+  const rows = [[[1.5], ...Array(12).fill([1]), [1.5]], [...Array(13).fill([1]), [2]], [[1.5], ...Array(12).fill([1]), [1.5]], [[1.8], ...Array(11).fill([1]), [2.2]], [[2.4], ...Array(10).fill([1]), [2.6]], [[1], [1], [1], [1.3], [5.6], [1.3], [1], [1], [1], [1]]];
+  document.querySelectorAll(`#${v} .kb`).forEach((kb) => {
+    kb.innerHTML = rows.map((r, i) => `<div class="r ${i === 0 ? "fnr" : ""}">${r.map(([w]) => `<i style="flex:${w}"></i>`).join("")}</div>`).join("");
   });
 }
 function loadDevices() {
@@ -614,12 +601,13 @@ function buildGrid() {
 
 const run = async () => {
   // load every face up front: text built later would otherwise stay invisible (display=block) when the render ends
-  await Promise.all(["300", "400", "500", "600", "700"].map((w) => document.fonts.load(`${w} 16px Jost`)).concat(["400", "500"].map((w) => document.fonts.load(`${w} 16px "Bodoni Moda"`)), document.fonts.load(`italic 400 16px "Bodoni Moda"`)));
+  await Promise.all(["300", "400", "500", "600", "700"].map((w) => document.fonts.load(`${w} 16px Jost`)).concat(["400", "500", "600", "700"].map((w) => document.fonts.load(`${w} 16px "Bodoni Moda"`)), document.fonts.load(`italic 400 16px "Bodoni Moda"`), document.fonts.load(`italic 600 16px "Bodoni Moda"`)));
   await document.fonts.ready;
   const el = document.getElementById(v);
   if (builders[v]) el.innerHTML = builders[v]();
   if (builders[v]) Object.assign(el.style, v.startsWith("m-") ? { width: "390px", height: "844px" } : v.startsWith("tv-") ? { width: "1920px", height: "1080px" } : { width: "1440px", height: "900px" });
   drawArches();
+  drawKeyboards();
   loadDevices();
   buildGrid();
 };
