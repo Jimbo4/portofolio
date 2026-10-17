@@ -1,12 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { navLinks, profile } from "@/lib/config";
+import { scrollToSection } from "@/lib/scrollToSection";
 
 export function SiteNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  /** On the home page, scroll to the section directly: Next.js skips the scroll when the hash is already in the URL. */
+  const onSectionLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    setIsMenuOpen(false);
+    const [path, id] = href.split("#");
+    if (pathname !== (path || "/") || !id || !scrollToSection(id)) return;
+    event.preventDefault();
+    window.history.pushState(null, "", `#${id}`);
+  };
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 16);
@@ -39,6 +51,7 @@ export function SiteNav() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={(event) => onSectionLinkClick(event, link.href)}
               className="rounded-full px-3.5 py-2 text-sm text-ink-2 transition-colors hover:bg-black/5"
             >
               {link.label}
@@ -70,7 +83,7 @@ export function SiteNav() {
             <Link
               key={link.href}
               href={link.href}
-              onClick={() => setIsMenuOpen(false)}
+              onClick={(event) => onSectionLinkClick(event, link.href)}
               className="block border-b border-line-soft py-4 font-serif text-2xl text-ink"
             >
               {link.label}

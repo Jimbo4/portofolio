@@ -37,6 +37,7 @@
       <stop offset=".7" stop-color="#ff3d8b"/><stop offset="1" stop-color="#ff8a2a"/>
     </linearGradient>
     <filter id="glow" filterUnits="userSpaceOnUse" x="-800" y="-800" width="4000" height="3200"><feGaussianBlur stdDeviation="40"/></filter>
+    <filter id="sglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="36"/></filter>
     <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
     <pattern id="maze" width="120" height="120" patternUnits="userSpaceOnUse">
       <path d="M10 30 q20 -20 40 0 t40 0 M20 80 q15 25 40 10 t50 -5 M90 10 q10 30 -10 45" fill="none" stroke="#cdd6ec" stroke-width="2" stroke-linecap="round"/>
@@ -249,6 +250,28 @@
   </div>
 </section>
 
+<!-- ============ SLIDES COLLAGE 2400x1260 (render with SWIFTSHADER=0) ============ -->
+<!-- Tilted, staggered grid of 16:9 training slides (graphic_4 model). Every slide is rebuilt with generic content:
+     no client names, people, survey data, prices or logos from the source decks. Built by the script at the bottom. -->
+<style>
+  #slides { background: #17171c; }
+  .collage { position: absolute; left: 50%; top: 50%; display: flex; gap: 32px; transform: translate(-50%, -50%) rotate(-11deg); }
+  .collage .col { display: flex; flex-direction: column; gap: 32px; }
+  .frame { width: 520px; height: 293px; border-radius: 22px; overflow: hidden; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,.45); }
+  .slide { width: 960px; height: 540px; transform: scale(.5417); transform-origin: 0 0; position: absolute; left: 0; top: 0; overflow: hidden; padding: 56px 64px; }
+  .slide.dark { background: var(--navy); color: #fff; }
+  .slide.lightbg { background: var(--light); color: var(--ink); }
+  .slide h3 { font-size: 46px; font-weight: 700; letter-spacing: -.01em; line-height: 1.12; }
+  .slide .kicker { font-family: "JetBrains Mono", monospace; font-size: 16px; letter-spacing: .2em; text-transform: uppercase; opacity: .6; margin-bottom: 14px; }
+  .slide .card { position: static; background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.14); box-shadow: none; border-radius: 22px; }
+  .slide .wbox { background: #fff; border-radius: 22px; }
+  .slide .prompt { font-family: "JetBrains Mono", monospace; font-size: 19px; line-height: 1.6; }
+  .glowbg { position: absolute; inset: 0; pointer-events: none; }
+</style>
+<section class="view" id="slides" style="width:2400px;height:1260px">
+  <div class="collage" id="collage"></div>
+</section>
+
 <!-- ============ PATH 1920x960 ============ -->
 <section class="view dark" id="path" style="width:1920px;height:960px">
   <svg class="abs" width="1920" height="960" style="left:0;top:0">
@@ -287,6 +310,117 @@
 <script>
   const v = new URLSearchParams(location.search).get("v") || "hero";
   document.getElementById(v).classList.add("on");
+</script>
+<script>
+  // Slides for the collage view: [theme, inner HTML]. Generic teaching content only.
+  const glow = (a, b) => `<svg class="glowbg" width="960" height="540"><circle cx="${a[0]}" cy="${a[1]}" r="260" fill="#8a3dff" filter="url(#sglow)" opacity=".45"/><circle cx="${b[0]}" cy="${b[1]}" r="220" fill="#3b6dff" filter="url(#sglow)" opacity=".35"/></svg>`;
+  const maze = `<svg class="pattern" width="960" height="540"><rect width="960" height="540" fill="url(#maze)"/></svg>`;
+  const rel = (html) => `<div style="position:relative">${html}</div>`;
+  const slides = [
+    ["dark", glow([760, 120], [140, 480]) + `<svg class="glowbg" width="960" height="540"><path d="M-40 470 C 260 420, 420 200, 640 240 S 900 330, 1000 120" stroke="url(#g1)" stroke-width="70" fill="none" filter="url(#sglow)" opacity=".8"/><path d="M-40 470 C 260 420, 420 200, 640 240 S 900 330, 1000 120" stroke="url(#g1)" stroke-width="6" fill="none"/></svg>` +
+      rel(`<div class="kicker">Hands-on training</div><div style="font-size:104px;font-weight:800;line-height:1;letter-spacing:-.03em">Generative<br><span class="gtext">AI</span></div>`)],
+    ["lightbg", maze + rel(`<div class="kicker">Warm-up</div><h3>What isn't generative AI?</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px">
+        ${[["Human intelligence", "It predicts from patterns, without understanding."], ["Original creativity", "It recombines what it has learned."], ["Autonomous", "It acts only when prompted."], ["Infallible", "It can and does hallucinate."]].map(([t, d]) => `<div class="wbox" style="padding:22px 24px"><div style="font-size:22px;font-weight:700">${t}</div><div style="font-size:17px;color:var(--muted);margin-top:6px;line-height:1.4">${d}</div></div>`).join("")}
+      </div>`)],
+    ["dark", glow([480, 470], [820, 60]) + rel(`<div class="kicker">Foundations</div><h3>AI ≠ Generative AI</h3>`) +
+      `<svg class="glowbg" width="960" height="540"><g font-family="Poppins" font-weight="600" font-size="20" fill="#fff" text-anchor="middle">
+        <circle cx="640" cy="330" r="190" fill="rgba(59,109,255,.25)" stroke="rgba(255,255,255,.3)"/><text x="640" y="172">Artificial intelligence</text>
+        <circle cx="640" cy="360" r="145" fill="rgba(106,77,255,.3)" stroke="rgba(255,255,255,.3)"/><text x="640" y="248">Machine learning</text>
+        <circle cx="640" cy="390" r="100" fill="rgba(138,61,255,.35)" stroke="rgba(255,255,255,.3)"/><text x="640" y="326">Deep learning</text>
+        <circle cx="640" cy="420" r="55" fill="url(#g1)"/><text x="640" y="426" font-size="17">GenAI</text></g></svg>`],
+    ["lightbg", maze + rel(`<div style="height:428px;display:flex;flex-direction:column;justify-content:center;align-items:center">
+      <div style="font-size:140px;font-weight:800;font-style:italic;letter-spacing:-.03em" class="gtext">It's a tool.</div>
+      <div style="font-size:26px;color:var(--muted);margin-top:8px">That's it.</div></div>`)],
+    ["dark", glow([200, 120], [800, 480]) + rel(`<div style="display:grid;grid-template-columns:1fr 330px;gap:30px;align-items:center;height:428px">
+      <div style="font-size:54px;font-weight:700;line-height:1.12">How many of you have talked with an <span class="gtext">AI</span> today?</div>
+      <svg width="330" height="380" viewBox="0 0 240 320"><mask id="hm"><use href="#hand" x="20" y="10" width="200" height="270" fill="#fff"/></mask><rect x="20" y="10" width="200" height="270" fill="url(#g1)" mask="url(#hm)"/></svg></div>`)],
+    ["lightbg", maze + rel(`<div class="kicker">Prompting</div><h3>Few-shot: guide by example</h3>
+      <div class="wbox prompt" style="margin-top:28px;padding:26px 30px">Classify the tone of each review.<br><span style="color:var(--muted)">Great battery, fast delivery // positive<br>Arrived broken // negative<br>Works, but the manual is unclear // neutral</span><br>Setup took two minutes // <span class="gtext" style="font-weight:700">??</span></div>`)],
+    ["dark", glow([820, 420], [120, 80]) + rel(`<div class="kicker">Prompting</div><h3>Chain of thought</h3>
+      <div class="card prompt" style="margin-top:28px;padding:26px 30px;color:#fff">First, list the open issues in these notes.<br>Then, group them by owner.<br>Next, flag anything past its deadline.<br>Finally, write a three-line summary. <span style="color:#ff86b5">Think step by step.</span></div>`)],
+    ["lightbg", maze + rel(`<div class="kicker">Prompting</div><h3>Five parts, one prompt</h3>
+      <div style="display:flex;gap:14px;margin-top:40px">${[["R", "Role", "var(--blue)"], ["I", "Input", "#6a4dff"], ["S", "Steps", "var(--violet)"], ["E", "Expectation", "var(--pink)"], ["N", "Narrowing", "var(--orange)"]].map(([l, t, c]) => `<div class="wbox" style="flex:1;padding:22px 16px;text-align:center"><div style="width:76px;height:76px;margin:0 auto;border-radius:20px;background:${c};color:#fff;display:grid;place-items:center;font-size:40px;font-weight:800">${l}</div><div style="font-size:19px;font-weight:600;margin-top:14px">${t}</div></div>`).join("")}</div>`)],
+    ["dark", rel(`<div class="kicker">Images</div><h3>Depth of field</h3>
+      <div style="display:flex;gap:18px;margin-top:30px">${[["f/1.4", 22], ["f/2.8", 10], ["f/8", 0]].map(([f, b]) => `<div style="flex:1"><div style="height:220px;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(160deg,#26265c,#121238)">
+        <div style="position:absolute;left:24px;top:30px;width:120px;height:120px;border-radius:50%;background:#ff8a2a;filter:blur(${b}px);opacity:.85"></div>
+        <div style="position:absolute;right:20px;top:20px;width:90px;height:90px;border-radius:50%;background:#33c3ff;filter:blur(${b}px);opacity:.8"></div>
+        <div style="position:absolute;left:50%;bottom:20px;width:110px;height:150px;margin-left:-55px;border-radius:55px 55px 24px 24px;background:linear-gradient(180deg,#ff3d8b,#8a3dff)"></div></div>
+        <div class="mono" style="font-size:16px;margin-top:12px;opacity:.7">${f}</div></div>`).join("")}</div>`)],
+    ["lightbg", maze + rel(`<div class="kicker">Risks</div><h3>What to look out for</h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px">${[["Bias", "Skewed data, skewed answers", "var(--blue)"], ["Deepfakes", "Realistic, and false", "var(--violet)"], ["Copyright", "Who owns the output?", "var(--pink)"], ["Jailbreaks", "Prompts that break the rules", "var(--orange)"]].map(([t, d, c]) => `<div class="wbox" style="padding:22px 20px;border-top:7px solid ${c}"><div style="font-size:23px;font-weight:700">${t}</div><div style="font-size:16px;color:var(--muted);margin-top:8px;line-height:1.4">${d}</div></div>`).join("")}</div>`)],
+    ["dark", glow([700, 300], [100, 500]) + rel(`<div class="kicker">Agents</div><h3>What's an agent?</h3>`) +
+      `<svg class="glowbg" width="960" height="540" viewBox="0 0 960 540"><g transform="translate(140 40)">
+        <rect x="290" y="150" width="310" height="260" rx="130" fill="none" stroke="url(#g1)" stroke-width="5"/>
+        <g font-family="Poppins" font-weight="600" font-size="20" text-anchor="middle" fill="#fff">
+        <rect x="380" y="122" width="130" height="56" rx="18" fill="#26265c" stroke="rgba(255,255,255,.3)"/><text x="445" y="157">Context</text>
+        <rect x="370" y="250" width="150" height="60" rx="20" fill="url(#g1)"/><text x="445" y="287">Model</text>
+        <rect x="550" y="252" width="100" height="56" rx="18" fill="#26265c" stroke="rgba(255,255,255,.3)"/><text x="600" y="287">Tool</text>
+        <rect x="370" y="382" width="150" height="56" rx="18" fill="#26265c" stroke="rgba(255,255,255,.3)"/><text x="445" y="417">Feedback</text>
+        <circle cx="80" cy="262" r="26" fill="#fff"/><path d="M36 346 q44 -70 88 0 z" fill="#fff"/><text x="80" y="386">User</text></g>
+        <line x1="130" y1="280" x2="362" y2="280" stroke="#fff" stroke-width="3"/><polygon points="362,272 377,280 362,288" fill="#fff"/>
+        <line x1="230" y1="210" x2="230" y2="350" stroke="#ff3d8b" stroke-width="3" stroke-dasharray="8 8"/></g></svg>`],
+    ["lightbg", maze + rel(`<div class="kicker">Regulation</div><h3>The AI Act, by risk</h3>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:28px">${[["Transparency", "Chatbots must say they are an AI.", "var(--green)", "#fff"], ["High risk", "Hiring and credit scoring are monitored.", "var(--yellow)", "var(--ink)"], ["Unacceptable", "Social scoring is banned.", "var(--red)", "#fff"]].map(([t, d, c, tc]) => `<div class="wbox" style="display:flex;align-items:center;gap:20px;padding:16px 20px;border:3px solid ${c}"><span style="padding:6px 16px;border-radius:99px;background:${c};color:${tc};font-size:17px;font-weight:700;white-space:nowrap">${t}</span><span style="font-size:20px;font-weight:500">${d}</span></div>`).join("")}</div>`)],
+    ["dark", rel(`<div style="position:absolute;inset:-56px -64px;background:linear-gradient(120deg,#3b6dff,#8a3dff 40%,#ff3d8b 72%,#ff8a2a)"></div>
+      <div style="position:relative;height:428px;display:flex;align-items:center;justify-content:center;font-size:150px;font-weight:800;letter-spacing:-.03em">Hands-on!</div>`)],
+    ["dark", glow([840, 100], [200, 480]) + rel(`<div class="kicker">Co-design</div><h3>What should we build?</h3>`) +
+      `<svg class="glowbg" width="960" height="540" viewBox="0 0 960 540"><g transform="translate(330 150)">
+        <rect x="0" y="0" width="560" height="330" rx="24" fill="rgba(255,255,255,.05)"/><rect x="280" y="0" width="280" height="165" rx="24" fill="rgba(47,191,113,.14)"/>
+        <line x1="280" y1="10" x2="280" y2="320" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-dasharray="6 8"/><line x1="10" y1="165" x2="550" y2="165" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-dasharray="6 8"/>
+        <g font-family="Poppins" font-weight="600" font-size="17" fill="#fff"><circle cx="460" cy="60" r="13" fill="#3b6dff"/><text x="440" y="66" text-anchor="end">Internal FAQ bot</text>
+        <circle cx="350" cy="120" r="13" fill="#3b6dff"/><text x="372" y="126">Meeting minutes</text><circle cx="330" cy="240" r="13" fill="#8a3dff"/><text x="352" y="246">Quality reports</text>
+        <circle cx="60" cy="130" r="13" fill="#ff8a2a"/><text x="82" y="136">Predictive maintenance</text><circle cx="120" cy="270" r="13" fill="#ff8a2a"/><text x="142" y="276">Embedded assistant</text></g></g>
+        <g font-family="JetBrains Mono" font-size="14" fill="rgba(255,255,255,.55)" letter-spacing="2"><text x="70" y="250">↑ IMPACT</text><text x="70" y="290">→ EASE</text></g></svg>`],
+    ["lightbg", maze + rel(`<div class="kicker">Co-design</div><h3>One canvas per idea</h3>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:30px">${[["Input", "Supplier emails", "var(--blue)"], ["Output", "Orders at risk", "#6a4dff"], ["Data", "Promised dates", "var(--violet)"], ["Tools", "A custom assistant", "var(--pink)"], ["KPI", "Delays caught early", "var(--orange)"]].map(([t, d, c]) => `<div class="wbox" style="padding:20px 16px;border-top:6px solid ${c};min-height:170px"><div class="mono" style="font-size:13px;color:var(--muted)">${t}</div><div style="font-size:19px;font-weight:600;margin-top:10px;line-height:1.3">${d}</div></div>`).join("")}</div>`)],
+    ["dark", glow([480, 520], [860, 60]) + rel(`<div class="kicker">The program</div><h3>Three phases, one <span class="gtext">roadmap.</span></h3>`) +
+      `<svg class="glowbg" width="960" height="540"><line x1="90" y1="420" x2="860" y2="300" stroke="url(#g1)" stroke-width="7" stroke-linecap="round"/>
+        <g font-family="Poppins" font-weight="600" font-size="20" fill="#fff" text-anchor="middle">
+        <circle cx="190" cy="404" r="20" fill="#3b6dff"/><text x="190" y="458">Assessment</text>
+        <circle cx="420" cy="368" r="20" fill="#8a3dff"/><text x="420" y="422">AI literacy</text>
+        <circle cx="650" cy="333" r="20" fill="#ff3d8b"/><text x="650" y="387">Co-design</text>
+        <rect x="830" y="270" width="60" height="60" rx="18" fill="#ff8a2a"/><text x="860" y="365">Roadmap</text></g></svg>`],
+    ["lightbg", maze + rel(`<div class="kicker">Takeaways</div><h3>A prompt library for the team</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px">${["Meeting minutes in five bullets", "Tender summary with risks", "On-brand image brief", "Weekly report from raw notes"].map((t, i) => `<div class="wbox" style="display:flex;align-items:center;gap:16px;padding:18px 20px"><span style="width:44px;height:44px;border-radius:12px;background:${["var(--blue)", "var(--violet)", "var(--pink)", "var(--orange)"][i]}"></span><span style="font-size:20px;font-weight:600">${t}</span></div>`).join("")}</div>`)],
+    ["dark", glow([300, 300], [800, 100]) + rel(`<div class="kicker">Software</div><h3>From code to natural language</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px">
+        <div class="card prompt" style="padding:22px 24px;font-size:16px;color:rgba(255,255,255,.8)">score = 0<br>for word in review.split():<br>&nbsp;&nbsp;if word in positive: score += 1<br>&nbsp;&nbsp;if word in negative: score -= 1</div>
+        <div class="card prompt" style="padding:22px 24px;font-size:16px;color:#fff">You are a sentiment classifier.<br>Reply with one word:<br><span class="gtext" style="font-weight:700">POSITIVE</span> or <span class="gtext" style="font-weight:700">NEGATIVE</span>.</div></div>`)],
+    ["lightbg", maze + rel(`<div class="kicker">Images</div><h3>Light changes everything</h3>
+      <div style="display:flex;gap:18px;margin-top:30px">${[["Softbox", "radial-gradient(circle at 30% 30%,#fff,#ffd6e6 40%,#ff3d8b)"], ["Reflector", "radial-gradient(circle at 70% 40%,#fff3c4,#ff8a2a 55%,#8a3dff)"], ["Backlight", "radial-gradient(circle at 50% 110%,#fff,#8a3dff 45%,#121238)"]].map(([t, g]) => `<div style="flex:1"><div style="height:220px;border-radius:20px;background:${g}"></div><div class="mono" style="font-size:15px;margin-top:12px;color:var(--muted)">${t}</div></div>`).join("")}</div>`)],
+    ["dark", rel(`<div style="position:absolute;inset:-56px -64px;background:radial-gradient(80% 90% at 80% 20%,#8a3dff,transparent 60%),radial-gradient(70% 80% at 10% 100%,#3b6dff,transparent 60%),var(--navy)"></div>
+      <div style="position:relative;height:428px;display:flex;flex-direction:column;justify-content:flex-end"><div class="kicker">Section</div><div style="font-size:84px;font-weight:800;line-height:1;letter-spacing:-.02em">Prompting<br>techniques</div></div>`)],
+  ];
+
+  if (v === "slides") {
+    // Six staggered columns of five slides. Each slot takes the least used slide that differs from its neighbors
+    // (the slide above and the whole previous column) and, when possible, from the theme of the slide above.
+    const offsets = [120, -100, 40, -160, 0, -60];
+    const uses = slides.map(() => 0);
+    const columns = [];
+    const collage = document.getElementById("collage");
+    for (let c = 0; c < offsets.length; c++) {
+      const picked = [];
+      for (let r = 0; r < 5; r++) {
+        const above = picked[r - 1];
+        const banned = new Set([above, ...(columns[c - 1] ?? [])]);
+        const order = slides.map((_, i) => (i * 7 + c * 5 + r) % slides.length);
+        const score = (i) => uses[i] * 10 + (above !== undefined && slides[i][0] === slides[above][0] ? 1 : 0);
+        const choice = order.filter((i) => !banned.has(i)).sort((x, y) => score(x) - score(y))[0];
+        uses[choice]++;
+        picked.push(choice);
+      }
+      columns.push(picked);
+      const col = document.createElement("div");
+      col.className = "col";
+      col.style.marginTop = offsets[c] + "px";
+      for (const i of picked) {
+        col.insertAdjacentHTML("beforeend", `<div class="frame"><div class="slide ${slides[i][0]}">${slides[i][1]}</div></div>`);
+      }
+      collage.appendChild(col);
+    }
+  }
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">

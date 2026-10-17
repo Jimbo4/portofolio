@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import { ClickBurstFx } from "@/components/features/ClickBurstFx";
+import { HashScroll } from "@/components/features/HashScroll";
 import { SiteFooter } from "@/components/features/SiteFooter";
 import { SiteNav } from "@/components/features/SiteNav";
 import { profile } from "@/lib/config";
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main>{children}</main>
         <SiteFooter />
         <ClickBurstFx />
+        <HashScroll />
       </body>
     </html>
   );
