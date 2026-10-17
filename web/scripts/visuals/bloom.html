@@ -1,0 +1,861 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Bloom: anonymized rebuild of a white-label employee engagement platform (web, iOS, Android, HR admin).
+     Fictional product name, workspaces, people, content and data. No client marks, no photos of people.
+     Views: one <section id> per screen or cover, picked with ?v=<id>. ?z=2 zooms a view for crisp phone renders. -->
+<link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=block" rel="stylesheet">
+<style>
+  :root {
+    /* identity */
+    --or: #f08328; --ye: #fab32d; --te: #199cba; --sk: #8ac9e4; --mi: #96cfc3; --pk: #e8708a;
+    --cream: #fff4e6; --deep: #12343f; --leaf: #4f9a6a; --leaf-d: #2f7550;
+    /* product */
+    --ink: #1e2a32; --mut: #75818b; --bg: #f2f6f9; --line: #e4eaef; --ok: #2fa66a; --warn: #f0a528; --bad: #e0504a;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; background: #fff; }
+  .view { display: none; position: relative; overflow: hidden; }
+  .view.on { display: block; }
+  .abs { position: absolute; }
+  svg { display: block; }
+  svg text { font-family: "Sen", sans-serif; }
+
+  /* ================= product screens ================= */
+  .scr { --p: #199cba; font-family: "Sen", sans-serif; color: var(--ink); background: var(--bg); width: 1440px; height: 900px; overflow: hidden; position: relative; font-size: 15px; }
+  .scr.m { width: 390px; height: 844px; font-size: 13px; }
+  .pl { background: color-mix(in srgb, var(--p) 11%, #fff); }
+  .tp { color: var(--p); }
+  .bp { background: var(--p); color: #fff; }
+  .nav { height: 76px; background: #fff; border-bottom: 1px solid var(--line); display: flex; align-items: center; padding: 0 48px; gap: 36px; }
+  .search { display: flex; align-items: center; gap: 10px; height: 42px; width: 380px; border-radius: 21px; background: var(--bg); color: #9aa5ad; padding: 0 16px; font-size: 14px; }
+  .navi { display: flex; gap: 6px; margin-left: auto; }
+  .navi div { width: 74px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--mut); padding: 8px 0; border-radius: 10px; position: relative; }
+  .navi div.on { color: var(--p); background: color-mix(in srgb, var(--p) 10%, #fff); font-weight: 700; }
+  .navi .dot { position: absolute; top: 4px; right: 18px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+  .main { padding: 30px 56px; }
+  .card { background: #fff; border-radius: 14px; box-shadow: 0 4px 14px rgba(20, 45, 65, .07); padding: 22px 24px; }
+  .h1 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; }
+  .h2 { font-size: 20px; font-weight: 700; }
+  .h3 { font-size: 16px; font-weight: 700; }
+  .mut { color: var(--mut); }
+  .sm { font-size: 13px; }
+  .xs { font-size: 12px; }
+  .row { display: flex; align-items: center; }
+  .col { display: flex; flex-direction: column; }
+  .sb { justify-content: space-between; }
+  .g4 { gap: 4px; } .g6 { gap: 6px; } .g8 { gap: 8px; } .g10 { gap: 10px; } .g12 { gap: 12px; } .g16 { gap: 16px; } .g20 { gap: 20px; } .g24 { gap: 24px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--p); color: var(--p); font-weight: 700; font-size: 13px; background: #fff; white-space: nowrap; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 10px; background: var(--p); color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap; }
+  .btn.r { border-radius: 999px; }
+  .btn.o { background: #fff; color: var(--p); box-shadow: inset 0 0 0 1.5px var(--p); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: color-mix(in srgb, var(--p) 12%, #fff); color: var(--p); white-space: nowrap; }
+  .chip.ok { background: #e3f5ec; color: var(--ok); } .chip.warn { background: #fdf1dc; color: #c27c0e; } .chip.bad { background: #fbe5e4; color: var(--bad); } .chip.grey { background: #eef1f4; color: var(--mut); }
+  .bar { height: 8px; border-radius: 99px; background: #e8edf1; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 99px; background: var(--p); }
+  .av { border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; flex: none; }
+  .tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--line); }
+  .tabs div { padding: 0 2px 12px; color: var(--mut); font-weight: 600; font-size: 14px; }
+  .tabs div.on { color: var(--p); box-shadow: inset 0 -3px 0 var(--p); }
+  .seg { display: inline-flex; background: #fff; border-radius: 999px; padding: 4px; box-shadow: inset 0 0 0 1px var(--line); }
+  .seg span { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--mut); }
+  .seg span.on { background: var(--p); color: #fff; }
+  .hr { height: 1px; background: var(--line); }
+  .input { height: 42px; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; padding: 0 14px; color: #9aa5ad; font-size: 14px; }
+  .ta { border-radius: 10px; border: 1px solid var(--line); background: #fff; padding: 12px 14px; color: var(--ink); font-size: 14px; line-height: 1.45; }
+  .lbl { font-size: 12px; font-weight: 700; color: var(--mut); text-transform: uppercase; letter-spacing: .06em; }
+  .radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c3ccd3; flex: none; }
+  .radio.on { border-color: var(--p); box-shadow: inset 0 0 0 4px #fff; background: var(--p); }
+  .check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #c3ccd3; flex: none; display: grid; place-items: center; }
+  .check.on { background: var(--p); border-color: var(--p); color: #fff; }
+  .tog { width: 40px; height: 24px; border-radius: 12px; background: #d6dde3; position: relative; flex: none; }
+  .tog::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .tog.on { background: var(--p); } .tog.on::after { left: 19px; }
+  .strip { border-left: 12px solid var(--p); border-radius: 22px; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .t th { text-align: left; font-size: 12px; color: var(--mut); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .t td { padding: 11px 12px; border-bottom: 1px solid #eef2f5; white-space: nowrap; }
+  .hex { width: 46px; height: 52px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); display: grid; place-items: center; color: #fff; flex: none; }
+  .stat .n { font-size: 30px; font-weight: 800; letter-spacing: -.02em; }
+  .reac { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; background: #f1f4f7; font-size: 13px; font-weight: 700; color: #5b6770; }
+  .reac.on { background: color-mix(in srgb, var(--p) 12%, #fff); color: var(--p); }
+
+  /* admin shell */
+  .adm { display: grid; grid-template-columns: 236px 1fr; height: 100%; }
+  .side { background: #fff; border-right: 1px solid var(--line); padding: 26px 18px; display: flex; flex-direction: column; gap: 4px; }
+  .side .it { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 14px; border-radius: 10px; color: #56636c; font-size: 14px; font-weight: 600; }
+  .side .it.on { background: color-mix(in srgb, var(--p) 11%, #fff); color: var(--p); }
+  .side .grp { font-size: 11px; font-weight: 700; color: #a4afb7; letter-spacing: .1em; text-transform: uppercase; padding: 18px 14px 6px; }
+  .amain { padding: 28px 40px; overflow: hidden; }
+
+  /* mobile */
+  .sbar { height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 6px 28px 0; font-weight: 700; font-size: 14px; }
+  .mhead { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+  .mbody { padding: 6px 18px; }
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 86px; background: var(--p); border-radius: 26px 26px 0 0; display: flex; justify-content: space-around; padding: 14px 10px 0; color: rgba(255,255,255,.72); }
+  .tabbar div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; width: 64px; }
+  .tabbar div.on { color: #fff; }
+  .tabbar div.on svg { background: rgba(255,255,255,.2); border-radius: 12px; padding: 4px; width: 34px; height: 30px; }
+  .home-ind { position: absolute; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: rgba(255,255,255,.85); }
+
+  /* ================= identity ================= */
+  .title { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; color: var(--deep); letter-spacing: -.045em; line-height: .8; white-space: nowrap; }
+  .title .o { position: relative; display: inline-block; z-index: 0; }
+  .payoff { font-family: "Bricolage Grotesque", sans-serif; font-weight: 500; color: #4c6670; letter-spacing: -.01em; }
+  .stage { position: absolute; perspective: 2600px; }
+  .dev { position: absolute; transform-style: preserve-3d; }
+  .phone { position: absolute; background: #14181c; border-radius: 64px; padding: 15px; box-shadow: 0 60px 90px rgba(18, 52, 63, .28), 0 0 0 2px #2b3238 inset; }
+  .phone iframe { display: block; width: 390px; height: 844px; border: 0; border-radius: 50px; background: #fff; }
+  .tablet { position: absolute; background: #14181c; border-radius: 46px; padding: 30px; box-shadow: 0 70px 110px rgba(18, 52, 63, .26), 0 0 0 2px #2b3238 inset; }
+  .tablet iframe { display: block; width: 1440px; height: 900px; border: 0; border-radius: 16px; background: #fff; }
+  .shot { position: absolute; border: 0; border-radius: 14px; background: #fff; box-shadow: 0 40px 80px rgba(18, 52, 63, .22); }
+</style>
+</head>
+<body>
+<!-- Desktop screens 1440x900 -->
+<section class="view" id="d-home"></section>
+<section class="view" id="d-feed"></section>
+<section class="view" id="d-rewards"></section>
+<section class="view" id="d-growth"></section>
+<section class="view" id="d-checkpoints"></section>
+<section class="view" id="d-voice"></section>
+<section class="view" id="d-okr"></section>
+<section class="view" id="d-wiki"></section>
+<section class="view" id="d-wiki-ai"></section>
+<section class="view" id="d-login"></section>
+<section class="view" id="a-home"></section>
+<section class="view" id="a-analytics"></section>
+<section class="view" id="a-voice"></section>
+<section class="view" id="a-performance"></section>
+<section class="view" id="a-survey"></section>
+<section class="view" id="a-reviews"></section>
+<section class="view" id="a-review"></section>
+<section class="view" id="a-badges"></section>
+<section class="view" id="a-people"></section>
+<section class="view" id="s-workspace"></section>
+<!-- Mobile screens 390x844 -->
+<section class="view" id="m-home"></section>
+<section class="view" id="m-growth"></section>
+<section class="view" id="m-checkpoint"></section>
+<section class="view" id="m-reward"></section>
+<section class="view" id="m-survey"></section>
+<section class="view" id="m-wiki"></section>
+<section class="view" id="m-chat"></section>
+<section class="view" id="m-notifications"></section>
+
+<!-- ============ HERO 2400x1200 ============ -->
+<section class="view" id="hero" style="width:2400px;height:1200px;background:var(--cream)">
+  <svg class="abs garden" data-kind="hero" width="2400" height="1200" style="left:0;top:0"></svg>
+  <div class="abs title" data-size="330" style="left:150px;top:330px">bloom</div>
+  <div class="abs payoff" style="left:162px;top:640px;font-size:46px">Employee engagement platform</div>
+  <div class="stage" style="left:1180px;top:0;width:1220px;height:1200px">
+    <div class="dev" style="left:40px;top:250px;transform:rotateY(-16deg) rotateX(6deg) rotateZ(1deg) scale(.66);transform-origin:0 0">
+      <div class="tablet"><iframe data-src="d-home"></iframe></div>
+    </div>
+    <div class="dev" style="left:760px;top:430px;transform:rotateY(-12deg) rotateX(5deg) rotateZ(2deg) scale(.86);transform-origin:0 0">
+      <div class="phone"><iframe data-src="m-notifications"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARD 1200x1500 ============ -->
+<section class="view" id="card" style="width:1200px;height:1500px;background:var(--cream)">
+  <svg class="abs garden" data-kind="card" width="1200" height="1500" style="left:0;top:0"></svg>
+  <div class="abs title" data-size="290" style="left:0;right:0;text-align:center;top:150px">bloom</div>
+  <div class="stage" style="left:0;top:0;width:1200px;height:1500px">
+    <div class="dev" style="left:70px;top:610px;transform:rotateY(18deg) rotateZ(-4deg) scale(.86);transform-origin:50% 0">
+      <div class="phone"><iframe data-src="m-growth"></iframe></div>
+    </div>
+    <div class="dev" style="left:690px;top:610px;transform:rotateY(-18deg) rotateZ(4deg) scale(.86);transform-origin:50% 0">
+      <div class="phone"><iframe data-src="m-survey"></iframe></div>
+    </div>
+    <div class="dev" style="left:380px;top:560px;transform:scale(.94);transform-origin:50% 0">
+      <div class="phone"><iframe data-src="m-home"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOWCASE 2400x1350 (body) ============ -->
+<section class="view" id="showcase" style="width:2400px;height:1350px;background:var(--cream)">
+  <svg class="abs garden" data-kind="petals" width="2400" height="1350" style="left:0;top:0"></svg>
+  <div class="abs grid3d" style="left:0;top:0;width:2400px;height:1350px"></div>
+</section>
+
+<!-- ============ WHITE LABEL 2400x1350 (body) ============ -->
+<section class="view" id="white-label" style="width:2400px;height:1350px;background:#eef4f6">
+  <svg class="abs garden" data-kind="soft" width="2400" height="1350" style="left:0;top:0"></svg>
+  <div class="stage" style="left:0;top:0;width:2400px;height:1350px">
+    <div class="dev" style="left:90px;top:270px;transform:rotateY(12deg) rotateX(4deg) scale(.82);transform-origin:0 0">
+      <div class="tablet"><iframe data-src="s-workspace"></iframe></div>
+    </div>
+    <div class="dev" style="left:1440px;top:330px;transform:rotateY(-10deg) scale(.88);transform-origin:0 0">
+      <div class="phone"><iframe data-src="m-reward"></iframe></div>
+    </div>
+    <div class="dev" style="left:1880px;top:230px;transform:rotateY(-14deg) scale(.88);transform-origin:0 0">
+      <div class="phone"><iframe data-src="m-checkpoint"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const params = new URLSearchParams(location.search);
+const v = params.get("v") || "hero";
+document.getElementById(v).classList.add("on");
+if (params.get("z")) document.body.style.zoom = params.get("z");
+</script>
+<script>
+/* ===================== icons (lucide-style strokes) ===================== */
+const ic = (p, s = 20, w = 2, extra = "") => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${p}</svg>`;
+const P = {
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  award: '<circle cx="12" cy="9" r="6"/><path d="m8.5 14 -1.5 8 5-3 5 3-1.5-8"/>',
+  sprout: '<path d="M12 21v-9"/><path d="M12 12C12 7 8 5 4 5c0 4 3 7 8 7z"/><path d="M12 14c0-4 3-7 8-7 0 4-3 7-8 7z"/>',
+  voice: '<path d="M3 11v2a1 1 0 0 0 1 1h3l6 5V5L7 10H4a1 1 0 0 0-1 1z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  cog: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  plus: '<path d="M5 12h14M12 5v14"/>',
+  chevR: '<path d="m9 6 6 6-6 6"/>', chevD: '<path d="m6 9 6 6 6-6"/>', chevL: '<path d="m15 6-6 6 6 6"/>',
+  thumb: '<path d="M7 10v11M15 5.9 14 10h5.8a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 18.4 21H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h2.8a2 2 0 0 0 1.8-1.1L12 2a3 3 0 0 1 3 3.9z"/>',
+  heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>',
+  bulb: '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',
+  hands: '<path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-3-3l2.8-2.8a5.8 5.8 0 0 1 7 .9L21 7"/><path d="m21 3 1 11h-2M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3M3 4h8"/>',
+  laugh: '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 3 4 3 4-3 4-3H8zM9 9h.01M15 9h.01"/>',
+  comment: '<path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/>',
+  send: '<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
+  smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+  file: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  chart: '<path d="M3 3v18h18"/><path d="m7 15 4-5 4 3 5-7"/>',
+  bars: '<path d="M3 21h18M6 17V10M11 17V5M16 17v-8M21 17v-4"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  cal: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  check: '<path d="m5 12 5 5 9-10"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  dots: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+  vdots: '<circle cx="12" cy="5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="19" r="1.3"/>',
+  arrowL: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
+  up: '<path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/>',
+  down: '<path d="m3 7 6 6 4-4 8 8"/><path d="M14 17h7v-7"/>',
+  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  dl: '<path d="M12 4v11m-5-5 5 5 5-5M4 17v3h16v-3"/>',
+  upl: '<path d="M12 16V4m-5 5 5-5 5 5M4 17v3h16v-3"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  copy: '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>',
+  star: '<path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2 6.4 20.2l1.1-6.3L2.9 9.5l6.3-.9z"/>',
+  bot: '<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13v1M15 13v1M2 13v3M22 13v3"/>',
+  spark: '<path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/>',
+  history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/>',
+  clip: '<path d="m21 11-8.6 8.6a6 6 0 0 1-8.5-8.5l8.6-8.6a4 4 0 0 1 5.7 5.7L9.6 16.8a2 2 0 0 1-2.8-2.8L14.7 6"/>',
+  filter: '<path d="M3 5h18l-7 8v6l-4 2v-8z"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  palette: '<circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7H17a5 5 0 0 0 5-5C22 6 17.5 2 12 2z"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  building: '<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 21v-4h6v4M8 7h2M14 7h2M8 11h2M14 11h2"/>',
+  flag: '<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>',
+  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+  layers: '<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 12 10 5 10-5M2 17l10 5 10-5"/>',
+  edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/>',
+  rocket: '<path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="M12 15l-3-3a22 22 0 0 1 2-4A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/>',
+  coffee: '<path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/>',
+  wifi: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01"/>',
+  battery: '<rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor"/>',
+  signal: '<path d="M4 18v-2M9 18v-5M14 18V9M19 18V5"/>',
+};
+
+/* ===================== fictional people and workspaces ===================== */
+const PAL = ["#f08328", "#199cba", "#e8708a", "#2fa66a", "#7c6fd6", "#fab32d", "#4b8fd1", "#c2557c"];
+const hash = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+const ini = (n) => n.split(" ").map((x) => x[0]).slice(0, 2).join("");
+const av = (n, s = 36, c) => `<div class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s * .38)}px;background:${c || PAL[hash(n) % PAL.length]}">${ini(n)}</div>`;
+const WS = {
+  vireo: { p: "#199cba", logo: (s = 1) => `<div class="row g8" style="color:#199cba;font-weight:800;font-size:${24 * s}px;letter-spacing:-.02em">${leafMark(30 * s, "#199cba")}vireo</div>` },
+  halden: { p: "#24408e", logo: (s = 1) => `<div class="row g8" style="color:#24408e;font-weight:800;font-size:${17 * s}px;letter-spacing:.24em"><svg width="${28 * s}" height="${28 * s}" viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24" rx="6" fill="#24408e"/><path d="M9 8v12M19 8v12M9 14h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>HALDEN</div>` },
+  corvia: { p: "#f08328", logo: (s = 1) => `<div class="row g8" style="color:#f08328;font-weight:800;font-size:${23 * s}px;letter-spacing:-.01em"><svg width="${28 * s}" height="${28 * s}" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#f08328"/><path d="M19 9.5a6.5 6.5 0 1 0 0 9" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round"/></svg>corvia</div>` },
+  lumina: { p: "#6f4fc8", logo: (s = 1) => `<div class="row g8" style="color:#6f4fc8;font-weight:800;font-size:${22 * s}px;letter-spacing:.01em"><svg width="${28 * s}" height="${28 * s}" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="#6f4fc8"/><path d="M14 6.5l1.9 5.6 5.6 1.9-5.6 1.9L14 21.5l-1.9-5.6L6.5 14l5.6-1.9z" fill="#fff"/></svg>lumina</div>` },
+  alder: { p: "#2a8f62", logo: (s = 1) => `<div class="row g8" style="color:#2a8f62;font-weight:800;font-size:${21 * s}px;letter-spacing:.14em"><svg width="${28 * s}" height="${28 * s}" viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24" rx="12" fill="#2a8f62"/><path d="M14 6 7.5 17h13zM14 10l-5 8h10zM14 17v5" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>ALDER</div>` },
+};
+function leafMark(s, c) {
+  return `<svg width="${s}" height="${s}" viewBox="0 0 30 30"><path d="M5 25C5 12 13 5 26 4c0 13-7 21-21 21z" fill="${c}"/><path d="M5 25 17 13" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+}
+// Bloom mark: five petals, one per identity colour
+function bloomMark(s) {
+  const cols = ["#f08328", "#fab32d", "#96cfc3", "#199cba", "#8ac9e4"];
+  return `<svg width="${s}" height="${s}" viewBox="-20 -20 40 40">${cols.map((c, i) => `<ellipse cx="0" cy="-9.5" rx="6.6" ry="9.5" fill="${c}" opacity=".95" transform="rotate(${i * 72})"/>`).join("")}<circle r="4.6" fill="#12343f"/></svg>`;
+}
+const bloomWord = (s = 1, c = "#12343f") => `<div class="row g8" style="font-family:'Bricolage Grotesque';font-weight:800;font-size:${24 * s}px;letter-spacing:-.04em;color:${c}">${bloomMark(26 * s)}bloom</div>`;
+
+/* ===================== charts ===================== */
+function smooth(pts) {
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+function lineChart(w, h, series, labels, { max = 100, ticks = 4, area = false, dots = false, unit = "" } = {}) {
+  const L = 38, B = 28, T = 8, R = 8, iw = w - L - R, ih = h - B - T;
+  const x = (i, n) => L + (iw * i) / (n - 1), y = (val) => T + ih - (ih * val) / max;
+  let s = `<svg width="${w}" height="${h}">`;
+  for (let k = 0; k <= ticks; k++) { const yy = T + (ih * k) / ticks; s += `<line x1="${L}" x2="${w - R}" y1="${yy}" y2="${yy}" stroke="#e8edf1" stroke-dasharray="4 4"/><text x="${L - 8}" y="${yy + 4}" font-size="11" fill="#9aa5ad" text-anchor="end">${Math.round(max - (max * k) / ticks)}${unit}</text>`; }
+  labels.forEach((lb, i) => { s += `<text x="${x(i, labels.length)}" y="${h - 8}" font-size="11" fill="#9aa5ad" text-anchor="middle">${lb}</text>`; });
+  series.forEach(({ vals, color, width = 3, dash }) => {
+    const pts = vals.map((val, i) => [x(i, vals.length), y(val)]);
+    if (area) s += `<path d="${smooth(pts)} L${pts.at(-1)[0]},${T + ih} L${pts[0][0]},${T + ih}Z" fill="${color}" opacity=".85"/>`;
+    s += `<path d="${smooth(pts)}" fill="none" stroke="${area ? "#fff" : color}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ""} stroke-linecap="round"/>`;
+    if (dots) pts.forEach(([a, b]) => { s += `<circle cx="${a}" cy="${b}" r="4.5" fill="#fff" stroke="${color}" stroke-width="2.5"/>`; });
+  });
+  return s + "</svg>";
+}
+function barChart(w, h, vals, color, labels, { max, hi = [], every = 1, rad = 4 } = {}) {
+  const L = 4, B = labels ? 24 : 4, T = 6, iw = w - L * 2, ih = h - B - T, n = vals.length, bw = (iw / n) * .62;
+  max = max || Math.max(...vals);
+  let s = `<svg width="${w}" height="${h}">`;
+  vals.forEach((val, i) => {
+    const bh = (ih * val) / max, xx = L + (iw / n) * i + (iw / n - bw) / 2;
+    s += `<rect x="${xx}" y="${T + ih - bh}" width="${bw}" height="${bh}" rx="${rad}" fill="${hi.includes(i) ? color : color}" opacity="${hi.length && !hi.includes(i) ? .35 : 1}"/>`;
+    if (labels && i % every === 0) s += `<text x="${xx + bw / 2}" y="${h - 6}" font-size="10.5" fill="#9aa5ad" text-anchor="middle">${labels[i]}</text>`;
+  });
+  return s + "</svg>";
+}
+function donut(size, segs, th = 14, center = "", sub = "") {
+  const r = (size - th) / 2, c = 2 * Math.PI * r, tot = segs.reduce((a, [x]) => a + x, 0);
+  let off = 0, s = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><g transform="rotate(-90 ${size / 2} ${size / 2})">`;
+  segs.forEach(([val, col]) => { const len = (c * val) / tot; s += `<circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${col}" stroke-width="${th}" stroke-dasharray="${Math.max(0, len - 3)} ${c}" stroke-dashoffset="${-off}"/>`; off += len; });
+  s += `</g>`;
+  if (center) s += `<text x="50%" y="${size / 2 + (sub ? 2 : 9)}" text-anchor="middle" font-size="${size * .2}" font-weight="800" fill="#1e2a32">${center}</text>`;
+  if (sub) s += `<text x="50%" y="${size / 2 + size * .17}" text-anchor="middle" font-size="${Math.max(10, size * .085)}" fill="#75818b">${sub}</text>`;
+  return s + "</svg>";
+}
+const ring = (size, pct, col, th = 8, label) => donut(size, [[pct, col], [100 - pct, "#e8edf1"]], th, label ?? `${pct}%`);
+function radar(size, labels, vals, req, col) {
+  const cx = size / 2, cy = size / 2, R = size / 2 - 26, n = labels.length;
+  const pt = (i, v) => [cx + Math.sin((2 * Math.PI * i) / n) * R * v / 5, cy - Math.cos((2 * Math.PI * i) / n) * R * v / 5];
+  let s = `<svg width="${size}" height="${size}">`;
+  for (let k = 1; k <= 5; k++) s += `<polygon points="${labels.map((_, i) => pt(i, k).join(",")).join(" ")}" fill="none" stroke="#e3e9ee"/>`;
+  labels.forEach((lb, i) => { const [a, b] = pt(i, 5.9); s += `<line x1="${cx}" y1="${cy}" x2="${pt(i, 5)[0]}" y2="${pt(i, 5)[1]}" stroke="#e3e9ee"/><text x="${a}" y="${b + 4}" font-size="10.5" font-weight="700" fill="#8a959e" text-anchor="middle">${lb}</text>`; });
+  s += `<polygon points="${req.map((r, i) => pt(i, r).join(",")).join(" ")}" fill="${col}" fill-opacity=".14" stroke="${col}" stroke-opacity=".45" stroke-dasharray="4 3"/>`;
+  s += `<polygon points="${vals.map((r, i) => pt(i, r).join(",")).join(" ")}" fill="${col}" fill-opacity=".38" stroke="${col}" stroke-width="2.5"/>`;
+  vals.forEach((r, i) => { const [a, b] = pt(i, r); s += `<circle cx="${a}" cy="${b}" r="3.5" fill="${col}"/>`; });
+  return s + "</svg>";
+}
+const spark = (w, h, vals, col) => { const mx = Math.max(...vals), mn = Math.min(...vals); const pts = vals.map((v2, i) => [3 + (i * (w - 6)) / (vals.length - 1), h - 3 - ((v2 - mn) / (mx - mn || 1)) * (h - 6)]); return `<svg width="${w}" height="${h}"><path d="${smooth(pts)}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linecap="round"/></svg>`; };
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+// Organisational network: teams as clusters, collaboration as edges
+function network(w, h) {
+  const r = rng(11), teams = [["#199cba", 220, 190], ["#f08328", 520, 140], ["#2fa66a", 420, 330], ["#7c6fd6", 160, 380], ["#e8708a", 640, 330]];
+  const nodes = [];
+  teams.forEach(([c, x, y], t) => { const n = 9 + Math.floor(r() * 4); for (let i = 0; i < n; i++) { const a = r() * Math.PI * 2, d = 20 + r() * 70; nodes.push({ x: x + Math.cos(a) * d * 1.2, y: y + Math.sin(a) * d * .85, c, t, s: 4 + r() * 6 }); } });
+  let s = `<svg width="${w}" height="${w * 470 / 760}" viewBox="0 0 760 470">`;
+  nodes.forEach((a, i) => nodes.forEach((b, j) => { if (j <= i) return; const same = a.t === b.t, d = Math.hypot(a.x - b.x, a.y - b.y); if ((same && d < 85 && r() < .55) || (!same && r() < .018)) s += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${same ? a.c : "#b8c3cb"}" stroke-opacity="${same ? .4 : .55}" stroke-width="${same ? 1.4 : 1}"/>`; }));
+  nodes.forEach((a) => { s += `<circle cx="${a.x}" cy="${a.y}" r="${a.s}" fill="${a.c}" stroke="#fff" stroke-width="2"/>`; });
+  return s + "</svg>";
+}
+// Word cloud: spiral placement with box collision
+function cloud(w, h, words) {
+  const placed = [], cx = w / 2, cy = h / 2;
+  let out = "";
+  words.forEach(([t, wt, col]) => {
+    const fs = 13 + wt * 4.2, bw = t.length * fs * .56 + 8, bh = fs * 1.05;
+    for (let k = 0; k < 2000; k++) {
+      const a = k * .35, rr = 3.2 * a, x = cx + Math.cos(a) * rr * 1.7 - bw / 2, y = cy + Math.sin(a) * rr - bh / 2;
+      if (x < 0 || y < 0 || x + bw > w || y + bh > h) continue;
+      if (placed.some((p) => !(x + bw < p[0] || x > p[0] + p[2] || y + bh < p[1] || y > p[1] + p[3]))) continue;
+      placed.push([x, y, bw, bh]);
+      out += `<div style="position:absolute;left:${x}px;top:${y}px;font-size:${fs}px;font-weight:${wt > 5 ? 800 : 700};color:${col};white-space:nowrap;line-height:1">${t}</div>`;
+      break;
+    }
+  });
+  return `<div style="position:relative;width:${w}px;height:${h}px">${out}</div>`;
+}
+// Mood faces 0 (bad) to 4 (great)
+function face(m, s = 28, on = true) {
+  const cols = ["#e0504a", "#f08328", "#fab32d", "#96cfc3", "#2fa66a"], mouth = ["M8 17q4-4 8 0", "M8 16.5q4-2 8 0", "M8 15.5h8", "M8 15q4 2.5 8 0", "M7.5 14q4.5 5 9 0"][m];
+  return `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="${on ? cols[m] : "#e3e9ee"}"/><circle cx="8.5" cy="9.5" r="1.4" fill="#fff"/><circle cx="15.5" cy="9.5" r="1.4" fill="#fff"/><path d="${mouth}" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+}
+// Badge medallion with an icon
+const medal = (icon, col, s = 54) => `<div style="width:${s}px;height:${s}px;border-radius:50%;background:${col};display:grid;place-items:center;color:#fff;box-shadow:inset 0 0 0 4px rgba(255,255,255,.35);flex:none">${ic(icon, s * .44, 2.2)}</div>`;
+const hexb = (icon, col, s = 46) => `<div class="hex" style="width:${s}px;height:${s * 1.13}px;background:${col}">${ic(icon, s * .44, 2.2)}</div>`;
+
+/* ===================== flat illustrations ===================== */
+const illGrowth = (w = 220) => `<svg width="${w}" height="${w * .72}" viewBox="0 0 220 158">
+  <ellipse cx="110" cy="146" rx="96" ry="10" fill="#e3edf1"/>
+  <path d="M120 140h50l6-44h-62z" fill="#f08328"/><rect x="110" y="88" width="72" height="12" rx="4" fill="#e06d1a"/>
+  <path d="M146 88c0-26 4-44 20-58" stroke="#2f7550" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M150 64c-18-2-28-14-30-28 16 0 28 10 30 28z" fill="#4f9a6a"/><path d="M156 50c4-16 18-24 32-22-2 16-14 24-32 22z" fill="#96cfc3"/>
+  <circle cx="168" cy="26" r="10" fill="#fab32d"/>
+  <path d="M30 70h46l12 22v26a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6z" fill="#199cba"/><path d="M88 92 116 64" stroke="#199cba" stroke-width="9" stroke-linecap="round"/>
+  <path d="M40 70c0-14 26-14 26 0" stroke="#127a93" stroke-width="6" fill="none"/>
+  <g fill="#8ac9e4"><circle cx="124" cy="72" r="3.5"/><circle cx="130" cy="82" r="3"/><circle cx="121" cy="86" r="2.6"/></g>
+  <path d="M190 120V70m-10 10 10-12 10 12" stroke="#2fa66a" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const illReward = (w = 220) => `<svg width="${w}" height="${w * .72}" viewBox="0 0 220 158">
+  <ellipse cx="110" cy="146" rx="96" ry="10" fill="#e3edf1"/>
+  <rect x="40" y="84" width="74" height="56" rx="6" fill="#199cba"/><rect x="34" y="70" width="86" height="20" rx="5" fill="#127a93"/><rect x="70" y="70" width="14" height="70" fill="#fab32d"/>
+  <path d="M77 70c-14-22-34-14-26-2 4 5 16 4 26 2zM77 70c14-22 34-14 26-2-4 5-16 4-26 2z" fill="#f08328"/>
+  <path d="M146 92l-12 48 14-8 10 12 6-48z" fill="#e8708a"/><path d="M176 92l12 48-14-8-10 12-6-48z" fill="#c2557c"/>
+  <circle cx="161" cy="76" r="30" fill="#fab32d"/><circle cx="161" cy="76" r="21" fill="#f8c95a" stroke="#fff" stroke-width="3"/>
+  <path d="m161 63 4 8.5 9 1.2-6.6 6.2 1.6 9-8-4.4-8 4.4 1.6-9-6.6-6.2 9-1.2z" fill="#fff"/>
+  <g fill="#96cfc3"><circle cx="196" cy="40" r="5"/><circle cx="24" cy="50" r="4"/><circle cx="120" cy="30" r="3.5"/></g></svg>`;
+const illVoice = (w = 220) => `<svg width="${w}" height="${w * .72}" viewBox="0 0 220 158">
+  <ellipse cx="110" cy="146" rx="96" ry="10" fill="#e3edf1"/>
+  <path d="M40 78h22l52-30v84L62 102H40a6 6 0 0 1-6-6V84a6 6 0 0 1 6-6z" fill="#199cba"/><rect x="104" y="44" width="16" height="92" rx="8" fill="#127a93"/>
+  <path d="M52 102l8 32h14l-6-32z" fill="#127a93"/>
+  <rect x="136" y="34" width="66" height="40" rx="12" fill="#fab32d"/><path d="M150 74l-6 12 16-12z" fill="#fab32d"/>
+  <g fill="#fff"><circle cx="154" cy="54" r="4"/><circle cx="169" cy="54" r="4"/><circle cx="184" cy="54" r="4"/></g>
+  <rect x="146" y="92" width="54" height="34" rx="11" fill="#f08328"/><path d="M190 126l6 10-14-10z" fill="#f08328"/>
+  <path d="M158 109h30" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`;
+
+/* ===================== shells ===================== */
+const NAV = [["home", "Profile", P.user], ["feed", "Feed", P.home], ["rewards", "Rewards", P.award], ["growth", "Growth", P.sprout], ["voice", "Voice", P.voice], ["okr", "OKR", P.target], ["wiki", "Wiki", P.book], ["bell", "Alerts", P.bell], ["cog", "Settings", P.cog]];
+function app(active, body, { ws = "vireo", me = "Giulia Ferri" } = {}) {
+  return `<div class="scr" style="--p:${WS[ws].p}"><div class="nav">${WS[ws].logo()}<div class="search">${ic(P.search, 17)}Search people, posts and articles</div>
+    <div class="navi">${NAV.map(([k, l, p]) => `<div class="${k === active ? "on" : ""}">${ic(p, 21)}${l}${k === "bell" ? '<span class="dot">4</span>' : ""}</div>`).join("")}</div>${av(me, 40)}</div>
+    <div class="main">${body}</div></div>`;
+}
+const SIDE = [["home", "Home", P.home], ["analytics", "Analytics", P.chart], ["performance", "Performance", P.bars], ["g", "Engagement"], ["growth", "Challenges", P.sprout], ["rewards", "Reward programs", P.award], ["badges", "Special badges", P.star], ["voice", "Surveys", P.voice], ["news", "News", P.file], ["g", "People"], ["people", "Users & teams", P.users], ["reviews", "Reviews", P.flag], ["cog", "Settings", P.cog]];
+function admin(active, body, { ws = "vireo" } = {}) {
+  return `<div class="scr" style="--p:${WS[ws].p}"><div class="adm"><div class="side"><div style="padding:0 10px 22px">${WS[ws].logo(.95)}</div>
+    ${SIDE.map(([k, l, p]) => k === "g" ? `<div class="grp">${l}</div>` : `<div class="it ${k === active ? "on" : ""}">${ic(p, 19)}${l}</div>`).join("")}
+    <div style="margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--line)" class="row sb"><span class="xs mut">powered by</span>${bloomWord(.62)}</div></div>
+    <div class="amain">${body}</div></div></div>`;
+}
+function mob(active, body, { ws = "vireo", head } = {}) {
+  const tabs = [["home", "Home", P.home], ["growth", "Growth", P.sprout], ["rewards", "Rewards", P.award], ["voice", "Voice", P.voice], ["wiki", "Wiki", P.book]];
+  return `<div class="scr m" style="--p:${WS[ws].p};background:#f5f8fa"><div class="sbar"><span>9:41</span><span class="row g6">${ic(P.signal, 17, 2.4)}${ic(P.wifi, 17, 2.4)}${ic(P.battery, 22, 1.8)}</span></div>
+    ${head ?? `<div class="mhead">${WS[ws].logo(.85)}<span class="row g16" style="color:#56636c">${ic(P.search, 22)}<span style="position:relative">${ic(P.bell, 22)}<i style="position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:var(--bad);border:2px solid #f5f8fa"></i></span></span></div>`}
+    <div class="mbody">${body}</div>
+    <div class="tabbar">${tabs.map(([k, l, p]) => `<div class="${k === active ? "on" : ""}">${ic(p, 22)}${l}</div>`).join("")}</div><i class="home-ind"></i></div>`;
+}
+const mhead = (t, ws = "vireo") => `<div class="mhead"><span class="row g12" style="font-size:20px;font-weight:800">${ic(P.chevL, 22)}${t}</span><span style="color:#56636c">${ic(P.dots, 22)}</span></div>`;
+
+/* ===================== screens ===================== */
+const builders = {
+  /* ---------- employee: profile home ---------- */
+  "d-home": () => app("home", `<div style="display:grid;grid-template-columns:560px 1fr;gap:28px">
+    <div class="card col g16" style="height:792px">
+      <div class="row g16">${av("Giulia Ferri", 84)}<div class="col g4"><div style="font-size:24px;font-weight:800">Giulia Ferri</div><div class="mut">Product Marketing Specialist · Marketing</div><div class="sm" style="color:#8a959e;font-style:italic">“Curious about people, data and good coffee.”</div></div></div>
+      <div class="row g8"><span class="pill">${ic(P.file, 16)}Documents</span><span class="pill">${ic(P.edit, 16)}Post</span><span class="pill">${ic(P.comment, 16)}Ask feedback</span></div>
+      <div class="hr"></div>
+      <div class="row sb"><div><div class="h3">Skills map</div><div class="xs mut" style="margin-top:2px">Your level vs your role's target</div>${radar(250, ["COM", "LEA", "PRO", "CRE", "ANA", "TEC", "NEG", "ORG"], [4.2, 3, 3.8, 4.5, 3.4, 2.6, 3, 4], [4, 3.5, 4, 4, 4, 3, 3.5, 3.5], "var(--p)")}</div>
+        <div style="width:220px"><div class="h3">T-shape</div><div class="xs mut" style="margin-top:2px">Breadth and depth</div>
+          <svg width="220" height="232" style="margin-top:10px"><rect x="10" y="22" width="200" height="40" rx="8" fill="#e8edf1"/><rect x="10" y="22" width="168" height="40" rx="8" fill="var(--p)" opacity=".85"/><text x="22" y="47" font-size="13" font-weight="800" fill="#fff">SOFT  4.1</text><rect x="90" y="70" width="40" height="150" rx="8" fill="#e8edf1"/><rect x="90" y="110" width="40" height="110" rx="8" fill="#f08328"/><text x="110" y="168" font-size="13" font-weight="800" fill="#fff" text-anchor="middle" transform="rotate(-90 110 168)">HARD  3.2</text></svg></div></div>
+      <div class="h3">My analytics</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">${[[12, "rewards received"], [9, "rewards given"], [6, "challenges completed"], [2, "challenges requested"], [14, "feedback sent"], [11, "feedback received"], [8, "surveys completed"], [3, "suggestions sent"]].map(([n, l]) => `<div class="pl" style="border-radius:12px;padding:10px 12px"><div style="font-size:22px;font-weight:800" class="tp">${n}</div><div class="xs mut" style="line-height:1.25">${l}</div></div>`).join("")}</div>
+      <div class="h3" style="margin-top:4px">Special badges</div>
+      <div class="row g12">${[[P.rocket, "#f08328"], [P.star, "#fab32d"], [P.users, "#199cba"], [P.bulb, "#7c6fd6"], [P.heart, "#e8708a"], [P.compass, "#2fa66a"]].map(([p, c]) => hexb(p, c, 44)).join("")}</div>
+    </div>
+    <div class="col g20">
+      <div class="card"><div class="row sb"><div class="h3">Challenge badges</div><span class="sm tp" style="font-weight:700">See all</span></div>
+        <div class="row g20" style="margin-top:16px">${[[P.mic, "#199cba", "First workshop"], [P.users, "#f08328", "Mentor"], [P.chart, "#2fa66a", "Data savvy"], [P.zap, "#7c6fd6", "Fast learner"], [P.shield, "#e8708a", "Safety first"], [P.globe ?? P.compass, "#fab32d", "Explorer"]].map(([p, c, l]) => `<div class="col g6" style="align-items:center;width:84px">${medal(p, c, 56)}<span class="xs mut" style="text-align:center">${l}</span></div>`).join("")}</div></div>
+      <div class="card row g20" style="background:linear-gradient(110deg,color-mix(in srgb,var(--p) 14%,#fff),#fff 70%)"><div style="width:52px;height:52px;border-radius:14px" class="bp row" >${ic(P.bulb, 28)}</div><div style="flex:1"><div class="xs mut" style="font-weight:700;text-transform:uppercase;letter-spacing:.08em">Daily trivia</div><div style="font-size:17px;font-weight:700;margin-top:4px">Which planet has the longest day in the solar system?</div></div><span class="btn o r">Reveal answer</span></div>
+      <div class="card col g12" style="flex:1"><div class="row g10">${av("Marco Testa", 40)}<div><div style="font-weight:700">Marco Testa</div><div class="xs mut"><span class="tp" style="font-weight:700">Wins of the week</span> · 2 hours ago</div></div><span style="margin-left:auto;color:#9aa5ad">${ic(P.dots)}</span></div>
+        <div style="font-size:19px;font-weight:800">Spring onboarding cohort: 24 new colleagues on board</div>
+        <div style="height:190px;border-radius:12px;overflow:hidden;background:#fdf1e3;display:grid;place-items:center">${illGrowth(250)}</div>
+        <div class="sm" style="color:#4c5962;line-height:1.5">Thanks to every buddy who gave their time this month. The new colleagues finished their first challenge together and shared what they learned in the Learning corner.</div>
+        <div class="row g8"><span class="reac on">${ic(P.thumb, 16)}32</span><span class="reac">${ic(P.hands, 16)}18</span><span class="reac">${ic(P.heart, 16)}11</span><span class="reac">${ic(P.bulb, 16)}4</span><span class="reac">${ic(P.laugh, 16)}2</span><span class="sm mut" style="margin-left:auto">7 comments</span></div></div>
+    </div></div>`),
+
+  /* ---------- employee: social feed ---------- */
+  "d-feed": () => app("feed", `<div style="display:grid;grid-template-columns:380px 1fr;gap:28px">
+    <div class="col g20"><div class="card col g12"><div class="row g12">${av("Giulia Ferri", 52)}<div><div style="font-weight:800;font-size:17px">Giulia Ferri</div><div class="sm mut">Product Marketing Specialist</div></div></div><div class="row g8">${[[P.rocket, "#f08328"], [P.star, "#fab32d"], [P.users, "#199cba"], [P.bulb, "#7c6fd6"]].map(([p, c]) => hexb(p, c, 34)).join("")}</div><div class="row g8"><span class="pill">${ic(P.file, 15)}My documents</span></div></div>
+      <div class="card col g6" style="padding-bottom:18px"><div class="h2" style="margin-bottom:8px">Feeds</div>
+        ${[["News", 24, "#199cba"], ["Wins of the week", 18, "#f08328"], ["Learning corner", 12, "#2fa66a"], ["Office life", 31, "#e8708a"], ["Ideas lab", 9, "#7c6fd6"], ["Safety on site", 6, "#fab32d"]].map(([n, c, col], i) => `<div class="row g12" style="padding:10px;border-radius:10px;${i === 1 ? "background:color-mix(in srgb,var(--p) 10%,#fff)" : ""}"><span style="width:30px;height:30px;border-radius:50%;background:${col}"></span><div style="flex:1"><div style="font-weight:700">${n}</div><div class="xs mut">${c} posts</div></div><span style="color:#9aa5ad">${ic(P.chevR, 18)}</span></div>`).join("")}
+        <span class="pill" style="align-self:flex-start;margin-top:8px">${ic(P.plus, 15)}Add new feed</span></div></div>
+    <div class="col g16"><div class="row sb"><div class="h1">Wins of the week</div><div class="row g10"><span style="width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--line)">${ic(P.dots, 18)}</span><span class="btn r">${ic(P.plus, 16)}Post in this feed</span></div></div>
+      <div class="card col g12"><div class="row sb"><div style="font-size:21px;font-weight:800">The new warehouse app is live in all six sites</div><span style="color:#9aa5ad">${ic(P.vdots)}</span></div>
+        <div class="row g10">${av("Elena Rinaldi", 32)}<span style="font-weight:700">Elena Rinaldi</span><span class="sm tp" style="font-weight:700">Operations</span><span class="sm mut">· 14/03</span></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;height:200px"><div style="border-radius:12px;background:linear-gradient(135deg,#d7eef4,#bfe2ec);display:grid;place-items:center">${illReward(230)}</div><div class="col g8"><div style="flex:1;border-radius:12px;background:#fdecd9;display:grid;place-items:center">${illGrowth(130)}</div><div style="flex:1;border-radius:12px;background:#e3f3ee;display:grid;place-items:center;font-weight:800;font-size:22px;color:#2f7550">+3</div></div></div>
+        <div class="sm" style="color:#4c5962;line-height:1.55">After eight weeks of testing with the night shifts, the app replaces paper picking lists everywhere. Thank you to the forty colleagues who sent feedback and to the IT team for the weekend releases. <span class="tp" style="font-weight:700">Continue to read</span></div>
+        <div class="row g8"><span class="reac on">${ic(P.thumb, 16)}48</span><span class="reac">${ic(P.hands, 16)}27</span><span class="reac">${ic(P.heart, 16)}15</span><span class="reac">${ic(P.bulb, 16)}6</span><span class="reac">${ic(P.laugh, 16)}3</span></div>
+        <div class="col g6 sm" style="color:#4c5962"><div><b style="color:var(--ink)">Luca Moretti</b> Night shift here: picking time is way down already.</div><div><b style="color:var(--ink)">Sara Colombo</b> Great work everyone, see you at the retro!</div><div class="tp" style="font-weight:700">See all 12 comments</div></div>
+        <div class="row g10" style="background:#f3f6f8;border:1px solid var(--line);border-radius:12px;padding:8px 12px">${av("Giulia Ferri", 34)}<span class="mut sm" style="flex:1">Write a comment…</span><span class="row g12" style="color:#8a959e">${ic(P.smile, 19)}${ic(P.image, 19)}<span class="tp">${ic(P.send, 19)}</span></span></div></div>
+      <div class="card" style="height:120px"><div class="row g10">${av("Davide Conti", 32)}<span style="font-weight:700">Davide Conti</span><span class="sm mut">· 12/03</span></div><div style="font-size:21px;font-weight:800;margin-top:12px">Customer care hits a record month for first-call fixes</div></div>
+    </div></div>`),
+
+  /* ---------- employee: rewards ---------- */
+  "d-rewards": () => app("rewards", `<div class="row g24" style="align-items:stretch">
+    <div class="card row g24" style="flex:1;padding:26px 32px;background:linear-gradient(120deg,#fff,color-mix(in srgb,var(--p) 10%,#fff))">${illReward(200)}<div class="col g10"><div class="h1">Assign a reward</div><div class="mut" style="max-width:360px;line-height:1.5">Help your co-workers grow: thank them for something they did and link it to a skill.</div><span class="btn r" style="align-self:flex-start">${ic(P.users, 17)}Browse co-workers</span></div></div>
+    <div class="card col g12" style="width:420px"><div class="h3">This quarter</div><div class="row g24">${donut(118, [[12, "var(--p)"], [9, "#f08328"]], 14, "21", "rewards")}<div class="col g10 sm"><div class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:var(--p)"></i>12 received</div><div class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:#f08328"></i>9 assigned</div><div class="row g8 mut">Top skill: <b style="color:var(--ink)">Collaboration</b></div></div></div></div></div>
+    <div class="h2" style="margin:28px 0 14px">Reward programs</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">${[["Spring recognition", "Ends 30/06", ["Team player", "Problem solver", "Customer hero"], "#199cba", P.sprout], ["Safety first", "Ends 31/12", ["Safe hands", "Eyes open"], "#2fa66a", P.shield], ["Ideas that stick", "Ends 15/09", ["Bright idea", "Kaizen", "Quick win"], "#7c6fd6", P.bulb]].map(([n, d, rs, c, p]) => `<div class="card col g12"><div class="row g12">${medal(p, c, 46)}<div><div class="h3">${n}</div><div class="xs mut">${d}</div></div></div><div class="row g6" style="flex-wrap:wrap">${rs.map((r) => `<span class="chip" style="background:${c}1f;color:${c}">${r}</span>`).join("")}</div></div>`).join("")}</div>
+    <div class="card" style="margin-top:22px"><div class="tabs"><div class="on">Rewards I received</div><div>Rewards I assigned</div></div>
+      ${[["Luca Moretti", "Team player", "Thanks for covering the launch weekend with me.", "#199cba", P.users, "12/03"], ["Anna Bruni", "Customer hero", "The answer you wrote for the retailer saved the account.", "#f08328", P.heart, "02/03"], ["Paolo Neri", "Problem solver", "You fixed the campaign tracking in one afternoon.", "#7c6fd6", P.bulb, "21/02"]].map(([n, r, t, c, p, d]) => `<div class="row g16" style="padding:14px 4px;border-bottom:1px solid #eef2f5">${av(n, 40)}<div style="flex:1"><div class="sm"><b>${n}</b> <span class="mut">gave you</span> <b style="color:${c}">${r}</b></div><div class="sm mut" style="margin-top:2px">“${t}”</div></div>${hexb(p, c, 34)}<span class="xs mut" style="width:44px;text-align:right">${d}</span></div>`).join("")}</div>`),
+
+  /* ---------- employee: growth (challenges) ---------- */
+  "d-growth": () => app("growth", `<div class="row sb"><div class="h1">Growth</div><span class="btn r">${ic(P.plus, 16)}Request a challenge</span></div>
+    <div class="tabs" style="margin:22px 0"><div class="on">My challenges</div><div>Requested challenges</div><div>Feedback</div><div>Completed</div></div>
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:26px">
+    <div class="col g16">${[["Lead your first customer workshop", 60, "Run a two-hour workshop with a key account and collect their priorities for next year.", "Public speaking", "Elena Rinaldi", "01/02/25 – 30/04/25", P.mic, "#199cba", "ok", "On track"], ["Build the quarterly campaign dashboard", 35, "Bring paid, organic and CRM data into one weekly view for the marketing team.", "Data analysis", "Elena Rinaldi", "15/02/25 – 15/05/25", P.chart, "#2fa66a", "warn", "Behind"], ["Mentor a new colleague", 80, "Be the onboarding buddy of a new hire for their first ninety days.", "Coaching", "Marco Testa", "10/01/25 – 10/04/25", P.users, "#f08328", "ok", "On track"], ["Write the brand tone of voice guide", 15, "Draft the guide with the agency and share it in the Wiki.", "Writing", "Elena Rinaldi", "01/03/25 – 31/05/25", P.edit, "#7c6fd6", "bad", "At risk"]].map(([t, pc, d, sk, from, dates, p, c, st, stl]) => `<div class="card row g20" style="align-items:flex-start">${medal(p, c, 56)}<div class="col g8" style="flex:1"><div class="row sb"><div class="h3" style="font-size:17px">${t}</div><span class="chip ${st}">${stl}</span></div><div class="row g12"><div class="bar" style="width:260px"><i style="width:${pc}%;background:${c}"></i></div><span class="sm" style="font-weight:800">${pc}%</span></div><div class="sm mut">${d}</div><div class="row g12 xs mut"><span class="row g4">${ic(P.cal, 14)}${dates}</span><span class="chip" style="background:${c}1c;color:${c}">${sk}</span><span class="row g6">${av(from, 22)}from ${from}</span></div></div><span style="color:#9aa5ad;align-self:center">${ic(P.chevR)}</span></div>`).join("")}</div>
+    <div class="col g20"><div class="card col g12" style="align-items:center;text-align:center">${illGrowth(220)}<div class="h3">Choose a challenge for your continuous improvement</div><div class="row g24" style="margin-top:6px">${[[3, "active"], [6, "completed"], [2, "requested"]].map(([n, l]) => `<div class="stat"><div class="n tp">${n}</div><div class="xs mut">${l}</div></div>`).join("")}</div></div>
+      <div class="card col g10"><div class="h3">Feedback requests</div>${[["Sara Colombo", "How did the retailer presentation go?"], ["Paolo Neri", "Thoughts on the new landing page?"]].map(([n, q]) => `<div class="row g10" style="padding:6px 0">${av(n, 34)}<div style="flex:1"><div class="sm" style="font-weight:700">${n}</div><div class="xs mut">${q}</div></div><span class="btn o" style="height:32px;padding:0 12px;font-size:12px">Answer</span></div>`).join("")}</div></div></div>`),
+
+  /* ---------- employee: challenge detail with checkpoints ---------- */
+  "d-checkpoints": () => app("growth", `<div class="row g10 sm mut" style="margin-bottom:14px">${ic(P.arrowL, 16)}Growth / My challenges</div>
+    <div style="display:grid;grid-template-columns:1fr 420px;gap:26px">
+    <div class="card col g16" style="height:770px"><div class="row g20">${medal(P.mic, "#199cba", 72)}<div class="col g6" style="flex:1"><div class="h1" style="font-size:26px">Lead your first customer workshop</div><div class="row g12 sm mut"><span class="chip">Public speaking</span><span class="row g4">${ic(P.cal, 14)}01/02/25 – 30/04/25</span><span class="row g6">${av("Elena Rinaldi", 22)}from Elena Rinaldi</span></div></div>${ring(92, 60, "var(--p)", 10)}</div>
+      <div class="hr"></div><div class="row sb"><div class="h2">Checkpoints</div><span class="sm mut">4 of 6</span></div>
+      <div class="col" style="position:relative;padding-left:34px"><div style="position:absolute;left:13px;top:10px;bottom:20px;width:2px;background:var(--line)"></div>
+      ${[["28/03", 60, 4, "ok", "On track", "Agenda agreed with the client. Dry run with Marco on Thursday.", "Good structure. Keep the last 30 minutes for their questions."], ["14/03", 45, 3, "ok", "On track", "Interviewed three account managers to choose the topics.", ""], ["28/02", 25, 1, "warn", "Behind", "Busy with the spring campaign, I moved the interviews.", "Let's protect two hours a week for this."], ["14/02", 10, 3, "ok", "On track", "Read the last two workshop reports in the Wiki.", ""]].map(([d, pc, m, st, stl, t, r]) => `<div style="position:relative;padding-bottom:18px"><span style="position:absolute;left:-30px;top:2px;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--p)"></span>
+        <div class="row g12"><b>${d}</b><span class="chip grey">${pc}%</span>${face(m, 24)}<span class="chip ${st}">${stl}</span></div><div class="sm" style="margin-top:6px;color:#4c5962">${t}</div>${r ? `<div class="row g8 sm" style="margin-top:8px;background:#f5f8fa;border-radius:10px;padding:8px 12px">${av("Elena Rinaldi", 24)}<span style="color:#4c5962">${r}</span></div>` : ""}</div>`).join("")}</div></div>
+    <div class="card col g16" style="align-self:flex-start"><div class="h2">Add a checkpoint</div>
+      <div><div class="lbl">Progress</div><div class="row g12" style="margin-top:12px"><div style="flex:1;position:relative" class="bar"><i style="width:72%"></i></div><b>72%</b></div></div>
+      <div><div class="lbl">How do you feel about it?</div><div class="row sb" style="margin-top:12px">${[0, 1, 2, 3, 4].map((m) => `<div style="padding:6px;border-radius:12px;${m === 4 ? "box-shadow:0 0 0 2px var(--p)" : ""}">${face(m, 40, m === 4)}</div>`).join("")}</div></div>
+      <div><div class="lbl">Notes</div><div class="ta" style="margin-top:10px;height:110px">Dry run done. Marco suggested fewer slides and one exercise in pairs.</div></div>
+      <div class="row g10"><span class="btn" style="flex:1">Save checkpoint</span><span class="btn o">${ic(P.clip, 16)}</span></div>
+      <div class="hr"></div><div class="row g12">${medal(P.gift, "#fab32d", 40)}<div class="sm"><b>Reward when you finish</b><div class="mut">The “First workshop” badge and 50 points</div></div></div></div></div>`),
+
+  /* ---------- employee: voice (surveys + suggestions) ---------- */
+  "d-voice": () => app("voice", `<div style="display:grid;grid-template-columns:1fr 440px;gap:28px">
+    <div class="col g20"><div class="row sb"><div class="h1">Voice</div><div class="seg"><span class="on">Surveys</span><span>Suggestions</span><span>Completed</span></div></div>
+      <div class="card col g20" style="padding:30px 34px"><div class="row sb"><div><div class="lbl">Quarterly pulse · Spring</div><div class="h2" style="margin-top:6px">Question 3 of 8</div></div><span class="chip warn">${ic(P.clock, 13)}Closes in 4 days</span></div>
+        <div class="bar"><i style="width:37%"></i></div>
+        <div style="font-size:24px;font-weight:800;line-height:1.3">How supported do you feel by your team lead when priorities change?</div>
+        <div class="col g10">${["Fully supported", "Mostly supported", "Sometimes supported", "Rarely supported", "Other"].map((o, i) => `<div class="row g12" style="height:54px;padding:0 18px;border-radius:12px;border:1.5px solid ${i === 1 ? "var(--p)" : "var(--line)"};${i === 1 ? "background:color-mix(in srgb,var(--p) 8%,#fff)" : ""}"><span class="radio ${i === 1 ? "on" : ""}"></span><span style="font-weight:600">${o}</span></div>`).join("")}</div>
+        <div class="row sb"><span class="btn o">${ic(P.chevL, 16)}Back</span><span class="btn">Next${ic(P.chevR, 16)}</span></div></div>
+      <div class="card row g16"><div style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center" class="pl tp">${ic(P.voice, 22)}</div><div style="flex:1"><div class="h3">Smart working: one year later</div><div class="sm mut">12 questions · Closes 30/04</div></div><span class="btn o r">Start</span></div></div>
+    <div class="col g20"><div class="card col g12" style="align-items:center;text-align:center">${illVoice(230)}<div class="h3">Share your feedback with your company</div><div class="sm mut">Anonymous where it matters, public when you want.</div></div>
+      <div class="card col g12"><div class="h2">Send a suggestion</div><div class="input" style="color:var(--ink)">Quiet rooms on the second floor</div><div class="ta" style="height:96px">Two of the meeting rooms could become quiet rooms for focused work in the mornings.</div><div class="row sb"><span class="row g10 sm">${'<span class="tog on"></span>'}Make it public</span><span class="btn r">${ic(P.send, 15)}Send</span></div></div></div></div>`),
+
+  /* ---------- employee: OKR tree ---------- */
+  "d-okr": () => {
+    const kr = (t, pc, val) => `<div class="col g6" style="margin-top:10px"><div class="row sb sm"><span>${t}</span><b>${val}</b></div><div class="bar"><i style="width:${pc}%"></i></div></div>`;
+    const okr = (team, t, pc, st, stl, krs, c) => `<div class="card col" style="width:400px;border-top:5px solid ${c}"><div class="row sb"><span class="xs mut" style="font-weight:700;text-transform:uppercase;letter-spacing:.08em">${team}</span><span class="chip ${st}">${stl}</span></div><div class="row g12" style="margin-top:8px"><div class="h3" style="flex:1;font-size:16.5px">${t}</div>${ring(56, pc, c, 6)}</div>${krs}</div>`;
+    return app("okr", `<div class="row sb"><div class="h1">Objectives & key results</div><div class="row g12"><div class="seg"><span class="on">Company</span><span>Team</span><span>Shared</span><span>Analytics</span></div><span class="btn r">${ic(P.plus, 16)}New OKR</span></div></div>
+    <div class="col" style="align-items:center;margin-top:30px">
+      <div class="card row g24" style="width:640px;padding:22px 28px"><div style="flex:1"><div class="row g10"><span class="xs mut" style="font-weight:700;text-transform:uppercase;letter-spacing:.08em">Company · 2025</span><span class="chip ok">On track</span></div><div class="h2" style="margin-top:8px">Keep 92% of our customers year on year</div><div class="sm mut" style="margin-top:4px">3 team objectives · updated 2 days ago</div></div>${ring(96, 64, "var(--p)", 11)}</div>
+      <svg width="900" height="56"><path d="M450 0v22M30 22h840M30 22v34M450 22v34M870 22v34" stroke="#c9d3da" stroke-width="2" fill="none"/></svg>
+      <div class="row g24" style="align-items:flex-start">${okr("Customer care", "Solve problems on the first call", 71, "ok", "On track", kr("First-call resolution from 64% to 80%", 75, "76%") + kr("Average wait under 2 minutes", 68, "2:20"), "#199cba")}
+        ${okr("Sales", "Grow renewals with key accounts", 48, "warn", "Behind", kr("Quarterly business reviews with 40 accounts", 55, "22/40") + kr("Renewal rate from 85% to 90%", 40, "87%"), "#f08328")}
+        ${okr("Product", "Make onboarding self-service", 30, "bad", "At risk", kr("Setup wizard live for new customers", 35, "35%") + kr("Onboarding calls down by 30%", 25, "−8%"), "#7c6fd6")}</div></div>`);
+  },
+
+  /* ---------- employee: wiki home ---------- */
+  "d-wiki": () => app("wiki", `<div class="col" style="align-items:center"><div class="row g12" style="width:720px;height:54px;border-radius:27px;background:#fff;box-shadow:0 4px 18px rgba(20,45,65,.08);padding:0 22px;color:#9aa5ad">${ic(P.search, 20)}<span>Search the Wiki: policies, how-tos, people…</span><span class="btn r" style="margin-left:auto;height:38px">${ic(P.plus, 15)}New article</span></div></div>
+    <div class="h1 tp" style="margin:30px 0 16px">Most popular articles</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px">${[["12/02/2025", "How to request parental leave", "HR · Policies", "Who to tell, which forms to fill in and how the leave adds up with holidays and part time."], ["03/03/2025", "Expense reports in five minutes", "Finance · How-to", "Take a photo of the receipt, pick the project and send it: approvals happen in the app."], ["21/01/2025", "Your first week at the company", "Onboarding", "Accounts, badges, the people to meet and the challenges every new colleague starts with."]].map(([d, t, c, e]) => `<div class="card col g10" style="box-shadow:0 10px 26px rgba(20,45,65,.1);min-height:220px"><span class="xs mut">${d}</span><div style="font-size:19px;font-weight:800">${t}</div><span class="xs tp" style="font-weight:700">${c}</span><div class="sm mut" style="line-height:1.5">${e}</div><span class="sm tp" style="font-weight:700;margin-top:auto">Read ›</span></div>`).join("")}</div>
+    <div class="h1 tp" style="margin:30px 0 16px">Last published</div>
+    ${[["Safety walk: the checklist for site managers", "Safety · Operations", "Luca Moretti", "Every Monday the site manager walks the floor with this list and logs the findings."], ["Booking a meeting room from your phone", "Office · How-to", "Sara Colombo", "Rooms, desks and parking spots now book from the same calendar."]].map(([t, c, by, e]) => `<div class="card row g24" style="margin-bottom:14px"><div style="flex:1"><div style="font-size:20px;font-weight:800">${t}</div><div class="xs tp" style="font-weight:700;margin:4px 0 8px">${c}</div><div class="sm mut">${e}</div></div><div class="col g8" style="align-items:flex-end"><span class="xs mut">Last modified by</span><span class="row g8 sm">${av(by, 26)}<b>${by}</b></span><span class="btn" style="height:34px">Read ›</span></div></div>`).join("")}`),
+
+  /* ---------- employee: wiki article + AI assistant ---------- */
+  "d-wiki-ai": () => app("wiki", `<div style="display:grid;grid-template-columns:1fr 300px;gap:30px;padding-right:440px">
+    <div class="card col g14" style="padding:30px 36px;height:790px;gap:14px"><div class="row sb"><span class="xs tp" style="font-weight:700">HR · Policies</span><span class="row g12" style="color:#8a959e">${ic(P.history, 19)}${ic(P.edit, 19)}${ic(P.share, 19)}</span></div>
+      <div class="h1" style="font-size:28px">How to request parental leave</div>
+      <div class="row g8 xs mut">${av("Anna Bruni", 24)}Last modified by <b style="color:var(--ink)">Anna Bruni</b> · 12/02/2025 · 1,204 views</div>
+      <div class="hr"></div>
+      <div class="h3">1. Tell us early</div><div class="sm" style="color:#4c5962;line-height:1.6">Let your manager and HR know at least two months before the leave starts. You can do it from this article with the request form, or by writing to the HR desk.</div>
+      <div class="h3">2. Fill in the request</div><div class="sm" style="color:#4c5962;line-height:1.6">Pick the dates, attach the certificate and choose whether you want to split the leave into blocks. HR confirms within five working days.</div>
+      <div class="h3">3. Plan your handover</div><div class="sm" style="color:#4c5962;line-height:1.6">Agree with your team who covers your work. A handover template is attached below.</div>
+      <div class="lbl" style="margin-top:6px">Attachments</div>
+      <div class="row g12">${["Request form.pdf", "Handover template.docx"].map((f) => `<div class="row g10" style="border:1px solid var(--line);border-radius:14px;padding:12px 14px;width:250px"><span class="tp">${ic(P.file, 22)}</span><span class="sm" style="flex:1;font-weight:700">${f}</span><span class="mut">${ic(P.dl, 18)}</span></div>`).join("")}</div></div>
+    <div class="col g12"><div class="h3">Popular</div>${["Expense reports in five minutes", "Your first week at the company", "Smart working rules", "Company car policy", "Training budget: how to use it"].map((t, i) => `<div class="row g12 sm" style="padding:10px 0;border-bottom:1.5px dashed color-mix(in srgb,var(--p) 40%,#fff)"><b class="tp" style="font-size:18px;width:18px">${i + 1}</b>${t}</div>`).join("")}</div></div>
+    <div class="abs col" style="right:40px;top:100px;width:400px;height:770px;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(20,45,65,.18);overflow:hidden">
+      <div class="bp row g12" style="padding:18px 20px"><div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center">${ic(P.bot, 22)}</div><div><div style="font-weight:800;font-size:16px">Wiki AI ✨</div><div class="xs" style="opacity:.85">Your personal assistant</div></div><span style="margin-left:auto">${ic(P.x, 20)}</span></div>
+      <div class="col g12" style="padding:18px;flex:1;background:#f6f9fb">
+        <div style="align-self:flex-start;max-width:290px;background:#fff;border-radius:16px 16px 16px 4px;padding:12px 14px" class="sm">Hi, nice to hear from you, how can I help you today?</div>
+        <div style="align-self:flex-end;max-width:290px;border-radius:16px 16px 4px 16px;padding:12px 14px" class="sm bp">Can I split the leave into two blocks?</div>
+        <div style="align-self:flex-start;max-width:310px;background:#fff;border-radius:16px 16px 16px 4px;padding:12px 14px;line-height:1.5" class="sm">Yes. Step 2 of this article says you can split it into blocks when you fill in the request. Each block needs its own start and end date, and HR confirms all of them within five working days.<div class="row g6 xs tp" style="margin-top:8px;font-weight:700">${ic(P.book, 13)}How to request parental leave · step 2</div></div>
+        <div style="align-self:flex-end;max-width:290px;border-radius:16px 16px 4px 16px;padding:12px 14px" class="sm bp">Who covers my work while I'm away?</div>
+        <div style="align-self:flex-start;background:#fff;border-radius:16px;padding:12px 16px" class="row g4"><i style="width:7px;height:7px;border-radius:50%;background:#b8c3cb"></i><i style="width:7px;height:7px;border-radius:50%;background:#b8c3cb"></i><i style="width:7px;height:7px;border-radius:50%;background:#b8c3cb"></i></div></div>
+      <div class="row g10" style="padding:14px 16px;border-top:1px solid var(--line)"><span class="mut sm" style="flex:1">Ask about this article…</span><span class="btn" style="width:40px;padding:0">${ic(P.send, 17)}</span></div></div>`),
+
+  /* ---------- login ---------- */
+  "d-login": () => `<div class="scr" style="background:linear-gradient(135deg,#eaf5fb,#fff 50%,#fff3e6)"><div style="position:absolute;inset:0;filter:blur(70px)">${[["#f08328", 180, 160, 260], ["#199cba", 1160, 140, 300], ["#fab32d", 1040, 640, 260], ["#96cfc3", 260, 620, 300], ["#8ac9e4", 700, 420, 200]].map(([c, x, y, s]) => `<i style="position:absolute;left:${x}px;top:${y}px;width:${s}px;height:${s}px;border-radius:50%;background:${c};opacity:.45"></i>`).join("")}</div>
+    <div class="abs col g20" style="left:500px;top:170px;width:440px;padding:44px 40px;border-radius:22px;background:rgba(255,255,255,.62);backdrop-filter:blur(16px);box-shadow:0 30px 70px rgba(20,45,65,.12);align-items:center;text-align:center">
+      ${bloomWord(1.6)}<div><div style="font-size:26px;font-weight:800">Welcome back</div><div class="mut" style="margin-top:6px">Sign in with your company account</div></div>
+      <div class="row g12" style="width:100%;height:56px;justify-content:center;background:#fff;border-radius:14px;box-shadow:0 0 0 1px var(--line);font-weight:700;font-size:16px"><svg width="22" height="22" viewBox="0 0 22 22"><rect width="10" height="10" fill="#f25022"/><rect x="12" width="10" height="10" fill="#7fba00"/><rect y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>Continue with Microsoft</div>
+      <div class="row g10 mut sm" style="width:100%"><i class="hr" style="flex:1"></i>or<i class="hr" style="flex:1"></i></div>
+      <div class="input" style="width:100%">name@company.com</div><span class="btn" style="width:100%;height:50px;background:#199cba">Send me a sign-in code</span>
+      <span class="xs" style="color:#199cba;font-weight:700">Privacy policy</span></div></div>`,
+
+  /* ---------- HR: admin home ---------- */
+  "a-home": () => admin("home", `<div class="row sb"><div class="h1">Home</div><div class="row g12"><span class="seg"><span>Week</span><span class="on">Month</span><span>Year</span></span>${av("Sara Colombo", 40)}</div></div>
+    <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:22px;margin-top:22px">
+      <div class="card"><div class="row sb"><div class="h3">Adoption</div><span class="xs mut">Last 6 months</span></div><div style="margin-top:14px">${lineChart(555, 230, [{ vals: [52, 58, 61, 66, 63, 72, 78], color: "#199cba" }], ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"], { area: true, dots: true, unit: "%" })}</div></div>
+      <div class="card col g10"><div class="row sb"><div class="h3">Recent activity</div><span class="btn" style="height:32px;font-size:12px">View all</span></div>${[["Luca Moretti", "Suggested a program", "“A recognition program for the night shifts”"], ["Irene Sala", "Challenge checkpoint", "Mentor a new colleague · 80%"], ["Omar Haddad", "Completed a survey", "Quarterly pulse · Spring"], ["Lena Fischer", "Requested a challenge", "Present at the sales kick-off"]].map(([n, a, d]) => `<div class="row g12" style="padding:7px 0;border-bottom:1px solid #eef2f5">${av(n, 38)}<div style="flex:1;min-width:0"><div class="sm" style="font-weight:700">${n}</div><div class="xs tp" style="font-weight:700">${a}</div><div class="xs mut" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d}</div></div><span class="mut">${ic(P.chevR, 16)}</span></div>`).join("")}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-top:22px">
+      <div class="card col g10"><div class="h3">Direct links</div>${["Create challenge", "Create news", "Create survey", "Assign special badge", "New reward program"].map((t) => `<div class="row sb" style="height:42px;padding:0 14px;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--p) 50%,#fff);font-size:13px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.04em">${t}${ic(P.plus, 16)}</div>`).join("")}</div>
+      <div class="card col g8"><div class="h3">Live engagement</div>${["Marco Testa", "Anna Bruni", "Davide Conti", "Chiara Lodi", "Matteo Villa"].map((n, i) => `<div class="row g12" style="padding:5px 0">${av(n, 34)}<span class="sm" style="flex:1;font-weight:600">${n}</span>${spark(70, 24, [3, 5, 4, 6 + i % 2, 5, 7, 8 - i % 3], "#2fa66a")}</div>`).join("")}</div>
+      <div class="card col g8"><div class="row sb"><div class="h3">Long inactivity</div><span class="xs mut">30+ days</span></div>${[["Tommaso Greco", 41], ["Nadia Kerr", 37], ["Hugo Martin", 35], ["Paolo Neri", 33], ["Irene Sala", 31]].map(([n, d]) => `<div class="row g12" style="padding:5px 0">${av(n, 34)}<span class="sm" style="flex:1;font-weight:600">${n}</span><span class="chip grey">${d} days</span></div>`).join("")}</div></div>`),
+
+  /* ---------- HR: analytics ---------- */
+  "a-analytics": () => admin("analytics", `<div class="row sb"><div class="h1">Analytics</div><div class="row g12"><div class="seg"><span class="on">Usage</span><span>Impact</span><span>Importance</span><span>Learning</span></div><span class="btn o">${ic(P.dl, 16)}Export</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:22px">${[["Adoption index", "78", "+6 pts", "#199cba", P.users], ["Engagement index", "64", "+3 pts", "#f08328", P.heart], ["Active users", "1,018", "of 1,240", "#2fa66a", P.activity], ["Avg. daily access", "412", "+12.5%", "#7c6fd6", P.cal]].map(([l, n, d, c, p]) => `<div class="card row g16"><div style="width:48px;height:48px;border-radius:14px;background:${c}1f;color:${c};display:grid;place-items:center">${ic(p, 24)}</div><div><div class="xs mut" style="font-weight:700">${l}</div><div class="row g8" style="align-items:baseline"><span style="font-size:28px;font-weight:800">${n}</span><span class="xs" style="color:${d.startsWith("+") ? "var(--ok)" : "var(--mut)"};font-weight:700">${d}</span></div></div></div>`).join("")}</div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:22px;margin-top:22px">
+      <div class="card"><div class="row sb"><div class="h3">6 month trends</div><div class="row g16 xs"><span class="row g6"><i style="width:14px;height:3px;background:#199cba"></i>Adoption</span><span class="row g6"><i style="width:14px;height:3px;background:#f08328"></i>Engagement</span><span class="row g6"><i style="width:14px;height:3px;background:#2fa66a"></i>Growth</span></div></div><div style="margin-top:12px">${lineChart(570, 250, [{ vals: [61, 66, 63, 72, 75, 78], color: "#199cba" }, { vals: [48, 52, 55, 53, 60, 64], color: "#f08328" }, { vals: [30, 34, 41, 39, 46, 52], color: "#2fa66a", dash: "6 6" }], ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"])}</div></div>
+      <div class="card"><div class="h3">Hourly distribution of last access</div><div class="xs mut">Time of the day</div><div style="margin-top:16px">${barChart(425, 240, [1, 1, 0, 0, 1, 2, 5, 14, 30, 42, 36, 28, 22, 31, 34, 27, 20, 15, 9, 7, 5, 4, 2, 1], "#199cba", [...Array(24).keys()].map((h) => `${h}`), { every: 3, hi: [8, 9, 10, 13, 14] })}</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-top:22px">
+      <div class="card row g20">${donut(130, [[58, "#199cba"], [42, "#f08328"]], 16, "58%", "app")}<div class="col g10 sm"><div class="h3">App vs web</div><span class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:#199cba"></i>iOS & Android</span><span class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:#f08328"></i>Web</span></div></div>
+      <div class="card col g10"><div class="h3">Growth</div>${[["Active challenges", "86"], ["Avg. completed checkpoints", "3.4"], ["Users with a challenge", "61%"]].map(([l, n]) => `<div class="row sb sm"><span class="mut">${l}</span><b>${n}</b></div>`).join("")}</div>
+      <div class="card col g10"><div class="h3">Rewards</div>${[["Reward programs", "5"], ["Rewards this month", "214"], ["Most used skill", "Collaboration"]].map(([l, n]) => `<div class="row sb sm"><span class="mut">${l}</span><b>${n}</b></div>`).join("")}</div></div>`),
+
+  /* ---------- HR: voice analytics + organisational network ---------- */
+  "a-voice": () => admin("voice", `<div class="row sb"><div class="h1">Voice & network</div><div class="row g12"><span class="chip grey">${ic(P.cal, 13)}Last 90 days</span><span class="btn o">${ic(P.filter, 16)}All teams</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:22px">${[["Active surveys", "4"], ["Completed surveys", "2,316"], ["Avg. answer time", "3m 40s"], ["Suggestions", "128"], ["Published", "42%"]].map(([l, n]) => `<div class="card" style="padding:18px 20px"><div class="xs mut" style="font-weight:700">${l}</div><div style="font-size:26px;font-weight:800;margin-top:4px">${n}</div></div>`).join("")}</div>
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:22px;margin-top:22px">
+      <div class="col g22" style="gap:22px"><div class="card"><div class="h3">Most used words</div><div style="margin-top:8px">${cloud(440, 230, [["flexibility", 8, "#199cba"], ["training", 7, "#f08328"], ["team", 6, "#2fa66a"], ["recognition", 5, "#7c6fd6"], ["workload", 5, "#e0504a"], ["parking", 4, "#fab32d"], ["career", 4, "#199cba"], ["tools", 3, "#e8708a"], ["feedback", 4, "#2fa66a"], ["meetings", 3, "#f08328"], ["canteen", 2, "#7c6fd6"], ["growth", 3, "#199cba"], ["clarity", 2, "#e8708a"], ["smart working", 3, "#2fa66a"], ["onboarding", 2, "#f08328"], ["shifts", 2, "#4b8fd1"], ["trust", 2, "#7c6fd6"], ["office", 1, "#75818b"], ["coffee", 1, "#75818b"], ["mentors", 1, "#75818b"]])}</div></div>
+        <div class="card"><div class="row sb"><div class="h3">Sentiment</div><span class="xs mut">Open answers and suggestions</span></div><div class="row" style="height:18px;border-radius:9px;overflow:hidden;margin:16px 0 12px"><i style="width:56%;background:#2fa66a;height:100%"></i><i style="width:29%;background:#fab32d;height:100%"></i><i style="width:15%;background:#e0504a;height:100%"></i></div><div class="row g24 sm"><span class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:#2fa66a"></i>Positive 56%</span><span class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:#fab32d"></i>Neutral 29%</span><span class="row g8"><i style="width:10px;height:10px;border-radius:50%;background:#e0504a"></i>Negative 15%</span></div></div></div>
+      <div class="card"><div class="row sb"><div><div class="h3">Organisational network</div><div class="xs mut">Who works with whom, from rewards, feedback and challenges</div></div></div><div style="margin-top:10px">${network(550, 340)}</div><div class="row g16 xs" style="flex-wrap:wrap">${[["Marketing", "#199cba"], ["Sales", "#f08328"], ["Operations", "#2fa66a"], ["Product", "#7c6fd6"], ["Customer care", "#e8708a"]].map(([t, c]) => `<span class="row g6"><i style="width:10px;height:10px;border-radius:50%;background:${c}"></i>${t}</span>`).join("")}</div></div></div>`),
+
+  /* ---------- HR: performance ---------- */
+  "a-performance": () => admin("performance", `<div class="row sb"><div class="h1">Performance</div><div class="row g12"><div class="seg"><span>User</span><span class="on">Team</span></div><span class="btn o">Marketing ${ic(P.chevD, 16)}</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px">${[["Business objectives", 68, "#199cba", [40, 46, 52, 55, 61, 68]], ["Engagement", 74, "#f08328", [60, 58, 66, 70, 69, 74]], ["Personal growth", 57, "#2fa66a", [35, 41, 44, 50, 52, 57]]].map(([l, n, c, s]) => `<div class="card row g20">${ring(96, n, c, 10)}<div class="col g8"><div class="h3">${l}</div>${spark(150, 40, s, c)}<span class="xs mut">vs company avg. ${n - 6}%</span></div></div>`).join("")}</div>
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:22px;margin-top:22px">
+      <div class="card"><div class="row sb"><div class="h3">Team progress in ongoing challenges</div><span class="xs mut">8 people</span></div>${[["Giulia Ferri", 60], ["Paolo Neri", 82], ["Chiara Lodi", 45], ["Matteo Villa", 30], ["Nadia Kerr", 71], ["Hugo Martin", 55]].map(([n, pc]) => `<div class="row g12" style="margin-top:13px">${av(n, 30)}<span class="sm" style="width:110px;font-weight:600">${n}</span><div class="bar" style="flex:1"><i style="width:${pc}%"></i></div><b class="sm" style="width:40px;text-align:right">${pc}%</b></div>`).join("")}</div>
+      <div class="card"><div class="h3">Soft skills vs hard skills</div><div class="xs mut">Team average against role targets</div><div class="row" style="justify-content:center;margin-top:4px">${radar(290, ["COM", "LEA", "PRO", "CRE", "ANA", "TEC", "NEG", "ORG"], [3.8, 3.2, 3.9, 4.3, 3.1, 2.9, 3.3, 3.7], [4, 3.5, 4, 4, 3.8, 3.2, 3.5, 3.5], "#f08328")}</div></div></div>
+    <div class="card" style="margin-top:22px;padding-bottom:10px"><div class="h3">Compared to other teams</div><table class="t" style="margin-top:6px"><tr><th>Team</th><th style="width:380px">Challenge progress</th><th>People</th><th>OKR</th><th>Survey answers</th></tr>${[["Marketing", 62, 8, 71, 92], ["Sales", 48, 14, 48, 81]].map(([t, pc, n, okr, s]) => `<tr><td style="font-weight:700">${t}</td><td><div class="row g10"><div class="bar" style="flex:1;height:10px"><i style="width:${pc}%;background:#2fa66a"></i></div><b>${pc}%</b></div></td><td>${n}</td><td>${ring(36, okr, "#199cba", 5, "")}</td><td>${s}%</td></tr>`).join("")}</table></div>`),
+
+  /* ---------- HR: survey builder ---------- */
+  "a-survey": () => admin("voice", `<div class="row sb"><div><div class="sm mut row g8">${ic(P.arrowL, 15)}Surveys</div><div class="h1" style="margin-top:6px">New survey</div></div><div class="row g10"><span class="btn o">${ic(P.link, 16)}Copy link</span><span class="btn o">${ic(P.dl, 16)}Answers (CSV)</span><span class="btn">Save survey</span></div></div>
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:26px;margin-top:22px">
+    <div class="col g18" style="gap:18px">
+      <div class="card strip col g12" style="padding:24px 28px"><div style="font-size:24px;font-weight:800">Quarterly pulse · Spring</div><div class="sm mut">Eight questions on workload, support and recognition. Answers are anonymous below groups of five.</div><div class="row g10 sm"><span class="tp">${ic(P.clock, 17)}</span>Deadline: <b>30/04/2025</b></div></div>
+      <div class="card strip col g14" style="padding:22px 28px;gap:14px"><div class="row g12"><div class="input" style="flex:1;color:var(--ink);font-weight:700">How supported do you feel by your team lead when priorities change?</div><div class="input" style="width:200px;color:var(--ink)">Closed question ${ic(P.chevD, 16)}</div></div><div class="input" style="width:260px;color:var(--ink)">Category: Leadership</div>
+        <div class="row g12">${["Strongly disagree", "Disagree", "Agree", "Strongly agree"].map((o, i) => `<div class="row g10 sm" style="flex:1;height:46px;padding:0 14px;border-radius:12px;border:1px solid var(--line)"><span class="radio"></span>${o}</div>`).join("")}</div>
+        <div class="row sb"><span class="sm tp" style="font-weight:700">${ic(P.plus, 15, 2, 'style="display:inline;vertical-align:-3px"')} Add option</span><span class="row g16" style="color:#8a959e">${ic(P.copy, 19)}${ic(P.x, 19)}<span class="row g8 sm">Required <span class="tog on"></span></span></span></div></div>
+      <div class="card strip col g12" style="padding:22px 28px;border-left-color:#c3ccd3"><div class="row g12"><div class="input" style="flex:1;color:var(--ink);font-weight:700">What would make your work easier next quarter?</div><div class="input" style="width:200px;color:var(--ink)">Open question ${ic(P.chevD, 16)}</div></div><div class="ta mut" style="height:70px;color:#9aa5ad">Long answer text</div></div></div>
+    <div class="col g16"><div class="card col g12"><div class="h3">Assign to</div>${[["Whole company", true], ["Marketing", false], ["Sales", false], ["Operations", false]].map(([t, on]) => `<div class="row g10 sm"><span class="check ${on ? "on" : ""}">${on ? ic(P.check, 13, 3) : ""}</span>${t}</div>`).join("")}</div>
+      <div class="card col g10"><div class="h3">Questions</div>${["Workload", "Leadership", "Leadership", "Recognition", "Tools", "Growth", "Open", "Open"].map((c, i) => `<div class="row g10 sm"><b class="tp" style="width:18px">${i + 1}</b><span class="mut">${c}</span>${i === 2 ? '<span class="chip" style="margin-left:auto">editing</span>' : ""}</div>`).join("")}<span class="btn o" style="margin-top:6px">${ic(P.plus, 16)}Add question</span></div></div></div>`),
+
+  /* ---------- HR: reviews list ---------- */
+  "a-reviews": () => {
+    const st = (who, done) => `<span class="chip ${done ? "ok" : "warn"}">${who}: ${done ? "completed" : "waiting"}</span>`;
+    const row = (n, role, a, b) => `<div class="card row g20" style="padding:16px 22px">${av(n, 56)}<div style="width:250px"><div style="font-weight:800;font-size:16px">${n}</div><div class="xs mut">${role}</div></div><div class="row g8" style="flex:1">${st(n === "Giulia Ferri" ? "You" : "Employee", a)}${st("Manager", b)}</div><span class="btn o" style="height:36px">${ic(P.eye, 16)}View</span><span class="btn o" style="height:36px">${ic(P.send, 15)}Copy link</span><span class="btn o" style="height:36px">${ic(P.dl, 16)}PDF</span></div>`;
+    return admin("reviews", `<div class="row sb"><div class="h1">Reviews 2025</div><div class="row g12"><div class="seg"><span class="on">Mid-year</span><span>Year end</span></div><span class="btn">${ic(P.plus, 16)}Start a review cycle</span></div></div>
+      <div class="row g16" style="margin:22px 0">${[["Completed", 46, "var(--ok)"], ["Waiting for employee", 21, "#c27c0e"], ["Waiting for manager", 33, "var(--p)"]].map(([l, pc, c]) => `<div class="card" style="flex:1;padding:16px 20px"><div class="row sb sm"><span class="mut" style="font-weight:700">${l}</span><b style="color:${c}">${pc}%</b></div><div class="bar" style="margin-top:10px"><i style="width:${pc}%;background:${c}"></i></div></div>`).join("")}</div>
+      <div class="h2" style="margin-bottom:12px">Your review</div>${row("Giulia Ferri", "Product Marketing Specialist", true, false)}
+      <div class="h2" style="margin:22px 0 12px">Your team's reviews</div><div class="col g10">${row("Paolo Neri", "Content Designer", true, true)}${row("Chiara Lodi", "Performance Marketer", true, false)}${row("Matteo Villa", "Junior Copywriter", false, false)}</div>
+      <div class="h2" style="margin:22px 0 12px">Other reviews</div>${row("Nadia Kerr", "Brand Manager", true, true)}`);
+  },
+
+  /* ---------- HR: review form ---------- */
+  "a-review": () => {
+    const opts = ["Underperforming", "Growing", "Well done", "Outstanding"];
+    const skill = (n, d, a, m) => `<div class="card strip col g12" style="padding:20px 26px"><div class="row g8"><div class="h3" style="font-size:17px">${n}</div><span class="mut">${ic(P.info, 16)}</span></div><div class="sm mut">${d}</div>
+      <div class="row g10">${opts.map((o, i) => `<div class="row g8 sm" style="flex:1;height:42px;padding:0 12px;border-radius:10px;border:1.5px solid ${i === m ? "var(--p)" : "var(--line)"};${i === m ? "background:color-mix(in srgb,var(--p) 8%,#fff);font-weight:700" : ""}"><span class="radio ${i === m ? "on" : ""}"></span>${o}${i === a ? `<span class="chip grey" style="margin-left:auto;height:20px;font-size:10.5px">self</span>` : ""}</div>`).join("")}</div>
+      <div class="ta sm" style="color:#4c5962">${["Clear briefs to the agency, and she now checks the data before every launch.", "Took the lead on the workshop without being asked. Next step: delegate more."][n === "Customer focus" ? 0 : 1]}</div></div>`;
+    return admin("reviews", `<div class="row g20">${av("Giulia Ferri", 64)}<div><div class="sm mut">Mid-year review · Manager evaluation</div><div class="h1" style="font-size:26px">Giulia Ferri</div></div><span class="chip ok" style="margin-left:16px">Self-evaluation completed</span><span class="btn" style="margin-left:auto">Submit review</span></div>
+      <div style="display:grid;grid-template-columns:1fr 330px;gap:24px;margin-top:22px">
+        <div class="col g16">${skill("Customer focus", "Understands what customers need and turns it into the team's priorities.", 2, 2)}${skill("Initiative", "Starts things without waiting to be asked and sees them through.", 3, 3)}
+          <div class="card strip col g10" style="padding:20px 26px"><div class="h3">Development plan</div><div class="row g12"><div class="input" style="width:240px;color:var(--ink)">Data analysis ${ic(P.chevD, 16)}</div><div class="input" style="flex:1;color:var(--ink)">Build the campaign dashboard with the BI team by June</div></div></div></div>
+        <div class="col g16"><div class="card col g10" style="align-items:center;text-align:center"><div class="h3">Overall rating</div>${ring(130, 81, "var(--p)", 12, "3.25")}<div class="sm mut">Average of the skill ratings, from 1 to 4</div><span class="chip">Well done</span></div>
+          <div class="card col g10"><div class="h3">Career goals</div><div class="sm" style="color:#4c5962;line-height:1.5">Grow into a team lead role within two years and spend more time with customers.</div></div>
+          <div class="card col g8"><div class="h3">Ratings</div>${opts.map((o, i) => `<div class="row sb sm"><span class="mut">${o}</span><b>${[0, 1, 4, 2][i]}</b></div>`).join("")}</div></div></div>`);
+  },
+
+  /* ---------- HR: special badges ---------- */
+  "a-badges": () => {
+    const holder = (n, r) => `<div class="row g10" style="background:#f3f6f8;border-radius:10px;padding:6px 10px">${av(n, 30)}<div><div class="xs" style="font-weight:700">${n}</div><div style="font-size:11px" class="mut">${r}</div></div><span class="mut">${ic(P.x, 14)}</span></div>`;
+    return admin("badges", `<div class="row sb"><div class="h1">Special badges</div><span class="btn r">${ic(P.plus, 16)}Add special badge</span></div>
+      <div class="col g18" style="margin-top:22px;gap:18px">${[["Rocket launch", "For the people behind a product launch", P.rocket, "#f08328", [["Elena Rinaldi", "Operations Lead"], ["Luca Moretti", "Shift Supervisor"], ["Davide Conti", "IT Specialist"]]], ["North star", "Chosen by the leadership team each quarter", P.star, "#fab32d", [["Anna Bruni", "Key Account"], ["Paolo Neri", "Content Designer"]]], ["Bridge builder", "Brought two teams together on a project", P.users, "#199cba", [["Sara Colombo", "HR Business Partner"], ["Omar Haddad", "Data Analyst"], ["Lena Fischer", "Sales Manager"], ["Irene Sala", "Customer Care"]]], ["Bright idea", "A suggestion that became a project", P.bulb, "#7c6fd6", [["Matteo Villa", "Junior Copywriter"]]]].map(([n, d, p, c, hs]) => `<div class="card row g24"><div class="row g16" style="width:340px">${hexb(p, c, 58)}<div><div class="h3" style="font-size:17px">${n}</div><div class="xs mut">${d}</div></div></div><div class="col g8" style="flex:1"><span class="xs mut" style="font-weight:700">Assigned to</span><div class="row g10" style="flex-wrap:wrap">${hs.map(([a, b]) => holder(a, b)).join("")}<div style="width:44px;height:44px;border-radius:10px;border:2px dashed #c3ccd3;display:grid;place-items:center;color:#9aa5ad">${ic(P.plus, 18)}</div></div></div><span class="mut">${ic(P.vdots)}</span></div>`).join("")}</div>`);
+  },
+
+  /* ---------- HR: people and team tree ---------- */
+  "a-people": () => {
+    const node = (t, n, c, w = 170) => `<div class="card col g4" style="width:${w}px;padding:10px 12px;border-top:4px solid ${c};align-items:center;text-align:center"><span class="xs" style="font-weight:800">${t}</span><span style="font-size:11px" class="mut">${n} people</span></div>`;
+    return admin("people", `<div class="row sb"><div class="h1">Users & teams</div><div class="row g10"><span class="btn o">${ic(P.upl, 16)}Import CSV</span><span class="btn o"><svg width="16" height="16" viewBox="0 0 22 22"><rect width="10" height="10" fill="#f25022"/><rect x="12" width="10" height="10" fill="#7fba00"/><rect y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>Sync directory</span><span class="btn">${ic(P.plus, 16)}New user</span></div></div>
+      <div style="display:grid;grid-template-columns:1fr 400px;gap:22px;margin-top:22px">
+      <div class="card" style="padding:14px 18px"><div class="row g10" style="margin-bottom:8px"><div class="input" style="flex:1">${ic(P.search, 16)}&nbsp; Search 1,240 users</div><span class="btn o">${ic(P.filter, 16)}Filters</span></div>
+        <table class="t"><tr><th>Name</th><th>Team</th><th>Role</th><th>Permission</th><th>Last access</th></tr>${[["Giulia Ferri", "Marketing", "Product Marketing", "Mid", "Employee", "today"], ["Elena Rinaldi", "Operations", "Operations Lead", "Senior", "Manager", "today"], ["Sara Colombo", "People", "HR Business Partner", "Senior", "HR admin", "today"], ["Luca Moretti", "Operations · Site 2", "Shift Supervisor", "Mid", "Manager", "yesterday"], ["Anna Bruni", "Sales", "Key Account", "Senior", "Employee", "2 days ago"], ["Omar Haddad", "Product", "Data Analyst", "Junior", "Employee", "today"], ["Lena Fischer", "Sales · DACH", "Sales Manager", "Senior", "Manager", "3 days ago"], ["Tommaso Greco", "Operations · Site 4", "Warehouse Operator", "Junior", "Employee", "41 days ago"], ["Irene Sala", "Customer care", "Care Specialist", "Mid", "Employee", "today"], ["Paolo Neri", "Marketing", "Content Designer", "Mid", "Employee", "yesterday"], ["Chiara Lodi", "Marketing", "Performance Marketer", "Junior", "Employee", "today"]].map(([n, t, r, s, p, l]) => `<tr><td><span class="row g10">${av(n, 30)}<b>${n}</b></span></td><td>${t}</td><td class="mut">${r}</td><td><span class="chip ${p === "Employee" ? "grey" : ""}">${p}</span></td><td class="mut">${l}</td></tr>`).join("")}</table></div>
+      <div class="card col g10" style="align-items:center"><div class="row sb" style="width:100%"><div class="h3">Team tree</div><span class="xs mut">drag to move a team</span></div>
+        <div style="margin-top:6px">${node("Company", 1240, "var(--p)", 180)}</div><svg width="352" height="28"><path d="M176 0v14M52 14h248M52 14v14M176 14v14M300 14v14" stroke="#c9d3da" stroke-width="2" fill="none"/></svg>
+        <div class="row" style="gap:20px">${node("Commercial", 312, "#f08328", 104)}${node("Operations", 684, "#2fa66a", 104)}${node("Staff", 244, "#7c6fd6", 104)}</div>
+        <svg width="352" height="28"><path d="M52 0v14M26 14h60M26 14v14M86 14v14M176 0v14M146 14h60M146 14v14M206 14v14M300 0v14M266 14h60M266 14v14M326 14v14" stroke="#c9d3da" stroke-width="2" fill="none"/></svg>
+        <div class="row" style="gap:8px">${[["Sales", "#f08328"], ["Care", "#f08328"], ["Site 1", "#2fa66a"], ["Site 2", "#2fa66a"], ["People", "#7c6fd6"], ["Mktg", "#7c6fd6"]].map(([t, c]) => `<div class="card" style="width:52px;padding:8px 2px;border-top:3px solid ${c};text-align:center;font-size:10.5px;font-weight:800">${t}</div>`).join("")}</div>
+        <div class="hr" style="width:100%;margin-top:12px"></div><div class="col g8 sm" style="width:100%"><div class="row sb"><span class="mut">Manager scope</span><b>team + sub-teams</b></div><div class="row sb"><span class="mut">Roles with required skills</span><b>38</b></div><div class="row sb"><span class="mut">Last directory sync</span><b>today, 06:00</b></div></div></div></div>`);
+  },
+
+  /* ---------- super admin: workspace setup ---------- */
+  "s-workspace": () => {
+    const mods = [["Rewards", 1], ["Growth & challenges", 1], ["Voice & surveys", 1], ["OKR", 1], ["Private OKRs", 0], ["Analytics", 1], ["Social feed", 1], ["Manager evaluations", 1], ["Wiki & AI assistant", 1], ["Anonymous CSV export", 0]];
+    return `<div class="scr" style="--p:#24408e"><div class="nav" style="background:#12343f;color:#fff;border:0">${bloomWord(1, "#fff")}<span class="chip" style="background:rgba(255,255,255,.14);color:#fff">Super admin</span><div class="row g24 sm" style="margin-left:auto;opacity:.85"><span>Workspaces</span><span>Users</span><span>Billing</span></div>${av("Jacopo M", 38, "#f08328")}</div>
+    <div class="main" style="display:grid;grid-template-columns:1fr 430px;gap:28px">
+      <div class="col g18" style="gap:18px"><div class="row sb"><div><div class="sm mut">Workspaces / New</div><div class="h1">Halden Logistics</div></div><div class="row g10"><span class="btn o">Cancel</span><span class="btn">Create workspace</span></div></div>
+        <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:18px 24px"><div class="col g8"><span class="lbl">Workspace name</span><div class="input" style="color:var(--ink)">Halden Logistics</div></div><div class="col g8"><span class="lbl">Website</span><div class="input" style="color:var(--ink)">halden.example</div></div>
+          <div class="col g8"><span class="lbl">Primary colour</span><div class="row g10">${["#199cba", "#24408e", "#f08328", "#2fa66a", "#7c6fd6", "#c2557c"].map((c) => `<span style="width:36px;height:36px;border-radius:10px;background:${c};${c === "#24408e" ? "box-shadow:0 0 0 3px #fff,0 0 0 5px #24408e" : ""}"></span>`).join("")}<div class="input" style="width:120px;color:var(--ink)">#24408E</div></div></div>
+          <div class="col g8"><span class="lbl">Logo</span><div class="row g12" style="height:42px">${WS.halden.logo(.9)}<span class="btn o" style="margin-left:auto;height:36px">${ic(P.upl, 15)}Replace</span></div></div>
+          <div class="col g8"><span class="lbl">Sign-in</span><div class="input" style="color:var(--ink)">Microsoft single sign-on ${ic(P.chevD, 16)}</div></div><div class="col g8"><span class="lbl">Privacy policy URL</span><div class="input" style="color:var(--ink)">halden.example/privacy</div></div></div>
+        <div class="card"><div class="row sb"><div class="h3">Modules</div><span class="xs mut">Changes reach the apps in real time</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 40px;margin-top:16px">${mods.map(([m, on]) => `<div class="row sb sm" style="height:34px"><span style="font-weight:600">${m}</span><span class="tog ${on ? "on" : ""}"></span></div>`).join("")}</div></div></div>
+      <div class="card col g14" style="background:#f5f7fb;align-items:center;gap:14px"><div class="row sb" style="width:100%"><div class="h3">Live preview</div><div class="seg"><span class="on">App</span><span>Web</span></div></div>
+        <div style="width:300px;height:630px;border-radius:40px;background:#14181c;padding:10px"><div style="width:100%;height:100%;border-radius:31px;background:#f5f8fa;overflow:hidden;position:relative">
+          <div class="row sb" style="padding:22px 18px 10px">${WS.halden.logo(.7)}<span style="color:#56636c">${ic(P.bell, 18)}</span></div>
+          <div style="margin:6px 14px;border-radius:16px;padding:16px;background:#24408e;color:#fff"><div class="xs" style="opacity:.8">Good morning</div><div style="font-size:18px;font-weight:800;margin-top:2px">Welcome to Halden</div><div class="bar" style="background:rgba(255,255,255,.25);margin-top:12px"><i style="width:40%;background:#fff"></i></div><div class="xs" style="margin-top:6px;opacity:.85">Onboarding 2 of 5</div></div>
+          ${[["Rewards", P.award], ["Growth", P.sprout], ["Voice", P.voice]].map(([t, p]) => `<div class="row g10" style="margin:8px 14px;background:#fff;border-radius:12px;padding:12px"><span style="width:32px;height:32px;border-radius:9px;background:#24408e1c;color:#24408e;display:grid;place-items:center">${ic(p, 17)}</span><b class="sm">${t}</b><span class="mut" style="margin-left:auto">${ic(P.chevR, 16)}</span></div>`).join("")}
+          <div style="position:absolute;left:0;right:0;bottom:0;height:62px;background:#24408e;border-radius:20px 20px 0 0;display:flex;justify-content:space-around;align-items:center;color:rgba(255,255,255,.75)">${[P.home, P.sprout, P.award, P.voice, P.book].map((p, i) => `<span style="${i ? "" : "color:#fff"}">${ic(p, 19)}</span>`).join("")}</div></div></div></div></div></div>`;
+  },
+
+  /* ================= mobile ================= */
+  "m-home": () => mob("home", `<div style="border-radius:20px;padding:18px;background:var(--p);color:#fff;position:relative;overflow:hidden"><div class="row g12">${av("Giulia Ferri", 48, "rgba(255,255,255,.22)")}<div><div class="xs" style="opacity:.85">Good morning</div><div style="font-size:19px;font-weight:800">Giulia</div></div></div><div class="row sb" style="margin-top:16px">${[[12, "rewards"], [3, "challenges"], [2, "surveys"]].map(([n, l]) => `<div><div style="font-size:22px;font-weight:800">${n}</div><div style="font-size:11px;opacity:.85">${l}</div></div>`).join("")}</div><svg class="abs" style="right:-30px;top:-30px;opacity:.18" width="140" height="140" viewBox="-20 -20 40 40">${[0, 1, 2, 3, 4].map((i) => `<ellipse cy="-9.5" rx="6.6" ry="9.5" fill="#fff" transform="rotate(${i * 72})"/>`).join("")}</svg></div>
+    <div class="row sb" style="margin:18px 0 10px"><b style="font-size:16px">Your challenges</b><span class="xs tp" style="font-weight:700">See all</span></div>
+    <div class="row g10">${[[P.mic, "#199cba", "Customer workshop", 60], [P.users, "#f08328", "Mentor a colleague", 80]].map(([p, c, t, pc]) => `<div class="card col g8" style="flex:1;padding:14px">${medal(p, c, 38)}<b class="sm">${t}</b><div class="bar" style="height:6px"><i style="width:${pc}%;background:${c}"></i></div><span class="xs mut">${pc}%</span></div>`).join("")}</div>
+    <div class="row sb" style="margin:18px 0 10px"><b style="font-size:16px">News</b><span class="xs tp" style="font-weight:700">Wins of the week</span></div>
+    <div class="card col g10" style="padding:14px"><div class="row g8">${av("Elena Rinaldi", 30)}<div><div class="xs" style="font-weight:700">Elena Rinaldi</div><div style="font-size:11px" class="mut">Operations · 2h</div></div></div><b style="font-size:15px">The new warehouse app is live in all six sites</b><div style="height:110px;border-radius:12px;background:linear-gradient(135deg,#d7eef4,#bfe2ec);display:grid;place-items:center">${illReward(140)}</div><div class="row g6">${[[P.thumb, 48, 1], [P.hands, 27], [P.heart, 15], [P.bulb, 6]].map(([p, n, on]) => `<span class="reac ${on ? "on" : ""}" style="height:28px;padding:0 9px;font-size:12px">${ic(p, 14)}${n}</span>`).join("")}</div></div>`),
+
+  "m-growth": () => mob("growth", `<div class="col" style="align-items:center;text-align:center;padding:4px 0 12px">${illGrowth(210)}<b style="font-size:18px;margin-top:6px">Growth</b><span class="sm mut" style="margin-top:4px">Choose a challenge for your continuous improvement</span></div>
+    ${[[P.coffee, "#2fa66a", "Coffee with a mentor", "Coaching", "Request sent"], [P.mic, "#199cba", "Lead a customer workshop", "Public speaking", "60%"], [P.chart, "#7c6fd6", "Build the campaign dashboard", "Data analysis", "35%"]].map(([p, c, t, s, r]) => `<div class="card row g12" style="padding:12px 14px;margin-bottom:10px">${medal(p, c, 40)}<div style="flex:1"><b class="sm">${t}</b><div class="xs" style="color:${c};font-weight:700">${s}</div></div><span class="xs mut" style="font-weight:700">${r}</span></div>`).join("")}
+    <span class="btn r" style="width:100%;height:48px;margin-top:6px">Request a challenge</span>`, { ws: "halden" }),
+
+  "m-checkpoint": () => mob("growth", `<div class="card col g12" style="padding:16px"><div class="row g12">${medal(P.users, "#f08328", 44)}<div><b class="sm">Mentor a new colleague</b><div class="xs mut">Coaching · ends 10/04</div></div></div><div class="row g10"><div class="bar" style="flex:1"><i style="width:80%"></i></div><b class="sm">80%</b></div></div>
+    <b style="font-size:16px;display:block;margin:18px 0 10px">How is it going?</b><div class="row sb">${[0, 1, 2, 3, 4].map((m) => `<div style="padding:4px;border-radius:12px;${m === 3 ? "box-shadow:0 0 0 2px var(--p)" : ""}">${face(m, 48, m === 3)}</div>`).join("")}</div>
+    <b style="font-size:16px;display:block;margin:18px 0 10px">Progress</b><div class="card" style="padding:16px"><div class="row sb sm"><span class="mut">From 80%</span><b class="tp">to 90%</b></div><div class="bar" style="margin-top:10px;height:10px"><i style="width:90%"></i></div></div>
+    <b style="font-size:16px;display:block;margin:18px 0 10px">Notes for your manager</b><div class="ta sm" style="height:96px">Omar finished his first month. We moved to one check-in a week.</div>
+    <span class="btn r" style="width:100%;height:48px;margin-top:16px">Save checkpoint</span>`, { head: mhead("Checkpoint") }),
+
+  "m-reward": () => mob("rewards", `<div class="row g12" style="margin:4px 0 14px">${av("Omar Haddad", 50)}<div><b style="font-size:16px">Omar Haddad</b><div class="xs mut">Data Analyst · Product</div></div><span class="xs tp" style="margin-left:auto;font-weight:700">Change</span></div>
+    <b style="font-size:15px">Choose a reward</b><div class="xs mut" style="margin:2px 0 10px">Spring recognition</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${[[P.users, "Team player", "Collaboration", 1], [P.bulb, "Problem solver", "Analysis", 0], [P.heart, "Customer hero", "Customer focus", 0], [P.zap, "Quick learner", "Learning", 0]].map(([p, t, s, on]) => `<div class="card col g6" style="padding:12px;align-items:center;text-align:center;${on ? "box-shadow:0 0 0 2px var(--p)" : ""}">${hexb(p, on ? "var(--p)" : "#c3ccd3", 40)}<b class="xs">${t}</b><span style="font-size:10.5px" class="mut">${s}</span></div>`).join("")}</div>
+    <b style="font-size:15px;display:block;margin:16px 0 8px">Add a comment</b><div class="ta sm" style="height:84px">Thanks for rebuilding the sales report overnight before the board meeting.</div>
+    <div class="row g10 sm" style="margin-top:12px"><span class="tog on"></span>Share it in the feed</div>
+    <span class="btn r" style="width:100%;height:48px;margin-top:14px">${ic(P.gift, 18)}Assign reward</span>`, { ws: "corvia", head: mhead("Assign a reward") }),
+
+  "m-survey": () => mob("voice", `<div class="row sb xs" style="margin:2px 0 8px"><b class="tp">Quarterly pulse</b><span class="mut">5 of 8</span></div><div class="bar" style="height:6px"><i style="width:62%"></i></div>
+    <div style="font-size:20px;font-weight:800;line-height:1.3;margin:20px 0">“My work is recognised by the people I work with.”</div>
+    <div class="col g10">${["Strongly disagree", "Disagree", "Agree", "Strongly agree"].map((o, i) => `<div class="row g12" style="height:56px;padding:0 16px;border-radius:14px;background:#fff;border:1.5px solid ${i === 2 ? "var(--p)" : "var(--line)"}">${face([0, 1, 3, 4][i], 26, i === 2)}<b class="sm">${o}</b><span class="radio ${i === 2 ? "on" : ""}" style="margin-left:auto"></span></div>`).join("")}</div>
+    <div class="card row g10" style="margin-top:16px;padding:12px 14px"><span class="tp">${ic(P.lock, 18)}</span><span class="xs mut">Answers are anonymous. HR sees results only for groups of five or more.</span></div>
+    <div class="row g10" style="margin-top:18px"><span class="btn o r" style="width:56px;height:48px;padding:0">${ic(P.chevL, 18)}</span><span class="btn r" style="flex:1;height:48px">Next question</span></div>`, { ws: "corvia", head: mhead("Survey") }),
+
+  "m-wiki": () => mob("wiki", `<div class="row g8" style="margin-bottom:14px"><div class="input" style="flex:1;border-radius:24px">${ic(P.search, 16)}&nbsp; Search the Wiki</div><span class="btn" style="width:42px;height:42px;padding:0;border-radius:50%">${ic(P.plus, 18)}</span></div>
+    <div class="tp" style="font-size:22px;font-weight:800;margin-bottom:10px">Most popular</div>
+    ${[["12/02/2025", "How to request parental leave", "HR · Policies", "Who to tell, which forms to fill in and how the leave adds up with holidays."], ["03/03/2025", "Expense reports in five minutes", "Finance · How-to", "Take a photo of the receipt, pick the project and send it."]].map(([d, t, c, e]) => `<div class="card col g6" style="padding:14px;margin-bottom:10px"><span style="font-size:11px" class="mut">${d}</span><b class="tp" style="font-size:16px">${t}</b><span class="xs" style="font-weight:700">${c}</span><span class="xs mut" style="line-height:1.45">${e}</span><div style="border-top:1.5px dashed var(--line);margin:4px 0"></div><span class="xs tp" style="font-weight:800">Read ›</span></div>`).join("")}
+    <div class="tp" style="font-size:22px;font-weight:800;margin:6px 0 10px">Last published</div>
+    <div class="card row g10" style="padding:14px"><div style="flex:1"><b class="sm">Booking a meeting room from your phone</b><div class="xs mut">Office · How-to</div></div>${av("Sara Colombo", 30)}</div>`, { ws: "lumina" }),
+
+  "m-chat": () => mob("wiki", `<div class="col g10" style="padding-top:4px">
+    <div class="xs mut" style="text-align:center">Today 10:24</div>
+    <div class="row g8" style="align-items:flex-end"><div style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none" class="bp">${ic(P.bot, 16)}</div><div style="background:#fff;border-radius:16px 16px 16px 4px;padding:11px 13px;max-width:270px" class="sm">Hello, how has your day been? Ask me anything about company policies and how-tos.</div></div>
+    <div style="align-self:flex-end;border-radius:16px 16px 4px 16px;padding:11px 13px;max-width:260px" class="sm bp">How many days of training budget do I have this year?</div>
+    <div class="row g8" style="align-items:flex-end"><div style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none" class="bp">${ic(P.bot, 16)}</div><div style="background:#fff;border-radius:16px 16px 16px 4px;padding:11px 13px;max-width:270px;line-height:1.45" class="sm">Every employee has five training days a year, plus any course your manager approves as part of a challenge.<div class="row g6 xs tp" style="margin-top:8px;font-weight:700">${ic(P.book, 12)}Training budget: how to use it</div></div></div>
+    <div style="align-self:flex-end;border-radius:16px 16px 4px 16px;padding:11px 13px;max-width:260px" class="sm bp">Can I use them for an English course?</div>
+    <div class="row g8" style="align-items:flex-end"><div style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none" class="bp">${ic(P.bot, 16)}</div><div style="background:#fff;border-radius:16px 16px 16px 4px;padding:11px 13px;max-width:270px;line-height:1.45" class="sm">Yes, language courses count when they are linked to your role. Ask your manager to add it to your development plan.</div></div>
+    <div class="row g8" style="position:absolute;left:14px;right:14px;bottom:100px;background:#fff;border-radius:24px;padding:6px 6px 6px 16px;box-shadow:0 6px 20px rgba(20,45,65,.1)"><span class="sm mut" style="flex:1">Write here…</span><span class="btn" style="width:38px;height:38px;padding:0;border-radius:50%">${ic(P.send, 16)}</span></div></div>`,
+    { head: `<div class="mhead">${ic(P.chevL, 22)}<div class="col" style="align-items:center"><b style="font-size:16px">Wiki AI ✨</b><span style="font-size:11px" class="mut">Your personal assistant</span></div>${ic(P.dots, 22)}</div>`, ws: "alder" }),
+
+  "m-notifications": () => mob("home", `<div class="row g10" style="margin:2px 0 14px"><b style="font-size:22px">Notifications</b><span class="bp" style="border-radius:999px;padding:2px 9px;font-size:12px;font-weight:800">+4</span><span class="xs tp" style="margin-left:auto;font-weight:700">Mark all as read</span></div>
+    ${[["Today", "Luca Moretti gave you the Team player reward", P.award, "#199cba", 1], ["Today", "New survey: Quarterly pulse · Spring", P.voice, "#f08328", 1], ["Yesterday", "Elena accepted your challenge request", P.sprout, "#2fa66a", 1], ["Yesterday", "Your self-evaluation is ready to fill in", P.flag, "#7c6fd6", 1], ["14/03", "Marco commented on your post", P.comment, "#e8708a", 0], ["12/03", "You earned the Bright idea badge", P.star, "#fab32d", 0], ["10/03", "Checkpoint due on Mentor a new colleague", P.cal, "#199cba", 0]].map(([d, t, p, c, on]) => `<div class="card row g12" style="padding:12px 14px;margin-bottom:9px;opacity:${on ? 1 : .6}"><div style="width:38px;height:38px;border-radius:12px;background:${c}1f;color:${c};display:grid;place-items:center;flex:none">${ic(p, 19)}</div><div style="flex:1"><div style="font-size:11px;font-weight:700" class="tp">${d}</div><div class="sm" style="font-weight:600;line-height:1.3">${t}</div></div><span class="mut">${ic(P.chevR, 16)}</span></div>`).join("")}`),
+};
+
+/* ===================== identity: flowers ===================== */
+const FL = ["#f08328", "#fab32d", "#199cba", "#8ac9e4", "#96cfc3", "#e8708a"];
+// A flat flower head: n petals around a centre
+function flower(x, y, r, n, col, center = "#12343f", rot = 0, op = 1) {
+  let s = `<g transform="translate(${x} ${y}) rotate(${rot})" opacity="${op}">`;
+  for (let i = 0; i < n; i++) s += `<ellipse cx="0" cy="${-r * .52}" rx="${r * (n > 6 ? .2 : .32)}" ry="${r * .52}" fill="${col}" transform="rotate(${(360 / n) * i})"/>`;
+  return s + `<circle r="${r * .26}" fill="${center}"/></g>`;
+}
+function leaf(x, y, len, ang, col) {
+  return `<path d="M0 0C${len * .3} ${-len * .28} ${len * .75} ${-len * .25} ${len} 0C${len * .75} ${len * .22} ${len * .3} ${len * .25} 0 0Z" fill="${col}" transform="translate(${x} ${y}) rotate(${ang})"/>`;
+}
+function stem(x, base, top, col, r, n, rr) {
+  const bend = (rr() - .5) * 60;
+  let s = `<path d="M${x} ${base} C${x} ${base - (base - top) * .4} ${x + bend} ${top + (base - top) * .4} ${x + bend * .6} ${top}" stroke="#2f7550" stroke-width="${Math.max(5, r * .09)}" fill="none" stroke-linecap="round"/>`;
+  const ly = top + (base - top) * (.45 + rr() * .25), lx = x + bend * .4;
+  s += leaf(lx, ly, r * .9, -30 - rr() * 20, "#4f9a6a") + leaf(lx, ly + r * .5, r * .8, 200 + rr() * 20, "#5fae7a");
+  return s + flower(x + bend * .6, top, r, n, col, "#12343f", rr() * 60);
+}
+function drawGardens() {
+  document.querySelectorAll(`#${v} svg.garden`).forEach((svg) => {
+    const k = svg.dataset.kind, W = +svg.getAttribute("width"), H = +svg.getAttribute("height"), rr = rng(k.length * 97 + 5);
+    let s = "";
+    if (k === "hero") {
+      s += `<circle cx="1820" cy="560" r="560" fill="#ffe7cc"/><circle cx="2250" cy="180" r="260" fill="#d9f0ec"/><circle cx="1240" cy="1180" r="300" fill="#dff0f7"/>`;
+      // a rising row of flowers, like a bar chart that blooms
+      [[1240, 900, 70, 6, FL[2]], [1350, 820, 60, 8, FL[1]], [1470, 760, 80, 5, FL[0]], [2240, 520, 92, 6, FL[5]], [2330, 640, 70, 8, FL[4]], [2120, 860, 64, 5, FL[3]]].forEach(([x, top, r, n, c]) => { s += stem(x, H + 20, top, c, r, n, rr); });
+      for (let i = 0; i < 26; i++) { const x = 60 + rr() * 1060, y = 60 + rr() * 1080; if (y > 280 && y < 720 && x < 1150) continue; s += flower(x, y, 10 + rr() * 22, [5, 6, 8][i % 3], FL[i % FL.length], "#12343f", rr() * 90, .9); }
+    } else if (k === "card") {
+      s += `<circle cx="600" cy="1340" r="560" fill="#ffe7cc"/><circle cx="1120" cy="80" r="230" fill="#d9f0ec"/><circle cx="60" cy="500" r="200" fill="#dff0f7"/>`;
+      [[60, 1150, 80, 6, FL[0]], [170, 1290, 60, 8, FL[1]], [1140, 1120, 84, 5, FL[2]], [1040, 1300, 62, 6, FL[5]]].forEach(([x, top, r, n, c]) => { s += stem(x, H + 20, top, c, r, n, rr); });
+      for (let i = 0; i < 14; i++) { const x = 40 + rr() * 1120, y = 40 + rr() * 520; if (y > 110 && y < 470 && x > 120 && x < 1080) continue; s += flower(x, y, 12 + rr() * 22, [5, 6, 8][i % 3], FL[i % FL.length], "#12343f", rr() * 90, .9); }
+    } else if (k === "petals") {
+      for (let i = 0; i < 60; i++) s += flower(rr() * W, rr() * H, 14 + rr() * 40, [5, 6, 8][i % 3], FL[i % FL.length], "#12343f", rr() * 90, .55);
+    } else if (k === "soft") {
+      s += `<circle cx="1900" cy="700" r="620" fill="#ffe7cc"/><circle cx="380" cy="1300" r="420" fill="#d9f0ec"/>`;
+      for (let i = 0; i < 24; i++) { const x = rr() * W, y = rr() * H; s += flower(x, y, 12 + rr() * 26, [5, 6, 8][i % 3], FL[i % FL.length], "#12343f", rr() * 90, .7); }
+    }
+    svg.innerHTML = s;
+  });
+}
+// The two o's of the title open into flowers
+function drawTitles() {
+  document.querySelectorAll(`#${v} .title`).forEach((el) => {
+    const size = +el.dataset.size;
+    el.style.fontSize = size + "px";
+    el.innerHTML = [...el.textContent].map((ch) => ch === "o" ? `<span class="o">o</span>` : ch).join("");
+    el.querySelectorAll(".o").forEach((o, i) => {
+      const b = o.getBoundingClientRect(), r = b.width * .78, cols = [["#f08328", "#fab32d"], ["#199cba", "#96cfc3"]][i % 2];
+      o.style.color = cols[0];
+      const svg = `<svg style="position:absolute;left:50%;top:${size * .5}px;transform:translate(-50%,-50%);z-index:-1;overflow:visible" width="10" height="10">${[0, 1, 2, 3, 4, 5, 6, 7].map((k) => `<ellipse cx="0" cy="${-r * .74}" rx="${r * .17}" ry="${r * .3}" fill="${cols[1]}" transform="rotate(${k * 45 + 22.5})"/>`).join("")}</svg>`;
+      o.insertAdjacentHTML("afterbegin", svg);
+    });
+  });
+}
+function loadDevices() {
+  document.querySelectorAll(`#${v} iframe[data-src]`).forEach((f) => { f.src = `?v=${f.dataset.src}`; });
+}
+// Showcase: isometric grid of desktop screens, each used once; slots that would show only a sliver are dropped
+function buildGrid() {
+  const host = document.querySelector(`#${v} .grid3d`);
+  if (!host) return;
+  const ids = ["a-analytics", "d-home", "a-voice", "d-growth", "a-performance", "d-feed", "a-home", "d-checkpoints", "a-people", "d-okr", "a-review", "d-voice", "a-badges", "d-wiki-ai", "a-survey", "d-rewards", "a-reviews", "d-wiki", "s-workspace", "d-login"];
+  const SW = 1440, SH = 900, gap = 90, cols = 8, rows = 7;
+  const box = host.getBoundingClientRect();
+  const inner = document.createElement("div");
+  host.appendChild(inner);
+  const layout = (s) => {
+    inner.innerHTML = "";
+    Object.assign(inner.style, { position: "absolute", left: "0px", top: "0px", transformOrigin: "0 0", transform: `translate(${box.width * .5}px, ${box.height * .5}px) scale(${s}) rotateX(52deg) rotateZ(-38deg) translate(${-cols * (SW + gap) / 2}px, ${-rows * (SH + gap) / 2}px)` });
+    const slots = [];
+    for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) {
+      const d = document.createElement("div");
+      Object.assign(d.style, { position: "absolute", left: c * (SW + gap) + "px", top: r * (SH + gap) + (c % 2) * 380 + "px", width: SW + "px", height: SH + "px" });
+      inner.appendChild(d);
+      const b = d.getBoundingClientRect();
+      const vw = Math.max(0, Math.min(b.right, box.right) - Math.max(b.left, box.left)), vh = Math.max(0, Math.min(b.bottom, box.bottom) - Math.max(b.top, box.top));
+      slots.push([d, (vw * vh) / (b.width * b.height), Math.hypot(b.left + b.width / 2 - box.left - box.width / 2, b.top + b.height / 2 - box.top - box.height / 2)]);
+    }
+    return slots;
+  };
+  let s = .3, slots;
+  for (; s < 1; s += .02) { slots = layout(s); if (slots.filter(([, f]) => f > .3).length <= ids.length) break; }
+  slots.sort((a, b) => a[2] - b[2]);
+  let k = 0;
+  slots.forEach(([d, f]) => {
+    if (f <= .3 || k >= ids.length) return d.remove();
+    const fr = document.createElement("iframe");
+    fr.className = "shot"; fr.src = `?v=${ids[k++]}`;
+    Object.assign(fr.style, { left: d.style.left, top: d.style.top, width: SW + "px", height: SH + "px" });
+    d.replaceWith(fr);
+  });
+  document.body.setAttribute("data-slots", k);
+}
+
+const run = async () => {
+  // load every face up front: text built later would otherwise stay invisible (display=block) when the render ends
+  await Promise.all(["400", "600", "700", "800"].map((w) => document.fonts.load(`${w} 16px Sen`)).concat(["500", "800"].map((w) => document.fonts.load(`${w} 16px "Bricolage Grotesque"`))));
+  await document.fonts.ready;
+  const el = document.getElementById(v);
+  if (builders[v]) el.innerHTML = builders[v]();
+  if (builders[v]) Object.assign(el.style, v.startsWith("m-") ? { width: "390px", height: "844px" } : { width: "1440px", height: "900px" });
+  drawGardens();
+  drawTitles();
+  loadDevices();
+  buildGrid();
+};
+run();
+</script>
+</body>
+</html>

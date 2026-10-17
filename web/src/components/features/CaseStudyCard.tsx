@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Work } from "@/types";
-import { WorkCover, workCoverBackground } from "./WorkCover";
+import { WorkCover } from "./WorkCover";
 
 interface CaseStudyCardProps {
   work: Work;
@@ -28,7 +28,7 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
       }`}
     >
       <div
-        className={`relative w-full overflow-hidden rounded-card border border-line-soft ${aspect} ${workCoverBackground(work.cover)}`}
+        className={`relative w-full overflow-hidden rounded-card border border-line-soft ${aspect} bg-paper-2`}
       >
         <span className="absolute left-3.5 top-3.5 z-10 rounded-full bg-white/85 px-2.5 py-[5px] font-mono text-[11px] text-ink backdrop-blur-[6px]">
           {work.year}

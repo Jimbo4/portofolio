@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { BackLink } from "@/components/features/BackLink";
-import { caseStudyBodyText, caseStudyComponents, caseStudySectionTitle } from "@/components/features/CaseStudyMdx";
-import { PlaceholderCaseStudy } from "@/components/features/PlaceholderCaseStudy";
-import { WorkCover, workCoverBackground } from "@/components/features/WorkCover";
+import { caseStudyComponents } from "@/components/features/CaseStudyMdx";
+import { WorkCover } from "@/components/features/WorkCover";
 import { getAllWorks, getCaseStudyBody, getWorkBySlug } from "@/lib/case-studies";
 import type { KpiIcon, Work, WorkKpi } from "@/types";
 
@@ -16,12 +15,11 @@ export async function generateMetadata(props: PageProps<"/case-studies/[slug]">)
   const { slug } = await props.params;
   const work = getWorkBySlug(slug);
   if (!work) return {};
-  const ogImage = work.cover.kind === "image" ? [{ url: work.cover.hero, alt: work.cover.alt }] : undefined;
   return {
     title: work.name,
     description: work.description,
     alternates: { canonical: `/case-studies/${work.slug}` },
-    openGraph: { title: work.name, description: work.description, images: ogImage },
+    openGraph: { title: work.name, description: work.description, images: [{ url: work.cover.hero, alt: work.cover.alt }] },
   };
 }
 
@@ -115,6 +113,7 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
   if (!work) notFound();
 
   const body = getCaseStudyBody(slug);
+  if (body === undefined) notFound();
 
   return (
     <article className="mx-auto min-h-screen max-w-[1240px] px-7 pb-24 pt-[120px]">
@@ -137,27 +136,16 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
         {work.name}
       </h1>
       <p className="mt-[18px] max-w-[680px] text-lg leading-[1.55] text-muted">{work.description}</p>
-      {!work.isPlaceholder && <WorkMeta work={work} />}
+      <WorkMeta work={work} />
 
-      <div
-        className={`relative mb-10 mt-8 aspect-[16/8] w-full overflow-hidden rounded-3xl border border-line-soft ${workCoverBackground(work.cover)}`}
-      >
+      <div className="relative mb-10 mt-8 aspect-[16/8] w-full overflow-hidden rounded-3xl border border-line-soft bg-paper-2">
         <WorkCover cover={work.cover} variant="hero" sizes="(max-width: 1240px) 100vw, 1184px" priority />
       </div>
 
-      {body ? <MDXRemote source={body} components={caseStudyComponents} /> : <PlaceholderCaseStudy />}
+      <MDXRemote source={body} components={caseStudyComponents} />
 
       {work.kpis && (
         <section>
-          {work.isPlaceholder && (
-            <>
-              <h2 className={caseStudySectionTitle}>Outcome</h2>
-              <p className={caseStudyBodyText}>
-                {work.name} reached {work.kpis[0].value} {work.kpis[0].caption.toLowerCase()} and {work.kpis[1].value}{" "}
-                {work.kpis[1].caption.toLowerCase()} within the first year.
-              </p>
-            </>
-          )}
           <KpiPanel kpis={work.kpis} icon={work.kpiIcon} />
         </section>
       )}

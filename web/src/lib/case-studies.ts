@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { CaseStudyFrontmatter, KpiIcon, PillarId, Work } from "@/types";
-import { placeholderWorks } from "./works";
 
 const CONTENT_DIR = path.join(process.cwd(), "content/case-studies");
 const PILLAR_IDS: PillarId[] = ["design", "lead", "ai", "grow"];
@@ -49,12 +48,11 @@ function readCaseStudyFile(fileName: string): CaseStudyFile {
     role: data.role,
     blurb: data.blurb,
     description: data.description,
-    cover: { kind: "image", ...data.cover },
+    cover: data.cover,
     pillar: data.pillar,
     kpis: data.kpis,
     kpiIcon: data.kpiIcon,
     links: data.links,
-    isPlaceholder: false,
   };
   return { work, body: content };
 }
@@ -67,10 +65,11 @@ function readAllCaseStudyFiles(): CaseStudyFile[] {
     .map(readCaseStudyFile);
 }
 
-/** Real case studies plus the remaining placeholders, newest first. */
+/** All case studies, newest first. */
 export function getAllWorks(): Work[] {
-  const works = [...readAllCaseStudyFiles().map((file) => file.work), ...placeholderWorks];
-  return works.sort((a, b) => b.date.localeCompare(a.date));
+  return readAllCaseStudyFiles()
+    .map((file) => file.work)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function getWorkBySlug(slug: string): Work | undefined {
@@ -81,7 +80,7 @@ export function getWorksByPillar(pillar: PillarId): Work[] {
   return getAllWorks().filter((work) => work.pillar === pillar);
 }
 
-/** MDX body of a real case study, or undefined for placeholders. */
+/** MDX body of a case study, or undefined for an unknown slug. */
 export function getCaseStudyBody(slug: string): string | undefined {
   return readAllCaseStudyFiles().find((file) => file.work.slug === slug)?.body;
 }

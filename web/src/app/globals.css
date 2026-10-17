@@ -61,30 +61,10 @@
   opacity: 0.8;
 }
 
-@utility art-klever {
-  background: radial-gradient(120% 90% at 30% 20%, #7a2bd9, #2a0a55 55%, #0a0314);
-}
-@utility art-metrix {
-  background: radial-gradient(120% 90% at 30% 20%, #ff8a4d, #e84b2a 55%, #7a1f0c);
-}
-@utility art-vox {
-  background: radial-gradient(120% 90% at 30% 20%, #5aa9ff, #1e3fb0 55%, #0b1746);
-}
-@utility art-forma {
-  background: radial-gradient(120% 90% at 30% 20%, #6fe4d3, #119a8a 55%, #063c36);
-}
-@utility art-flow {
-  background: radial-gradient(120% 90% at 30% 20%, #3a3a3a, #121212 55%, #000);
-}
-
 @utility hero-glow {
   background:
     radial-gradient(1100px 480px at 50% 0%, #ece5da 0%, transparent 60%),
     var(--color-paper);
-}
-
-@utility striped-placeholder {
-  background: repeating-linear-gradient(135deg, #ede8e1 0 12px, #e5e0d8 12px 24px);
 }
 
 /* Loading placeholder: paper block with a light band sweeping across (transform only, so it stays cheap) */

@@ -24,8 +24,6 @@ export interface Tool {
   tileClass: string;
 }
 
-export type WorkArt = "klever" | "metrix" | "vox" | "forma" | "flow";
-
 export interface WorkKpi {
   value: string;
   caption: string;
@@ -40,16 +38,13 @@ export interface WorkLink {
 }
 
 /** Cover shown on cards and on the case study hero */
-export type WorkCover =
-  | { kind: "art"; art: WorkArt }
-  | {
-      kind: "image";
-      /** 4:5 image for carousel and grid cards */
-      card: string;
-      /** 2:1 image for the case study hero */
-      hero: string;
-      alt: string;
-    };
+export interface WorkCover {
+  /** 4:5 image for carousel and grid cards */
+  card: string;
+  /** 2:1 image for the case study hero */
+  hero: string;
+  alt: string;
+}
 
 export interface Work {
   slug: string;
@@ -67,8 +62,6 @@ export interface Work {
   /** Defaults to "growth" */
   kpiIcon?: KpiIcon;
   links?: WorkLink[];
-  /** Design-file placeholder: no MDX body, rendered with the generic template */
-  isPlaceholder: boolean;
 }
 
 /**
@@ -77,13 +70,15 @@ export interface Work {
  */
 export interface CaseStudyFrontmatter {
   name: string;
+  /** Internal note naming the real client or project, for searching the repo. Never rendered. */
+  internalRef?: string;
   pillar: PillarId;
   date: string;
   tags: string[];
   role: string;
   blurb: string;
   description: string;
-  cover: { card: string; hero: string; alt: string };
+  cover: WorkCover;
   kpis?: [WorkKpi, WorkKpi];
   /** Defaults to "growth" */
   kpiIcon?: KpiIcon;

@@ -45,20 +45,18 @@ web/
     ├── app/
     │   ├── page.tsx                  # Home: hero, philosophy pillars, projects carousel, skills, tools, contact
     │   ├── case-studies/page.tsx     # Works grouped by pillar, anchors #design #lead #ai #grow
-    │   ├── case-studies/[slug]/      # Detail page: header, meta, cover, MDX body (or placeholder template)
+    │   ├── case-studies/[slug]/      # Detail page: header, meta, cover, MDX body
     │   ├── layout.tsx                # Fonts (Fraunces, Inter, JetBrains Mono), nav, footer
     │   ├── **/loading.tsx            # Route skeletons (home, case studies, case study), mirror each page's layout
     │   └── globals.css               # Design tokens + utilities
     ├── components/features/
     │   ├── CaseStudyCard.tsx         # Card for carousel ("slide") and grid ("masonry")
     │   ├── CaseStudyMdx.tsx          # Blocks available inside case study MDX
-    │   ├── PlaceholderCaseStudy.tsx  # Generic body for placeholder works (delete when none remain)
     │   ├── Skeleton.tsx              # Skeleton block, SkeletonPage wrapper, CaseStudyCardSkeleton
-    │   ├── WorkCover.tsx             # Image cover or generated WorkArt
+    │   ├── WorkCover.tsx             # Cover image (card 4:5 or hero 2:1)
     │   └── WorksCarousel.tsx         # Infinite free-scrolling carousel (renders works ×3)
     ├── lib/
-    │   ├── case-studies.ts           # Loader: MDX works + placeholders, sorted newest first
-    │   ├── works.ts                  # Remaining design-file placeholders
+    │   ├── case-studies.ts           # Loader: MDX case studies, sorted newest first
     │   ├── config.ts                 # Personal data, pillars, tools (the only place for personal data)
     │   ├── shimmer.ts                # Animated next/image placeholder, removed once the image loads
     │   └── pillarTheme.ts            # Theme classes per pillar
@@ -80,13 +78,15 @@ Each project is meant to be done in its own chat. Everything needed is in this s
 - **Never invent metrics, KPIs or testimonials.** KPIs only when the user gives real numbers; otherwise omit `kpis`.
 - **Use cv_master to fill gaps**: `C:\Users\JacopoMarcolini\Desktop\workspace\202608_curvit\curvit\cv_master.md`.
   Cross-check every relevant bullet for the project or role; ask before adding anything it doesn't support.
+- **Treat every project name as its real name.** Never write that a name is invented or "the name I use here", and
+  never say in captions or alt text that screens are rebuilt, recreated or fictional. Invented names and fictional data
+  are recorded only in this file and in `internalRef`.
 - **Portfolio, not CV**: the year is a single year ("2026"), never a period like "2026 – present".
 - **Copy in English**, first person, plain and concrete. Product taglines may stay in their original language.
   Keep a plain portfolio tone without marketing phrasing, and avoid "X, not Y" or "not X, but Y" constructions.
 - **Vary the layout between sections**: never use the same block for two sections of one page (see blocks below).
   Reuse layouts that already exist in the portfolio first; create a new one only occasionally, when it is clearly more
   engaging.
-- Each new real project replaces a placeholder: ask the user which one to remove from `src/lib/works.ts`.
 
 ### Intake questions
 
@@ -119,6 +119,7 @@ Modeled on glueglue.com/it/works case studies. Each `##` heading in MDX is a sec
 ```yaml
 ---
 name: Paywall Design System
+internalRef: Bending Spoons # internal only, never rendered: the real client or project, for future searches
 pillar: design
 date: "2025-04"
 tags: ["Mobile App", "Monetization", "Design System"]
@@ -141,6 +142,7 @@ kpiIcon: growth            # optional, icon between the KPIs: growth (default, r
 ```
 
 The loader validates the frontmatter and fails the build on missing or malformed fields. There is no `status` field.
+`internalRef` is required by convention on every case study (ask the user for it) but never read by the site.
 
 ### MDX blocks (`src/components/features/CaseStudyMdx.tsx`)
 
@@ -211,8 +213,9 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
 | `ai-training-program` | 2026-01 | ai | All generative AI training programs told as one activity (no program or client named; the two universities are named with the user's ok). Sources: hub proposal, a client workshop deck and a university talk in OneDrive `bid/202604_prevendita` (16, 18, 20). KPIs from cv_master (400+ hours, 600+ people); 25+ companies and 90+ validated use cases from the proposal, in prose. No phase durations or agenda details: it is a generalization. Solo or leading a team of tutors. Visuals in `scripts/visuals/ai-training-program.html`: navy, blue-violet-pink-orange gradient, Poppins, three.js glass sparkles on hero and card; the `slides` view is a tilted collage of 20 rebuilt training slides with generic content (render with `SWIFTSHADER=0`). No logos, people or client survey data. |
 | `spendscape` | 2025-12 | lead | Three payment-data dashboards (cross-border tourism, domestic tourism, merchant payment performance) for "one of the world's largest payment networks", never named. Spendscape is an invented name. Sources: screenshots and two codebases in the user's Downloads. KPIs 500+ users, 30+ markets; €2M+ budget, weekly releases and a 10+ person team in prose. Visuals in `scripts/visuals/spendscape.html`: every screen rebuilt in HTML with fictional brand, user and data (d3 + world-atlas map, Voronoi cells as regions); the client's orange/red palette and a Mark-like geometric font (DM Sans) are allowed, its overlapping circles and name never. 21 rebuilt screens (pages, tabs and states of the three products); hero, card and showcase each use a screen at most once, unused slots off-canvas are culled. Covers tilt the screens in iframes (`BUDGET=25000` when rendering). Images are `-v2` after the first showcase repeated screens. The source codebases are no longer in Downloads. |
 | `marquee` | 2024-08 | lead | A production ERP for the commercials division and a creative AI studio (book scouting, moodboards, document chat) for "one of Italy's leading film and TV production companies", never named. Marquee is an invented name. Sources: two codebases in the user's Downloads (ERP and AI platform). No KPIs, no principles section (the user asked to skip it). Visuals in `scripts/visuals/marquee.html`: every screen rebuilt in HTML with Italian UI and fictional brand, projects, people and books; painted SVG stills and a pencil storyboard stand in for photos and generated images. Identity: a theatre marquee. The title is drawn from stroke glyphs (`GLYPHS`) with a bulb at every step along each stroke, all lit, so letters are always complete; hero and card sit on closed red velvet curtains painted per pixel on a canvas (`drawCurtains`, modelled on a curtain photo the user shared, which is not shipped), the showcase on the same cloth turned into a horizontal silk veil (`data-mode="veil"`); gold, film grain, Poiret One payoff. The showcase places each of the 14 rebuilt screens once, never repeated. Images are `-v2` because the first versions were cached. Hero and card fan the screens out in 3D iframes (`BUDGET=20000`), showcase is an isometric grid (`BUDGET=40000`); render single screens with `SWIFTSHADER=0 BUDGET=15000`, shorter budgets can drop the fonts. |
+| `bloom` | 2021-03 | grow | A white-label, multi-tenant employee engagement platform (feed, rewards, growth challenges with checkpoints, surveys and suggestions, OKRs, wiki with AI assistant, HR analytics with organisational network, surveys and manager reviews) for client companies, told as one platform: the user asked not to split it into its legacy and newer versions, and to cite every technology. Bloom is an invented name; never name the product, its owner, the agency that first designed it, the vendor or any tenant. Role: Fullstack Developer & Client Lead (single point of contact for the client companies). Sources: five codebases in the user's Downloads (`beyou-*`) and a public agency case study used only for content and style cues. No KPIs. Visuals in `scripts/visuals/bloom.html`: 20 desktop and 8 mobile screens rebuilt in HTML (Sen font) with fictional workspaces to show the white label (Vireo teal, Halden navy, Corvia in the orange of the Bloom mark, Lumina purple, Alder green; the five phones in the body each belong to a different one, and the card pairs Halden, Vireo and Corvia), fictional people and data, no photos. Identity: cream background, flat petal flowers on stems in the palette orange, yellow, teal, sky and mint, Bricolage Grotesque title whose two o's open into flowers. Hero: tablet + phone in 3D; card: three phones; `showcase` isometric grid places each desktop screen once (`BUDGET=45000 SWIFTSHADER=0`); `white-label` pairs the workspace setup with phones in two other workspaces. Phones render crisp with `?v=m-<id>&z=2` at 780x1688. |
 
-Remaining placeholders in `src/lib/works.ts`: Metrix, FlowOS.
+All placeholders from the design file have been removed: every project on the site is an MDX case study.
 
 ## Conventions
 
