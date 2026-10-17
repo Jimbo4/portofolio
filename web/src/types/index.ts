@@ -31,6 +31,9 @@ export interface WorkKpi {
   caption: string;
 }
 
+/** Icon between the two KPIs on the case study page */
+export type KpiIcon = "graduation" | "growth";
+
 export interface WorkLink {
   label: string;
   href: string;
@@ -61,6 +64,8 @@ export interface Work {
   cover: WorkCover;
   pillar: PillarId;
   kpis?: [WorkKpi, WorkKpi];
+  /** Defaults to "growth" */
+  kpiIcon?: KpiIcon;
   links?: WorkLink[];
   /** Design-file placeholder: no MDX body, rendered with the generic template */
   isPlaceholder: boolean;
@@ -80,5 +85,7 @@ export interface CaseStudyFrontmatter {
   description: string;
   cover: { card: string; hero: string; alt: string };
   kpis?: [WorkKpi, WorkKpi];
+  /** Defaults to "growth" */
+  kpiIcon?: KpiIcon;
   links?: WorkLink[];
 }

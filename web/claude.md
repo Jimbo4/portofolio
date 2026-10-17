@@ -136,6 +136,7 @@ links:                     # optional, only links the user approved
 kpis:                      # optional, exactly 2, real numbers only
   - { value: "<number>", caption: "<what it measures>" }
   - { value: "<number>", caption: "<what it measures>" }
+kpiIcon: growth            # optional, icon between the KPIs: growth (default, rising line chart) | graduation
 ---
 ```
 

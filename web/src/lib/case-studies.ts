@@ -1,11 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import type { CaseStudyFrontmatter, PillarId, Work } from "@/types";
+import type { CaseStudyFrontmatter, KpiIcon, PillarId, Work } from "@/types";
 import { placeholderWorks } from "./works";
 
 const CONTENT_DIR = path.join(process.cwd(), "content/case-studies");
 const PILLAR_IDS: PillarId[] = ["design", "lead", "ai", "grow"];
+const KPI_ICONS: KpiIcon[] = ["graduation", "growth"];
 
 interface CaseStudyFile {
   work: Work;
@@ -30,6 +31,9 @@ function assertFrontmatter(data: Record<string, unknown>, file: string): asserts
   if (data.kpis !== undefined && (!Array.isArray(data.kpis) || data.kpis.length !== 2)) {
     throw new Error(`${file}: "kpis" must list exactly 2 entries`);
   }
+  if (data.kpiIcon !== undefined && !KPI_ICONS.includes(data.kpiIcon as KpiIcon)) {
+    throw new Error(`${file}: unknown kpiIcon "${String(data.kpiIcon)}"`);
+  }
 }
 
 function readCaseStudyFile(fileName: string): CaseStudyFile {
@@ -48,6 +52,7 @@ function readCaseStudyFile(fileName: string): CaseStudyFile {
     cover: { kind: "image", ...data.cover },
     pillar: data.pillar,
     kpis: data.kpis,
+    kpiIcon: data.kpiIcon,
     links: data.links,
     isPlaceholder: false,
   };

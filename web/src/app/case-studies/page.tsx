@@ -6,7 +6,7 @@ import { pillars } from "@/lib/config";
 import { getWorksByPillar } from "@/lib/case-studies";
 
 export const metadata: Metadata = {
-  title: "Case Studies",
+  title: "Projects",
   description: "Selected work across product design, team leadership, AI enablement and business growth.",
   alternates: { canonical: "/case-studies" },
 };

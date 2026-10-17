@@ -6,7 +6,7 @@ import { caseStudyBodyText, caseStudyComponents, caseStudySectionTitle } from "@
 import { PlaceholderCaseStudy } from "@/components/features/PlaceholderCaseStudy";
 import { WorkCover, workCoverBackground } from "@/components/features/WorkCover";
 import { getAllWorks, getCaseStudyBody, getWorkBySlug } from "@/lib/case-studies";
-import type { Work, WorkKpi } from "@/types";
+import type { KpiIcon, Work, WorkKpi } from "@/types";
 
 export function generateStaticParams() {
   return getAllWorks().map((work) => ({ slug: work.slug }));
@@ -64,7 +64,13 @@ function WorkMeta({ work }: { work: Work }) {
   );
 }
 
-function KpiPanel({ kpis }: { kpis: [WorkKpi, WorkKpi] }) {
+/** Strokes of each KPI icon, drawn on a 32×32 grid */
+const kpiIconPaths: Record<KpiIcon, string[]> = {
+  graduation: ["M3 10 L16 4 L29 10 L16 16 Z", "M9 13 V20 C9 22 12 24 16 24 C20 24 23 22 23 20 V13"],
+  growth: ["M5 5 V27 H27", "M9 21 L14 15 L18 18 L26 9", "M21 9 H26 V14"],
+};
+
+function KpiPanel({ kpis, icon = "growth" }: { kpis: [WorkKpi, WorkKpi]; icon?: KpiIcon }) {
   return (
     <div className="mt-7 grid items-stretch gap-[18px] rounded-3xl border border-line bg-white p-7 md:grid-cols-[1fr_auto_1fr]">
       {kpis.map((kpi, index) => (
@@ -84,9 +90,19 @@ function KpiPanel({ kpis }: { kpis: [WorkKpi, WorkKpi] }) {
         aria-hidden="true"
         className="flex size-[84px] items-center justify-center self-center justify-self-center rounded-[18px] border border-line bg-white shadow-[0_6px_14px_rgba(0,0,0,.05)] md:order-2"
       >
-        <svg viewBox="0 0 32 32" width="36" height="36" fill="none" stroke="#1F4FE0" strokeWidth="2">
-          <path d="M3 10 L16 4 L29 10 L16 16 Z" />
-          <path d="M9 13 V20 C9 22 12 24 16 24 C20 24 23 22 23 20 V13" />
+        <svg
+          viewBox="0 0 32 32"
+          width="36"
+          height="36"
+          fill="none"
+          stroke="#1F4FE0"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {kpiIconPaths[icon].map((d) => (
+            <path key={d} d={d} />
+          ))}
         </svg>
       </div>
     </div>
@@ -102,7 +118,7 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
 
   return (
     <article className="mx-auto min-h-screen max-w-[1240px] px-7 pb-24 pt-[120px]">
-      <BackLink href="/case-studies" label="All case studies" />
+      <BackLink href="/case-studies" label="All projects" />
 
       <div className="mt-[18px] flex flex-wrap items-center gap-2.5">
         {work.tags.map((tag) => (
@@ -142,7 +158,7 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
               </p>
             </>
           )}
-          <KpiPanel kpis={work.kpis} />
+          <KpiPanel kpis={work.kpis} icon={work.kpiIcon} />
         </section>
       )}
     </article>
