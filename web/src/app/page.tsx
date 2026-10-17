@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowCircle } from "@/components/features/ArrowCircle";
 import { PillarIcon } from "@/components/features/PillarIcon";
 import { SectionTitle } from "@/components/features/SectionTitle";
 import { ToolsMarquee } from "@/components/features/ToolsMarquee";
@@ -58,6 +59,15 @@ export default function HomePage() {
                 <p className="text-[13px] leading-normal text-muted">{pillar.description}</p>
               </Link>
             ))}
+          </div>
+          <div className="mt-8 flex justify-end md:mt-12">
+            <Link
+              href="/case-studies"
+              className="group inline-flex items-center gap-3.5 font-serif text-lg font-semibold tracking-[-0.015em]"
+            >
+              Selected work
+              <ArrowCircle />
+            </Link>
           </div>
         </div>
       </section>

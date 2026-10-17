@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Work } from "@/types";
+import { ArrowCircle } from "./ArrowCircle";
 import { WorkCover } from "./WorkCover";
 
 interface CaseStudyCardProps {
@@ -60,16 +61,7 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
           <h3 className="m-0 font-serif text-[22px] font-bold tracking-[-0.01em]">{work.name}</h3>
           <p className="mt-1 max-w-[340px] text-[13.5px] leading-[1.45] text-muted">{work.blurb}</p>
         </div>
-        {isSlide && (
-          <span
-            aria-hidden="true"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line transition-[background-color,color,transform] duration-200 group-hover:-rotate-45 group-hover:bg-ink group-hover:text-white"
-          >
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
-          </span>
-        )}
+        {isSlide && <ArrowCircle />}
       </div>
     </Link>
   );

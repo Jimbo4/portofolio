@@ -31,6 +31,10 @@ export default function HomeLoading() {
               </div>
             ))}
           </div>
+          <div className="mt-8 flex items-center justify-end gap-3.5 md:mt-12">
+            <Skeleton className="h-6 w-32 rounded-md" />
+            <Skeleton className="size-9 rounded-full" />
+          </div>
         </div>
       </section>
 

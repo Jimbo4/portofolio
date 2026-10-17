@@ -117,7 +117,7 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
 
   return (
     <article className="mx-auto min-h-screen max-w-[1240px] px-7 pb-24 pt-[120px]">
-      <BackLink href="/case-studies" label="All projects" />
+      <BackLink href="/case-studies" label="Selected work" />
 
       <div className="mt-[18px] flex flex-wrap items-center gap-2.5">
         {work.tags.map((tag) => (
