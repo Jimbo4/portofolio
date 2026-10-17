@@ -162,6 +162,26 @@
   .ring .l { font-size: 12.5px; color: #555; line-height: 1.5; }
   .ring .l b { display: block; font-size: 22px; color: var(--ink); }
 
+  /* ---------- extra screens ---------- */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { text-align: left; font-weight: 600; color: #444; background: var(--side); padding: 11px 14px; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; }
+  .tbl td { padding: 11px 14px; border-bottom: 1px solid #eee; white-space: nowrap; }
+  .tbl .r { text-align: right; }
+  .mini { display: inline-block; width: 90px; height: 8px; background: #eee; border-radius: 4px; vertical-align: middle; margin-right: 10px; overflow: hidden; }
+  .mini i { display: block; height: 100%; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 18px; background: #fff1dc; color: #a95b00; font-size: 13px; font-weight: 500; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 8px; background: var(--orange); color: #fff; font-weight: 600; font-size: 14px; }
+  .btn.dark { background: var(--ink); }
+  .input { height: 46px; border: 1px solid #ccc; border-radius: 8px; display: flex; align-items: center; padding: 0 14px; font-size: 15px; color: #333; }
+  .tog { width: 40px; height: 22px; border-radius: 11px; background: #ccc; position: relative; flex: none; }
+  .tog.on { background: var(--orange); }
+  .tog i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+  .tog.on i { left: 21px; }
+  .status { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px; }
+  .status.ok { color: var(--ok); background: var(--ok-l); } .status.wait { color: #a95b00; background: #fff1dc; } .status.off { color: #777; background: #eee; }
+  .modal-bg { position: absolute; inset: 0; background: rgba(20,20,19,.5); }
+  .modal { position: absolute; left: 50%; top: 110px; transform: translateX(-50%); width: 620px; background: #fff; border-radius: 14px; padding: 30px 34px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+
   /* ---------- covers ---------- */
   .stage { position: absolute; transform-origin: 0 0; }
   .shot { position: absolute; border: 0; background: #fff; box-shadow: 0 40px 60px rgba(20,20,19,.28), 0 6px 14px rgba(20,20,19,.18); }
@@ -202,7 +222,10 @@
 </section>
 <script>
   const v = new URLSearchParams(location.search).get("v") || "hero";
-  document.getElementById(v).classList.add("on");
+  // Screens without a static section get one, so every builder can be picked with ?v=
+  let section = document.getElementById(v);
+  if (!section) { section = document.createElement("section"); section.id = v; section.className = "view"; section.style.width = "1440px"; document.body.prepend(section); }
+  section.classList.add("on");
 </script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
@@ -431,6 +454,217 @@ const builders = {
   },
 };
 
+/* ===================== more screens (one per page of the three products) ===================== */
+// Generic charts used by the screens below
+function axisY(L, w, y, min, max, step, unit) {
+  let s = "";
+  for (let v = min; v <= max + 1e-9; v += step) s += `<line x1="${L}" x2="${w}" y1="${y(v)}" y2="${y(v)}" stroke="#eee"/><text x="${L - 8}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="#777">${+v.toFixed(2)}${unit}</text>`;
+  return s;
+}
+function lineChart({ w, h, labels, series, min = 0, max, step, unit = "", L = 48, R = 16, T = 14, B = 28, refLine }) {
+  const pw = w - L - R, ph = h - T - B, x = (i) => L + (i / (labels.length - 1)) * pw, y = (v) => T + ph - ((v - min) / (max - min)) * ph;
+  let s = `<svg width="${w}" height="${h}">` + axisY(L, L + pw, y, min, max, step, unit);
+  labels.forEach((l, i) => (s += `<text x="${x(i)}" y="${h - 6}" font-size="11" text-anchor="middle" fill="#555">${l}</text>`));
+  if (refLine) s += `<line x1="${L}" x2="${L + pw}" y1="${y(refLine.v)}" y2="${y(refLine.v)}" stroke="${refLine.color}" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${L + pw}" y="${y(refLine.v) - 6}" font-size="11" text-anchor="end" fill="${refLine.color}">${refLine.label}</text>`;
+  series.forEach((sr) => {
+    const d = sr.vals.map((v, i) => x(i) + "," + y(v)).join("L");
+    if (sr.area) s += `<path d="M${x(0)},${y(min)}L${d}L${x(sr.vals.length - 1)},${y(min)}Z" fill="${sr.color}" opacity=".13"/>`;
+    s += `<path d="M${d}" fill="none" stroke="${sr.color}" stroke-width="${sr.width || 2.5}" stroke-dasharray="${sr.dash || ""}" stroke-linejoin="round"/>`;
+    if (sr.dots) sr.vals.forEach((v, i) => (s += `<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="#fff" stroke="${sr.color}" stroke-width="2"/>`));
+  });
+  return s + "</svg>";
+}
+// Grouped, stacked or overlapping vertical bars
+function barChart({ w, h, labels, series, max, step, unit = "", mode = "group", L = 48, R = 16, T = 14, B = 28, gap = .34, values }) {
+  const pw = w - L - R, ph = h - T - B, bw = pw / labels.length, y = (v) => T + ph - (v / max) * ph;
+  let s = `<svg width="${w}" height="${h}">` + axisY(L, L + pw, y, 0, max, step, unit);
+  labels.forEach((l, i) => {
+    const inner = bw * (1 - gap), x0 = L + i * bw + (bw - inner) / 2;
+    if (mode === "stack") {
+      let acc = 0;
+      series.forEach((sr) => { const v = sr.vals[i]; s += `<rect x="${x0}" y="${y(acc + v)}" width="${inner}" height="${y(acc) - y(acc + v)}" fill="${sr.color}" stroke="#fff" stroke-width="1"/>`; acc += v; });
+    } else if (mode === "overlap") {
+      const [back, front] = series;
+      s += `<rect x="${x0}" y="${y(back.vals[i])}" width="${inner}" height="${T + ph - y(back.vals[i])}" fill="${back.color}"/>`;
+      s += `<rect x="${x0 + inner * .22}" y="${y(front.vals[i])}" width="${inner * .56}" height="${T + ph - y(front.vals[i])}" fill="${front.color}"/>`;
+    } else {
+      const sw = inner / series.length;
+      series.forEach((sr, k) => (s += `<rect x="${x0 + k * sw + 1}" y="${y(sr.vals[i])}" width="${sw - 2}" height="${T + ph - y(sr.vals[i])}" fill="${sr.color}" rx="1.5"/>`));
+    }
+    if (values) s += `<text x="${L + i * bw + bw / 2}" y="${y(values[i]) - 6}" font-size="11" text-anchor="middle" fill="#333">${values[i]}${unit}</text>`;
+    s += `<text x="${L + i * bw + bw / 2}" y="${h - 6}" font-size="11" text-anchor="middle" fill="#555">${l}</text>`;
+  });
+  return s + "</svg>";
+}
+function scatter({ w, h, pts, x: [xmin, xmax, xstep, xunit], y: [ymin, ymax, ystep, yunit], xlab, ylab, L = 52, R = 20, T = 14, B = 44 }) {
+  const pw = w - L - R, ph = h - T - B, sx = (v) => L + ((v - xmin) / (xmax - xmin)) * pw, sy = (v) => T + ph - ((v - ymin) / (ymax - ymin)) * ph;
+  let s = `<svg width="${w}" height="${h}">` + axisY(L, L + pw, sy, ymin, ymax, ystep, yunit);
+  for (let v = xmin; v <= xmax + 1e-9; v += xstep) s += `<text x="${sx(v)}" y="${T + ph + 18}" font-size="11" text-anchor="middle" fill="#777">${v}${xunit}</text>`;
+  if (ymin < 0) s += `<line x1="${L}" x2="${L + pw}" y1="${sy(0)}" y2="${sy(0)}" stroke="#999"/>`;
+  s += `<text x="${L + pw / 2}" y="${h - 4}" font-size="11.5" text-anchor="middle" fill="#555">${xlab}</text><text x="12" y="${T + ph / 2}" font-size="11.5" text-anchor="middle" fill="#555" transform="rotate(-90 12 ${T + ph / 2})">${ylab}</text>`;
+  pts.forEach(([label, xv, yv, r, c]) => (s += `<circle cx="${sx(xv)}" cy="${sy(yv)}" r="${r}" fill="${c || "#f28c00"}" fill-opacity=".72" stroke="#fff" stroke-width="1.5"/><text x="${sx(xv) + r + 4}" y="${sy(yv) + 4}" font-size="11.5" fill="#333">${label}</text>`));
+  return s + "</svg>";
+}
+function donutSvg(data, center, sub, size = 190, width = 30) {
+  const r = size / 2 - width / 2 - 2, c = 2 * Math.PI * r, m = size / 2;
+  let off = 0, s = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><g transform="rotate(-90 ${m} ${m})">`;
+  data.forEach(([v, col]) => { s += `<circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${col}" stroke-width="${width}" stroke-dasharray="${(v / 100) * c - 2} ${c}" stroke-dashoffset="${-off}"/>`; off += (v / 100) * c; });
+  return s + `</g><text x="${m}" y="${m - 2}" text-anchor="middle" font-size="24" font-weight="700">${center}</text><text x="${m}" y="${m + 18}" text-anchor="middle" font-size="11.5" fill="#666">${sub}</text></svg>`;
+}
+const legend = (items, style = "") => `<div class="leg" style="${style}">${items.map(([t, c]) => `<span><i style="background:${c}"></i>${t}</span>`).join("")}</div>`;
+const table = (cols, rows) => `<table class="tbl"><tr>${cols.map(([t, a]) => `<th class="${a || ""}">${t}</th>`).join("")}</tr>${rows.map((r) => `<tr>${r.map((c, i) => `<td class="${cols[i][1] || ""}">${c}</td>`).join("")}</tr>`).join("")}</table>`;
+const mini = (v, max = 100, col = "#f28c00") => `<span class="mini"><i style="width:${(v / max) * 100}%;background:${col}"></i></span>`;
+const vbox = (t, ok) => `<span class="vbox ${ok ? "ok" : "ko"}">${t}</span>`;
+const months12 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const months6 = months12.slice(0, 6).map((m) => m + " 2025");
+
+/* --- domestic tourism shell --- */
+const dTabs = ["Summary", "Origins", "Industries", "Comparison"];
+function dSide() {
+  return `<aside class="d-side">
+    <div><div class="brand">${mark(20)}<b>spendscape</b></div><div class="d-sub">Tourism &amp; Excursion Dashboard</div></div>
+    <div><div class="d-h">Time Period</div><div class="d-box">Jun 2024 – Dec 2024 ${I.cal}</div>
+      <div class="d-chk"><i><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4"><path d="m4 12 5 5L20 6"/></svg></i>By week</div>
+      <div class="slider"><i style="left:38%;right:8%"></i><b style="left:38%"></b><b style="left:92%"></b></div><div class="slabels"><span>Jan 2023</span><span>Dec 2024</span></div></div>
+    <div><div class="d-h">Data Type</div><div class="d-box">Domestic Tourism ${I.chev}</div></div>
+    <div><div class="d-h">Map ${I.info}</div><svg data-map="italy" width="274" height="320" style="display:block;margin:4px auto 0"></svg>
+      <div class="legend-grad"></div><div class="slabels" style="margin-top:6px"><span>Lower spend</span><span>Higher spend</span></div></div>
+  </aside>`;
+}
+function dShell({ tab, seg = 0, title, sub, body }) {
+  return `<div class="d-wrap">${dSide()}<div class="d-main">
+    <div class="d-nav"><div class="d-tabs">${dTabs.map((t, i) => `<div class="${i === tab ? "on" : ""}">${t}</div>`).join("")}</div>
+      <div class="d-right"><div class="seg"><div class="${seg ? "" : "on"}">Insights</div><div class="${seg ? "on" : ""}">Trends</div></div><div class="lang">EN ${I.chev}</div><div class="avatar">A</div></div></div>
+    <div class="d-title"><h1>${title}</h1><span>${sub}</span></div>${body}</div></div>`;
+}
+const dCard = (title, cap, body, style = "") => `<div class="d-card" style="${style}"><h3>${title} ${I.info}</h3><div class="cap">${cap}</div>${body}</div>`;
+
+/* --- merchant payments shell --- */
+const mNav = [["Analytics", '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'], ["Authorization", '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>'], ["Authentication", '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'], ["Fraud", '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="M12 8v5M12 16v.5"/>'], ["Performance", '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>'], ["Settings", '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>']];
+const mTabs = ["Home", "Geography", "Benchmark", "Issuers", "Acquirers"];
+function mShell({ nav, title, tabs = mTabs, tab = 0, filters = true, body }) {
+  const icon = (p) => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+  const f = filters ? `<div class="m-filter">${[["Time Period", "Jan 2025 – Jun 2025", 1], ["Brand", "All brands"], ["Channel", "All channels"], ["Product Type", "All products"], ["Customer Type", "All customers"]].map(([l, v, c]) => `<div class="field"><label>${l}</label><div class="sel">${v}${c ? I.cal : I.chev}</div></div>`).join("")}<div class="dlbtn" style="margin-left:auto">${I.dl}</div></div>` : "";
+  return `<div class="m-wrap"><aside class="m-side"><div style="margin-bottom:22px">${mark(26)}</div>${mNav.map(([t, p], i) => `<div class="m-item ${i === nav ? "on" : ""}">${icon(p)}${t}</div>`).join("")}</aside>
+    <div class="m-main"><div class="m-head"><h1>${title}</h1><div class="d-right"><div class="lang">All merchants ${I.chev}</div><div class="avatar">A</div></div></div>
+    ${tabs.length ? `<div class="m-tabs">${tabs.map((t, i) => `<div class="${i === tab ? "on" : ""}">${t}</div>`).join("")}</div>` : ""}${f}${body}</div></div>`;
+}
+const mCard = (title, cap, body, style = "") => `<div class="m-card" style="${style}"><h3>${title} ${I.info}</h3>${cap ? `<div class="cap">${cap}</div>` : ""}${body}</div>`;
+const mKpis = (items) => `<div class="m-kpis">${items.map(([l, v, d, ko, n = "vs previous period"]) => `<div class="m-kpi"><div class="l">${l} ${I.info}</div><div class="v">${v}</div><div class="d"><b class="${ko ? "ko" : ""}">${d}</b> ${n}</div></div>`).join("")}</div>`;
+const tog = (on) => `<span class="tog ${on ? "on" : ""}"><i></i></span>`;
+
+Object.assign(builders, {
+  /* ---------- cross-border tourism ---------- */
+  "screen-categories": () => tHeader(2) + tFilters("", `<div class="field" style="margin-left:150px;margin-top:-28px"><label>Selected category</label><div class="sel" style="width:128px">Restaurants${I.chev}</div></div>`) + tMap(false) +
+    `<div class="t-body">${kpis([{ l: "Avg. Ticket Value", v: "34 $", d: "8.6", up: 1, n: "from previous period" }, { l: "Yearly Growth", v: "+7% YoY", d: "3.2", up: 0, n: "from Yo2Y" }])}
+    ${panel("Top Origins - Restaurants Spend Share", `<div class="two">${hbars("Origins", [["United States", 9.1, 6.2, 1], ["Germany", 8.4, 3.9, 1], ["UK", 7.9, 1.4, 0], ["France", 7.2, 8.8, 1], ["Switzerland", 6.1, 2.3, 0], ["Netherlands", 5.4, 7.7, 1], ["Spain", 4.6, 0.9, 0], ["Austria", 3.8, 4.2, 1], ["Canada", 3.1, 2.6, 1], ["Others", 2.2, 1.1, 0]])}<div class="div"></div>
+      <div><div class="hbt">Spend Share by week</div>${barChart({ w: 600, h: 330, labels: ["W8", "W9", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17"], series: [{ vals: [5.2, 5.8, 6.4, 6.1, 7.3, 7.9, 7.4, 8.2, 8.8, 9.4], color: "#f28c00" }], max: 10, step: 2, unit: "%" })}</div></div>${showMore}`)}
+    ${panel("Ticket distribution - Restaurants", barChart({ w: 1340, h: 300, labels: ["< 10 $", "10 – 25 $", "25 – 50 $", "50 – 100 $", "100 – 250 $", "> 250 $"], series: [{ vals: [14, 31, 28, 17, 7, 3], color: "#f28c00" }, { vals: [17, 33, 26, 15, 6, 3], color: "#d9d9d9" }], max: 40, step: 10, unit: "%", gap: .45 }) + legend([["Week 8 / 2024 - Week 2 / 2025", "#f28c00"], ["Week 8 / 2023 - Week 2 / 2024", "#d9d9d9"]], "justify-content:center"))}</div>` + tFoot,
+
+  "screen-login-tourism": () => `<div style="display:flex;min-height:900px">
+    <div style="width:46%;background:#1b1b1a;color:#fff;padding:70px 64px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden">
+      <div class="brand" style="font-size:24px">${mark(26)}<b>spendscape</b><span>Tourism Insights</span></div>
+      <div style="position:relative;z-index:1"><div style="font-size:56px;font-weight:700;letter-spacing:-.03em;line-height:1.02">Cross-border spending,<br><span style="color:#f79e1b">week by week.</span></div>
+        <div style="margin-top:22px;font-size:17px;color:#bbb;max-width:430px;line-height:1.5">Aggregated card data on where visitors come from and what they spend on.</div></div>
+      <div style="font-size:12px;color:#888">© 2025 Spendscape</div>
+      <svg width="520" height="520" style="position:absolute;right:-160px;bottom:-140px;opacity:.5"><circle cx="260" cy="260" r="250" fill="none" stroke="#f28c00" stroke-width="2" stroke-dasharray="2 10"/><circle cx="260" cy="260" r="170" fill="none" stroke="#ff661c" stroke-width="2" stroke-dasharray="2 10"/><circle cx="260" cy="260" r="90" fill="none" stroke="#d1282d" stroke-width="2" stroke-dasharray="2 10"/></svg>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center"><div style="width:420px">
+      <div style="font-size:34px;font-weight:700;letter-spacing:-.02em">Welcome back</div><div style="color:#666;margin-top:8px;font-size:15px">Please sign in below.</div>
+      <div style="margin-top:36px;font-size:13px;font-weight:600">Email address</div><div class="input" style="margin-top:8px">name@organisation.org</div>
+      <div style="margin-top:20px;font-size:13px;font-weight:600">Password</div><div class="input" style="margin-top:8px;letter-spacing:.3em">••••••••••</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:13px"><span class="d-chk" style="margin:0"><i><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4"><path d="m4 12 5 5L20 6"/></svg></i>Remember me</span><u>Forgot password?</u></div>
+      <div class="btn" style="width:100%;justify-content:center;height:48px;margin-top:30px">Log in</div>
+    </div></div></div>`,
+
+  /* ---------- domestic tourism ---------- */
+  "screen-domestic-trends": () => dShell({ tab: 0, seg: 1, title: "Lazio", sub: "Domestic tourism · Jan 2024 – Dec 2024", body: `
+    <div style="display:flex;gap:10px;margin-top:24px;align-items:center">${["Roma", "Litorale", "Castelli", "Tuscia"].map((t) => `<span class="chip">${t} ${I.x.replace('width="18" height="18"', 'width="12" height="12"')}</span>`).join("")}<span class="chip" style="background:#fff;border:1px dashed #ccc;color:#555">+ Add area</span></div>
+    ${dCard("Indexed spend by month", "Selected areas, 100 = average month of 2023", `<div style="margin-top:12px">${lineChart({ w: 960, h: 300, labels: months12, series: [{ vals: [82, 86, 97, 108, 121, 139, 160, 171, 136, 112, 94, 118], color: "#f28c00", area: 1, width: 3 }, { vals: [61, 64, 70, 85, 104, 128, 151, 166, 118, 84, 66, 72], color: "#ff661c", dash: "6 4" }, { vals: [70, 72, 81, 92, 99, 107, 112, 109, 98, 90, 82, 95], color: "#d1282d" }, { vals: [55, 57, 63, 72, 80, 88, 97, 101, 86, 71, 60, 66], color: "#999", dash: "2 4" }], max: 180, step: 45 })}</div>${legend([["Roma", "#f28c00"], ["Litorale", "#ff661c"], ["Castelli", "#d1282d"], ["Tuscia", "#999"]])}`)}
+    ${dCard("Table view", "Full year, compared with 2023", `<div style="margin-top:14px">${table([["Area"], ["Indexed spend", "r"], ["Avg. ticket", "r"], ["Avg. tourist spending", "r"], ["Var % YoY", "r"]], [["Roma", "118", "€52", "€246", vbox("+7.2%", 1)], ["Litorale", "101", "€38", "€188", vbox("+11.5%", 1)], ["Castelli", "93", "€41", "€162", vbox("−2.4%", 0)], ["Tuscia", "78", "€36", "€141", vbox("+4.0%", 1)]])}</div>`)}` }),
+
+  "screen-domestic-origins": () => dShell({ tab: 1, title: "Lazio", sub: "Origins · Jun 2024 – Dec 2024", body: `
+    ${dCard("Top origins - Spend %", "Italian regions of origin, compared with the same period of 2023", `<div style="margin-top:14px">${barChart({ w: 960, h: 290, labels: ["Lombardia", "Campania", "Toscana", "Veneto", "Piemonte", "Emilia-R.", "Puglia", "Sicilia", "Abruzzo", "Others"], series: [{ vals: [17.2, 14.1, 9.8, 8.6, 7.9, 7.1, 6.4, 5.8, 4.9, 9.6], color: "#fde3bf" }, { vals: [18.4, 13.2, 10.6, 8.1, 8.3, 7.6, 6.0, 6.2, 5.1, 8.9], color: "#f28c00" }], max: 20, step: 5, unit: "%", mode: "overlap", gap: .3 })}</div>${legend([["Jun – Dec 2024", "#f28c00"], ["Jun – Dec 2023", "#fde3bf"]])}`)}
+    <div class="d-grid" style="grid-template-columns:1.25fr 1fr">${dCard("Average ticket and growth", "Bubble size: spend share", `<div style="margin-top:10px">${scatter({ w: 560, h: 300, pts: [["Lombardia", 52, 7.1, 26], ["Campania", 38, -2.4, 22], ["Toscana", 47, 4.8, 17], ["Veneto", 44, -1.1, 15], ["Piemonte", 49, 5.6, 14], ["Puglia", 35, 9.2, 12], ["Sicilia", 33, 2.0, 11]], x: [30, 60, 5, "€"], y: [-5, 10, 5, "%"], xlab: "Average ticket", ylab: "Var % YoY" })}</div>`)}
+      ${dCard("Ranking", "Spend % and Var % YoY", `<div class="rank">${[["Lombardia", "18.4%", "+7.1%", 1], ["Campania", "13.2%", "−2.4%", 0], ["Toscana", "10.6%", "+4.8%", 1], ["Piemonte", "8.3%", "+5.6%", 1], ["Veneto", "8.1%", "−1.1%", 0], ["Emilia-Romagna", "7.6%", "+3.0%", 1]].map(([n, s, d, ok], i) => `<div><em>${i + 1}</em><span>${n}</span><b style="font-weight:600">${s}</b>${vbox(d, ok)}</div>`).join("")}</div>`)}</div>` }),
+
+  "screen-domestic-industries": () => {
+    const ind = [["Accommodation", "#f28c00"], ["Food & drink", "#f6b04f"], ["Retail", "#f8c580"], ["Transport", "#ff661c"], ["Leisure", "#d9d9d9"]];
+    return dShell({ tab: 2, title: "Lazio", sub: "Industries · Jun 2024 – Dec 2024", body: `
+    ${dCard("Spend by industry", "Monthly indexed spend, stacked", `<div style="margin-top:14px">${barChart({ w: 960, h: 300, labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], series: [[38, 46, 52, 41, 30, 24, 31], [28, 33, 37, 30, 26, 22, 30], [18, 20, 22, 19, 17, 18, 28], [16, 21, 25, 17, 13, 11, 14], [12, 15, 18, 14, 10, 8, 11]].map((vals, i) => ({ vals, color: ind[i][1] })), max: 160, step: 40, mode: "stack", gap: .42 })}</div>${legend(ind)}`)}
+    <div class="d-grid" style="grid-template-columns:1fr 1fr">${dCard("Share by industry", "Spend % and Var % YoY", `<div class="prog" style="margin-top:20px">${[["Accommodation", 34.6, "+6.1%", 1], ["Food & drink", 25.2, "+9.4%", 1], ["Retail", 17.3, "−1.8%", 0], ["Transport", 13.1, "+2.2%", 1], ["Leisure", 9.8, "−0.6%", 0]].map(([t, v, d, ok]) => `<div style="grid-template-columns:120px 1fr 56px 70px"><span>${t}</span><span class="t"><i style="width:${v * 2.4}%"></i></span><b>${v}%</b>${vbox(d, ok)}</div>`).join("")}</div>`)}
+      ${dCard("Average ticket by industry", "Euro per transaction", `<div style="margin-top:10px">${barChart({ w: 440, h: 240, labels: ["Accom.", "Food", "Retail", "Transp.", "Leisure"], series: [{ vals: [118, 31, 46, 27, 39], color: "#f28c00" }], max: 140, step: 35, unit: "", values: [118, 31, 46, 27, 39], gap: .45 })}</div>`)}</div>` });
+  },
+
+  "screen-domestic-comparison": () => dShell({ tab: 3, title: "Lazio <span style='color:#bbb;font-weight:400'>vs</span> Toscana", sub: "Comparison · Jun 2024 – Dec 2024", body: `
+    <div class="d-kpis">${[["Indexed spend", "128", "121"], ["Average ticket", "€46", "€49"], ["Avg. tourist spending", "€212", "€231"], ["Var % YoY", "+6.9%", "+4.3%"]].map(([l, a, b]) => `<div class="d-kpi"><div class="l">${l}</div><div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px"><span class="v" style="margin:0;font-size:26px;color:#f28c00">${a}</span><span style="font-size:22px;font-weight:700;color:#555">${b}</span></div><div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-top:4px"><span>Lazio</span><span>Toscana</span></div></div>`).join("")}</div>
+    ${dCard("Indexed spend by month", "Lazio and Toscana side by side", `<div style="margin-top:14px">${barChart({ w: 960, h: 290, labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], series: [{ vals: [112, 135, 154, 121, 96, 83, 105], color: "#f28c00" }, { vals: [104, 141, 162, 117, 88, 72, 90], color: "#333" }], max: 180, step: 45, gap: .4 })}</div>${legend([["Lazio", "#f28c00"], ["Toscana", "#333"]])}`)}
+    ${dCard("Top industries", "Spend % in each territory", `<div style="margin-top:14px">${table([["Industry"], ["Lazio", "r"], [""], ["Toscana", "r"], [""]], [["Accommodation", "34.6%", mini(34.6, 40), "37.9%", mini(37.9, 40, "#333")], ["Food & drink", "25.2%", mini(25.2, 40), "27.4%", mini(27.4, 40, "#333")], ["Retail", "17.3%", mini(17.3, 40), "14.8%", mini(14.8, 40, "#333")], ["Transport", "13.1%", mini(13.1, 40), "9.6%", mini(9.6, 40, "#333")]])}</div>`)}` }),
+
+  "screen-admin": () => `<div class="d-wrap" style="min-height:1000px"><aside class="d-side" style="width:270px">
+      <div><div class="brand">${mark(20)}<b>spendscape</b></div><div class="d-sub">Admin</div></div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:15px">${[["Users", 1], ["Areas", 0], ["Access log", 0]].map(([t, on]) => `<div style="padding:11px 14px;border-radius:8px;${on ? "background:#fff;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)" : "color:#555"}">${t}</div>`).join("")}</div>
+      <div style="margin-top:auto;font-size:14px;color:#555">← Back to dashboard</div></aside>
+    <div class="d-main"><div class="d-nav"><div class="d-title" style="margin:0"><h1>Users</h1><span>48 users · 12 areas</span></div><div class="d-right"><div class="input" style="width:280px;height:40px;gap:10px;color:#888">${I.search}Search users</div><div class="btn">+ Add user</div></div></div>
+      <div class="d-card" style="padding:0;overflow:hidden;margin-top:30px">${table([["Email"], ["Role"], ["Area"], ["Status"], ["Last access"], [""]], [["analyst01@tourism-board.org", "Analyst", "Lazio", "<span class='status ok'>Active</span>", "Today"], ["analyst02@tourism-board.org", "Analyst", "Roma", "<span class='status ok'>Active</span>", "Yesterday"], ["manager01@tourism-board.org", "Manager", "Lazio", "<span class='status ok'>Active</span>", "2 days ago"], ["viewer01@municipality.org", "Viewer", "Tuscia", "<span class='status wait'>Invited</span>", "—"], ["analyst03@tourism-board.org", "Analyst", "Litorale", "<span class='status ok'>Active</span>", "3 days ago"], ["viewer02@municipality.org", "Viewer", "Castelli", "<span class='status ok'>Active</span>", "1 week ago"], ["manager02@region.org", "Manager", "All areas", "<span class='status ok'>Active</span>", "Today"], ["viewer03@municipality.org", "Viewer", "Sabina", "<span class='status off'>Disabled</span>", "2 months ago"], ["analyst04@tourism-board.org", "Analyst", "Ciociaria", "<span class='status wait'>Invited</span>", "—"]].map((r) => [...r, "<span style='color:#999;letter-spacing:2px'>•••</span>"]))}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:13px;color:#666"><span>Showing 1–9 of 48</span><span style="display:flex;gap:6px">${["‹", "1", "2", "3", "…", "6", "›"].map((p) => `<span style="width:32px;height:32px;border-radius:6px;display:grid;place-items:center;${p === "1" ? "background:#141413;color:#fff" : "border:1px solid #ddd"}">${p}</span>`).join("")}</span></div>
+    </div></div>`,
+
+  "screen-glossary": () => builders["screen-domestic"]() + `<div class="modal-bg"></div><div class="modal"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:26px;font-weight:700">Glossary</div>${I.x}</div>
+    <div style="display:flex;flex-direction:column;gap:18px;margin-top:22px">${[["Spend %", "Share of the total card spend recorded in the selected area and period."], ["Average Ticket Value", "Total spend divided by the number of transactions."], ["Average Tourist Spending", "Total spend divided by the number of distinct cards."], ["Indexed Spend", "Spend volume as an index, where 100 is the average month of the reference year."], ["Var % YoY", "Growth compared with the same period one year earlier."], ["Data Type", "Domestic tourism, cross-border tourism, or both."]].map(([t, d]) => `<div style="border-bottom:1px solid #eee;padding-bottom:16px"><div style="font-weight:600;font-size:15px">${t}</div><div style="color:#555;font-size:14px;margin-top:4px;line-height:1.5">${d}</div></div>`).join("")}</div></div>`,
+
+  /* ---------- merchant payments ---------- */
+  "screen-merchant-geography": () => mShell({ nav: 1, title: "Authorization", tab: 1, body: `
+    <div class="m-row" style="grid-template-columns:1.7fr 1fr">${mCard("Approval rate by issuer country", "Transactions in the selected period", `<svg data-map="world" width="780" height="400" style="display:block;margin-top:14px"></svg><div class="legend-grad" style="width:260px"></div><div class="slabels" style="width:260px;margin-top:6px"><span>80%</span><span>98%</span></div>`)}
+      ${mCard("Top countries", "Approval rate", `<div class="prog" style="margin-top:20px">${[["Italy", 95.4], ["Germany", 94.1], ["France", 93.6], ["Spain", 92.8], ["UK", 91.2], ["Netherlands", 90.7], ["United States", 87.9], ["Brazil", 84.3]].map(([t, v]) => `<div style="grid-template-columns:110px 1fr 56px"><span>${t}</span><span class="t"><i style="width:${(v - 75) * 4}%"></i></span><b>${v}%</b></div>`).join("")}</div>`)}</div>
+    <div class="m-card" style="margin-top:22px;padding:0;overflow:hidden">${table([["Country"], ["Transactions", "r"], ["Share", "r"], ["Approval rate"], ["Soft declines", "r"], ["Var YoY", "r"]], [["Italy", "3,412,880", "42.1%", mini(95.4) + "95.4%", "2.1%", vbox("+0.8 pp", 1)], ["Germany", "1,108,204", "13.7%", mini(94.1) + "94.1%", "2.6%", vbox("+1.1 pp", 1)], ["France", "902,517", "11.1%", mini(93.6) + "93.6%", "2.9%", vbox("−0.3 pp", 0)], ["Spain", "611,930", "7.6%", mini(92.8) + "92.8%", "3.3%", vbox("+0.4 pp", 1)], ["United Kingdom", "498,116", "6.1%", mini(91.2) + "91.2%", "3.8%", vbox("+1.6 pp", 1)]])}</div>` }),
+
+  "screen-merchant-benchmark": () => mShell({ nav: 2, title: "Authentication", tab: 2, body: `
+    <div class="m-kpis">${[["Frictionless rate", "78.4%", "74.1%"], ["Challenge success", "91.2%", "89.6%"], ["Authentication rate", "95.8%", "94.9%"], ["Abandonment", "3.1%", "4.4%"]].map(([l, a, b]) => `<div class="m-kpi"><div class="l">${l} ${I.info}</div><div style="display:flex;gap:16px;align-items:baseline;margin-top:8px"><span class="v" style="margin:0">${a}</span><span style="color:#888;font-size:14px">Peers ${b}</span></div><div style="height:8px;border-radius:4px;background:#eee;margin-top:12px;position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:${parseFloat(a)}%;background:#f28c00;border-radius:4px"></i><b style="position:absolute;top:-4px;left:${parseFloat(b)}%;width:2px;height:16px;background:#141413"></b></div></div>`).join("")}</div>
+    <div class="m-row" style="grid-template-columns:1.5fr 1fr">${mCard("Frictionless rate, you and peers", "Monthly, share of authenticated transactions", `<div style="margin-top:14px">${barChart({ w: 640, h: 280, labels: months6, series: [{ vals: [74.2, 75.1, 76.8, 77.0, 78.1, 79.4], color: "#f28c00" }, { vals: [72.5, 72.9, 73.4, 74.0, 74.6, 75.1], color: "#cfcfcf" }], max: 100, step: 25, unit: "%", gap: .38 })}</div>${legend([["Your merchants", "#f28c00"], ["Peer group", "#cfcfcf"]])}`)}
+      ${mCard("Authentication outcome", "Share of transactions", `<div class="stack" style="grid-template-columns:70px 1fr;margin-top:26px">${[["You", [78.4, 17.4, 4.2]], ["Peers", [74.1, 20.8, 5.1]]].map(([n, p]) => `<div>${n}</div><div class="bars" style="height:30px">${p.map((v, i) => `<i style="width:${v}%;background:${["#f28c00", "#f8c580", "#d1282d"][i]}"></i>`).join("")}</div>`).join("")}</div>${legend([["Frictionless", "#f28c00"], ["Challenged", "#f8c580"], ["Failed", "#d1282d"]], "margin-top:26px")}`)}</div>
+    <div class="m-card" style="margin-top:22px">${lineChart({ w: 1180, h: 220, labels: months6, series: [{ vals: [3.9, 3.7, 3.5, 3.4, 3.2, 3.1], color: "#f28c00", dots: 1, width: 3 }, { vals: [4.6, 4.6, 4.5, 4.5, 4.4, 4.4], color: "#999", dash: "6 4" }], min: 2, max: 5, step: 1, unit: "%" })}</div>` }),
+
+  "screen-fraud": () => mShell({ nav: 3, title: "Fraud", tab: 0, body: `
+    ${mKpis([["Fraud rate", "5.8 bps", "−0.7 bps"], ["Fraud amount", "€184K", "−9.3%"], ["Chargebacks", "1,240", "+3.4%", 1], ["Fraud to sales", "0.058%", "−0.007 pp"]])}
+    <div class="m-row">${mCard("Fraud rate by month", "Basis points of sales volume", `<div style="margin-top:14px">${lineChart({ w: 640, h: 270, labels: months6, series: [{ vals: [6.9, 6.6, 6.8, 6.2, 6.0, 5.8], color: "#d1282d", dots: 1, width: 3, area: 1 }], min: 0, max: 10, step: 2.5, refLine: { v: 7.5, color: "#ff661c", label: "Alert threshold" } })}</div>`)}
+      ${mCard("Fraud by type", "Share of fraud amount", `<div style="display:flex;align-items:center;gap:22px;margin-top:20px">${donutSvg([[46, "#d1282d"], [27, "#ff661c"], [15, "#f28c00"], [12, "#f8c580"]], "€184K", "fraud amount")}<div style="display:flex;flex-direction:column;gap:11px;font-size:13px">${[["Card not present", 46, "#d1282d"], ["Lost or stolen", 27, "#ff661c"], ["Counterfeit", 15, "#f28c00"], ["Other", 12, "#f8c580"]].map(([t, v, c]) => `<span style="display:flex;align-items:center;gap:8px"><i style="width:11px;height:11px;border-radius:3px;background:${c}"></i>${t}<b style="margin-left:auto;padding-left:14px;font-weight:600">${v}%</b></span>`).join("")}</div></div>`)}</div>
+    <div class="m-three">${mCard("By ticket range", "Fraud rate, bps", `<div class="prog">${[["< €20", 2.1, "#8cba2d"], ["€20 – €50", 3.8, "#8cba2d"], ["€50 – €100", 5.9, "#ffc61e"], ["€100 – €250", 8.4, "#ff661c"], ["> €250", 12.7, "#d1282d"]].map(([t, v, c]) => `<div><span>${t}</span><span class="t"><i style="width:${v * 7}%;background:${c}"></i></span><b>${v}</b></div>`).join("")}</div>`)}
+      ${mCard("By channel", "Fraud rate, bps", `<div class="prog">${[["Card present", 1.4, "#8cba2d"], ["E-commerce", 9.6, "#ff661c"], ["Mail / phone", 14.2, "#d1282d"], ["Recurring", 3.1, "#8cba2d"]].map(([t, v, c]) => `<div><span>${t}</span><span class="t"><i style="width:${v * 6}%;background:${c}"></i></span><b>${v}</b></div>`).join("")}</div>`)}
+      ${mCard("Chargebacks", "Monthly count", `<div style="margin-top:10px">${barChart({ w: 330, h: 170, labels: ["J", "F", "M", "A", "M", "J"], series: [{ vals: [188, 201, 214, 196, 219, 222], color: "#f8c580" }], max: 250, step: 125, gap: .4 })}</div>`)}</div>` }),
+
+  "screen-performance": () => mShell({ nav: 4, title: "Performance", tabs: ["Home", "Geography", "Benchmark"], tab: 0, body: `
+    ${mKpis([["Sales volume", "€38.2M", "+7.4%"], ["Transactions", "8.1M", "+6.2%"], ["Active cards", "2.3M", "+4.8%"], ["Average ticket", "€47.20", "−2.1%", 1]])}
+    ${mCard("Sales volume by month", "Current and previous year, € millions", `<div style="margin-top:14px">${lineChart({ w: 1180, h: 280, labels: months12, series: [{ vals: [5.4, 5.1, 5.9, 6.2, 6.6, 6.9, 7.4, 7.9, 6.8, 6.3, 6.0, 7.7], color: "#f28c00", area: 1, width: 3 }, { vals: [5.0, 4.8, 5.4, 5.8, 6.1, 6.4, 6.8, 7.1, 6.3, 5.9, 5.7, 7.0], color: "#999", dash: "6 4" }], min: 0, max: 8, step: 2, unit: "M" })}</div>${legend([["2025", "#f28c00"], ["2024", "#999"]])}`, "margin-top:22px")}
+    <div class="m-three">${mCard("Domestic and cross-border", "Share of sales volume", `<div style="display:flex;justify-content:center;margin-top:14px">${donutSvg([[71, "#f28c00"], [29, "#f8c580"]], "29%", "cross-border", 170, 26)}</div>`)}
+      ${mCard("By product type", "Share of transactions", `<div class="prog">${[["Consumer debit", 48], ["Consumer credit", 27], ["Prepaid", 14], ["Commercial", 11]].map(([t, v]) => `<div><span>${t}</span><span class="t"><i style="width:${v * 2}%"></i></span><b>${v}%</b></div>`).join("")}</div>`)}
+      ${mCard("By weekday", "Average daily transactions, thousands", `<div style="margin-top:10px">${barChart({ w: 330, h: 180, labels: ["M", "T", "W", "T", "F", "S", "S"], series: [{ vals: [41, 43, 44, 46, 52, 58, 37], color: "#f28c00" }], max: 60, step: 30, gap: .35 })}</div>`)}</div>` }),
+
+  "screen-issuers": () => mShell({ nav: 1, title: "Authorization", tab: 3, body: `
+    <div class="m-row" style="grid-template-columns:1fr 1.35fr">${mCard("Approval rate and volume", "Top issuers in the period", `<div style="margin-top:10px">${scatter({ w: 470, h: 280, pts: [["Issuer A", 31, 95.2, 22], ["Issuer B", 18, 93.1, 17], ["Issuer C", 12, 90.4, 14], ["Issuer D", 9, 96.3, 12], ["Issuer E", 7, 86.8, 11], ["Issuer F", 5, 91.9, 9]], x: [0, 35, 5, "%"], y: [84, 98, 2, "%"], xlab: "Share of transactions", ylab: "Approval rate" })}</div>`)}
+      ${mCard("Top decline reasons by issuer", "Share of declines", `<div class="stack" style="grid-template-columns:80px 1fr;margin-top:22px">${[["Issuer A", [41, 22, 19, 18]], ["Issuer B", [35, 30, 15, 20]], ["Issuer C", [52, 18, 12, 18]], ["Issuer D", [29, 25, 26, 20]], ["Issuer E", [47, 21, 17, 15]]].map(([n, p]) => `<div>${n}</div><div class="bars">${p.map((v, i) => `<i style="width:${v}%;background:${["#ff661c", "#f28c00", "#f8c580", "#fde3bf"][i]}"></i>`).join("")}</div>`).join("")}</div>${legend([["Insufficient funds", "#ff661c"], ["Do not honor", "#f28c00"], ["Invalid data", "#f8c580"], ["Other", "#fde3bf"]])}`)}</div>
+    <div class="m-card" style="margin-top:22px;padding:0;overflow:hidden">${table([["Issuer"], ["Country"], ["Transactions", "r"], ["Approval rate"], ["Soft declines", "r"], ["Var YoY", "r"]], [["Issuer A", "Italy", "2,511,040", mini(95.2) + "95.2%", "1.9%", vbox("+0.6 pp", 1)], ["Issuer B", "Italy", "1,457,833", mini(93.1) + "93.1%", "2.7%", vbox("+1.2 pp", 1)], ["Issuer C", "Germany", "972,110", mini(90.4) + "90.4%", "4.1%", vbox("−0.9 pp", 0)], ["Issuer D", "France", "729,086", mini(96.3) + "96.3%", "1.4%", vbox("+0.2 pp", 1)], ["Issuer E", "Spain", "566,912", mini(86.8) + "86.8%", "5.6%", vbox("−1.7 pp", 0)], ["Issuer F", "Netherlands", "405,377", mini(91.9) + "91.9%", "3.0%", vbox("+0.9 pp", 1)]])}</div>` }),
+
+  "screen-settings": () => mShell({ nav: 5, title: "Settings", tabs: ["Preferences", "Users", "Notifications"], tab: 0, filters: false, body: `
+    <div class="m-row" style="grid-template-columns:1fr 1fr;margin-top:30px">
+      <div class="m-card"><h3>Dashboard preferences</h3><div style="display:flex;flex-direction:column;gap:22px;margin-top:22px;font-size:14.5px">${[["Weekly data", "Show weeks instead of months where available", 1], ["Raw spend", "Show absolute amounts next to shares", 0], ["Compact tables", "Reduce row height in data tables", 1]].map(([t, d, on]) => `<div style="display:flex;justify-content:space-between;align-items:center;gap:20px"><div><div style="font-weight:600">${t}</div><div style="color:#666;font-size:13px;margin-top:3px">${d}</div></div>${tog(on)}</div>`).join("")}
+        <div><div style="font-weight:600">Currency</div><div class="sel" style="margin-top:8px;width:220px;border-radius:4px">Euro (€)${I.chev}</div></div></div></div>
+      <div class="m-card"><h3>Modules</h3><div style="display:flex;flex-direction:column;gap:6px;margin-top:16px;font-size:14.5px">${mNav.slice(0, 5).map(([t], i) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee"><span>${t}</span>${tog(i !== 0)}</div>`).join("")}</div></div>
+    </div>
+    <div class="m-card" style="margin-top:22px"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Users with access</h3><div class="btn">+ Add user</div></div><div style="margin-top:16px">${table([["Email"], ["Role"], ["Merchants"], ["Status"]], [["payments.lead@merchant.example", "Admin", "All merchants", "<span class='status ok'>Active</span>"], ["analyst@merchant.example", "Viewer", "Online store", "<span class='status ok'>Active</span>"], ["finance@merchant.example", "Viewer", "All merchants", "<span class='status wait'>Invited</span>"]])}</div></div>` }),
+
+  "screen-login-merchant": () => `<div style="min-height:900px;background:#f6f6f6;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:26px">
+    <div class="brand" style="font-size:26px">${mark(28)}<b>spendscape</b><span>Payments</span></div>
+    <div style="width:470px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:40px 44px">
+      <div style="font-size:26px;font-weight:700">Sign in</div><div style="color:#666;margin-top:6px;font-size:14px">Use the credentials sent by your account manager.</div>
+      <div style="margin-top:28px;font-size:13px;font-weight:600">Email</div><div class="input" style="margin-top:8px;border-radius:4px">name@merchant.example</div>
+      <div style="margin-top:18px;font-size:13px;font-weight:600">Password</div><div class="input" style="margin-top:8px;border-radius:4px;letter-spacing:.3em">••••••••••</div>
+      <div class="d-chk" style="margin-top:18px"><i><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4"><path d="m4 12 5 5L20 6"/></svg></i>I accept the <u>terms and conditions</u></div>
+      <div class="btn dark" style="width:100%;justify-content:center;height:46px;margin-top:26px;border-radius:4px">Sign in</div>
+      <div style="text-align:center;margin-top:18px;font-size:13px"><u>Forgot your password?</u></div>
+    </div><div style="font-size:12px;color:#888">© 2025 Spendscape · Terms of Use · Privacy Policy</div></div>`,
+});
+
 if (builders[v]) document.getElementById(v).innerHTML = builders[v]();
 // ?measure=1 writes the screen height into the DOM, read with chrome --dump-dom to size the cover iframes
 if (new URLSearchParams(location.search).has("measure")) document.body.setAttribute("data-h", document.getElementById(v).offsetHeight);
@@ -453,6 +687,15 @@ async function drawMaps() {
     const kind = el.dataset.map, w = +el.getAttribute("width"), h = +el.getAttribute("height");
     const svg = d3.select(el);
     let proj;
+    if (kind === "world") {
+      // Choropleth of approval rate by country, fictional values derived from the country id
+      const land = countries.filter((f) => f.id !== "010");
+      const wp = d3.geoNaturalEarth1().fitExtent([[0, 0], [w, h]], { type: "FeatureCollection", features: land });
+      const rate = (id) => 80 + ((+id * 37) % 19);
+      svg.append("g").selectAll("path").data(land).join("path").attr("d", d3.geoPath(wp))
+        .attr("fill", (f) => (+f.id % 5 === 0 ? "#e6e4df" : heat((rate(f.id) - 80) / 18))).attr("stroke", "#fff").attr("stroke-width", .5);
+      return;
+    }
     if (kind === "italy") proj = d3.geoMercator().fitExtent([[6, 6], [w - 6, h - 6]], italy);
     else {
       proj = d3.geoMercator().scale(1750).center([12.6, 42.1]).translate([w * 0.6, 250]);
@@ -497,31 +740,53 @@ drawMaps();
 
 /* ===================== isometric covers ===================== */
 // Each cover shows the rebuilt screens in tilted iframes, arranged in staggered columns.
-const H = { "screen-overview": 2440, "screen-origins": 2080, "screen-comparison": 2005, "screen-compare-empty": 1022, "screen-domestic": 1100, "screen-merchant": 1250 };
+const H = { "screen-overview": 2429, "screen-origins": 2076, "screen-categories": 1651, "screen-comparison": 2002, "screen-compare-empty": 1022, "screen-login-tourism": 900, "screen-domestic": 1100, "screen-domestic-trends": 1100, "screen-domestic-origins": 1100, "screen-domestic-industries": 1100, "screen-domestic-comparison": 1100, "screen-admin": 1000, "screen-glossary": 1100, "screen-merchant": 1250, "screen-merchant-geography": 1250, "screen-merchant-benchmark": 1250, "screen-fraud": 1250, "screen-performance": 1250, "screen-issuers": 1250, "screen-settings": 1250, "screen-login-merchant": 900 };
+// Every visible slot of a cover gets a different screen: no screen appears twice in the same image.
+// The pool alternates the three products so neighbours rarely come from the same dashboard.
+const pool = ["screen-overview", "screen-merchant", "screen-domestic-origins", "screen-fraud", "screen-categories", "screen-domestic", "screen-merchant-geography", "screen-login-tourism", "screen-domestic-industries", "screen-performance", "screen-comparison", "screen-admin", "screen-merchant-benchmark", "screen-domestic-trends", "screen-issuers", "screen-origins", "screen-glossary", "screen-settings", "screen-domestic-comparison", "screen-login-merchant", "screen-compare-empty"];
 // Stage local axes after rotateZ(-38deg) rotateX(52deg): columns run up-right, screens stack down-right.
-// x/y place the grid so it covers the whole canvas; each column cycles the screens from a different start.
+// x/y place the grid so it covers the canvas; area is the part of the canvas where screens can be seen.
 const iso = {
-  hero: { x: -1406, y: 444, s: .42, cols: 9, len: 9500 },
-  card: { x: -1134, y: 809, s: .36, cols: 6, len: 7800 },
-  showcase: { x: -1382, y: 432, s: .4, cols: 7, len: 9800 },
+  hero: { x: -1406, y: 444, s: .42, cols: 9, len: 9500, area: [1150, 0, 2400, 1200], start: 0 },
+  card: { x: -1134, y: 809, s: .36, cols: 6, len: 7800, area: [0, 330, 1200, 1500], start: 3 },
+  showcase: { x: -2600, y: 1300, s: .5, cols: 12, len: 16000, area: [0, 0, 2400, 1350], start: 0 },
 };
-const order = ["screen-overview", "screen-merchant", "screen-domestic", "screen-comparison", "screen-origins", "screen-compare-empty"];
+const COS = Math.cos((38 * Math.PI) / 180), SIN = Math.sin((38 * Math.PI) / 180), TILT = Math.cos((52 * Math.PI) / 180);
 const stage = document.querySelector(`#${v} .stage[data-iso]`);
 if (stage) {
-  const cfg = iso[stage.dataset.iso], gap = 90;
+  const cfg = iso[stage.dataset.iso], gap = 90, [ax0, ay0, ax1, ay1] = cfg.area;
+  const project = (X, Y) => [cfg.x + cfg.s * (X * COS + Y * SIN), cfg.y + cfg.s * TILT * (-X * SIN + Y * COS)];
+  const visible = (X, Y, h) => {
+    for (let i = 0; i <= 12; i++) for (let j = 0; j <= 12; j++) {
+      const [px, py] = project(X + (1440 * i) / 12, Y + (h * j) / 12);
+      if (px > ax0 - 4 && px < ax1 + 4 && py > ay0 - 4 && py < ay1 + 4) return true;
+    }
+    return false;
+  };
+  const order = [...pool.slice(cfg.start), ...pool.slice(0, cfg.start)];
+  let k = 0, overflow = 0;
   stage.style.left = cfg.x + "px"; stage.style.top = cfg.y + "px";
   stage.style.transform = `scale(${cfg.s}) rotateX(52deg) rotateZ(-38deg)`;
   for (let c = 0; c < cfg.cols; c++) {
-    let y = -((c * 737) % 1600), k = c * 2;
+    let y = -((c * 737) % 1600);
+    const X = c * (1440 + gap);
     while (y < cfg.len) {
-      const id = order[k++ % order.length];
-      const f = document.createElement("iframe");
-      f.className = "shot"; f.src = `?v=${id}`;
-      Object.assign(f.style, { left: c * (1440 + gap) + "px", top: y + "px", width: "1440px", height: H[id] + "px" });
-      stage.appendChild(f);
-      y += H[id] + gap;
+      const id = order[k % order.length], h = H[id];
+      if (visible(X, y, h)) {
+        if (k >= order.length) overflow++;
+        else {
+          const f = document.createElement("iframe");
+          f.className = "shot"; f.src = `?v=${id}`;
+          Object.assign(f.style, { left: X + "px", top: y + "px", width: "1440px", height: h + "px" });
+          stage.appendChild(f);
+        }
+        k++;
+      }
+      y += h + gap;
     }
   }
+  // Read with --dump-dom: slots used, and slots left empty because the pool ran out
+  document.body.dataset.slots = k; document.body.dataset.overflow = overflow;
 }
 </script>
 </body>
