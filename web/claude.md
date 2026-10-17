@@ -47,17 +47,20 @@ web/
     │   ├── case-studies/page.tsx     # Works grouped by pillar, anchors #design #lead #ai #grow
     │   ├── case-studies/[slug]/      # Detail page: header, meta, cover, MDX body (or placeholder template)
     │   ├── layout.tsx                # Fonts (Fraunces, Inter, JetBrains Mono), nav, footer
+    │   ├── **/loading.tsx            # Route skeletons (home, case studies, case study), mirror each page's layout
     │   └── globals.css               # Design tokens + utilities
     ├── components/features/
     │   ├── CaseStudyCard.tsx         # Card for carousel ("slide") and grid ("masonry")
     │   ├── CaseStudyMdx.tsx          # Blocks available inside case study MDX
     │   ├── PlaceholderCaseStudy.tsx  # Generic body for placeholder works (delete when none remain)
+    │   ├── Skeleton.tsx              # Skeleton block, SkeletonPage wrapper, CaseStudyCardSkeleton
     │   ├── WorkCover.tsx             # Image cover or generated WorkArt
     │   └── WorksCarousel.tsx         # Infinite free-scrolling carousel (renders works ×3)
     ├── lib/
     │   ├── case-studies.ts           # Loader: MDX works + placeholders, sorted newest first
     │   ├── works.ts                  # Remaining design-file placeholders
     │   ├── config.ts                 # Personal data, pillars, tools (the only place for personal data)
+    │   ├── shimmer.ts                # Animated next/image placeholder, removed once the image loads
     │   └── pillarTheme.ts            # Theme classes per pillar
     └── types/index.ts                # Work, CaseStudyFrontmatter, PillarId, …
 ```
@@ -210,7 +213,10 @@ Remaining placeholders in `src/lib/works.ts`: Metrix, Forma Studio, FlowOS, Nort
 - **Components:** PascalCase → `CaseStudyCard.tsx`
 - **Utils / functions:** camelCase
 - **Content files:** kebab-case slugs → `paywall-design-system.mdx`
-- **Images:** always Next.js `<Image>` with explicit width/height (or `fill` inside a sized frame)
+- **Images:** always Next.js `<Image>` with explicit width/height (or `fill` inside a sized frame), and
+  `placeholder={shimmerPlaceholder}` so a slow image shows a shimmer instead of an empty box
+- **Loading states:** a new route gets a `loading.tsx` built from `Skeleton` that mirrors its layout; a slow element
+  without its own placeholder (e.g. a video) sits in a `skeleton` frame
 - **Tailwind only:** no CSS modules, no inline styles; tokens only in `globals.css`
 - **Mobile-first**, no horizontal page scroll
 - **No `any`** in TypeScript

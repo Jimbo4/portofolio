@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { MDXComponents } from "mdx/types";
+import { shimmerPlaceholder } from "@/lib/shimmer";
 
 /*
  * Building blocks available inside content/case-studies/*.mdx.
@@ -29,6 +30,7 @@ export function Figure({ src, alt, width, height, caption, sizes = "(max-width: 
         width={Number(width)}
         height={Number(height)}
         sizes={sizes}
+        placeholder={shimmerPlaceholder}
         className="h-auto w-full rounded-2xl border border-line-soft"
       />
       {caption && <figcaption className="text-[13px] leading-[1.5] text-muted">{caption}</figcaption>}
@@ -126,15 +128,18 @@ export function VideoFeature({ title, src, poster, label, children }: VideoFeatu
         <h2 className="mb-[18px] font-serif text-[32px] font-semibold tracking-[-0.02em]">{title}</h2>
         <div className="flex flex-col gap-3.5 [&_p]:mt-0">{children}</div>
       </div>
-      <video
-        src={src}
-        poster={poster}
-        aria-label={label}
-        controls
-        playsInline
-        preload="metadata"
-        className="mx-auto aspect-[9/16] w-[min(320px,100%)] rounded-[28px] bg-ink object-cover"
-      />
+      {/* The skeleton frame shows until the poster paints over it */}
+      <div className="skeleton mx-auto aspect-[9/16] w-[min(320px,100%)] rounded-[28px]">
+        <video
+          src={src}
+          poster={poster}
+          aria-label={label}
+          controls
+          playsInline
+          preload="metadata"
+          className="relative z-10 size-full rounded-[28px] object-cover"
+        />
+      </div>
     </div>
   );
 }

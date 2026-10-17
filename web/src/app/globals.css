@@ -87,6 +87,33 @@
   background: repeating-linear-gradient(135deg, #ede8e1 0 12px, #e5e0d8 12px 24px);
 }
 
+/* Loading placeholder: paper block with a light band sweeping across (transform only, so it stays cheap) */
+@utility skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-paper-2);
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-paper-3) 75%, transparent), transparent);
+    transform: translateX(-100%);
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @utility marquee-fade {
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
