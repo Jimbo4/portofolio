@@ -201,6 +201,11 @@
 <section class="view" id="ai-scouting" style="width:1440px"></section>
 <section class="view" id="ai-moodboard" style="width:1440px"></section>
 <section class="view" id="ai-chat" style="width:1440px"></section>
+<section class="view" id="erp-directors" style="width:1440px"></section>
+<section class="view" id="erp-locations" style="width:1440px"></section>
+<section class="view" id="erp-rights" style="width:1440px"></section>
+<section class="view" id="ai-top100" style="width:1440px"></section>
+<section class="view" id="ai-moodboards" style="width:1440px"></section>
 <!-- single images used by the body -->
 <section class="view" id="storyboard-frame" style="width:1600px;height:900px"></section>
 
@@ -227,8 +232,8 @@
 </section>
 
 <!-- ============ SHOWCASE 2400x1350 (body) ============ -->
-<section class="view velvet" id="showcase" style="width:2400px;height:1350px">
-  <div class="spot"></div>
+<section class="view" id="showcase" style="width:2400px;height:1350px;background:#3a0306">
+  <canvas class="drape" data-mode="veil" width="2400" height="1350"></canvas>
   <div class="stage3d" data-flow="showcase" style="top:0;height:1350px"></div>
   <div class="grain"></div>
 </section>
@@ -535,6 +540,50 @@ const builders = {
     <div class="prompt" style="margin-top:28px"><div class="q ph">Scrivi qualcosa…</div><div class="row"><span></span><div style="display:flex;gap:10px"><span class="bt">${ic(P.clip, 16)}Allega</span><span class="bt">${ic(P.send, 16)}</span></div></div></div>
   </div></div>`,
 
+  "erp-directors": () => {
+    const dirs = [["Elena Marchi", "Lanterna Film", 12, "coast"], ["Tommaso Rinaldi", "Lanterna Film", 9, "forest"], ["Giulia Ferraro", "Nord Est Pictures", 7, "neon"], ["Marco Bellandi", "Nord Est Pictures", 11, "desert"], ["Sara Conti", "Officina Visiva", 5, "lighthouse"], ["Davide Greco", "Officina Visiva", 8, "diner"], ["Irene Bassi", "Studio Riva", 4, "coast"], ["Paolo Fumagalli", "Studio Riva", 6, "neon"]];
+    return `<div class="erp">${erpNav()}
+    <div class="e-h" style="margin-top:0"><h3>Regie</h3><div style="display:flex;gap:12px"><span class="btn ghost">${ic(P.users, 18)}Tutte le case di produzione ${ic(P.chev, 16)}</span><span class="btn">${ic(P.plus, 18)}Nuovo regista</span></div></div>
+    <div class="dirs" style="margin-top:8px">${dirs.map(([n, c, p, k], i) => `<div class="dir"><div class="reel" style="height:150px">${still(k, 320, 150)}<span class="play">${ic(P.play, 20, 2)}</span></div><div class="b"><span class="avatar sm">${n.split(" ").map((x) => x[0]).join("")}</span><div><strong>${n}</strong><small>${c}</small></div><span class="chip">${p} progetti</span></div></div>`).join("")}</div>
+    <div class="pager">Pagina 1 di 4<span class="b">Precedente</span><span class="b">Successiva</span></div></div>`;
+  },
+
+  "erp-locations": () => {
+    const locs = [["Casale delle Querce", "Val d'Orcia, Toscana", ["interni", "campagna"], "diner"], ["Faro di Capo Bianco", "Costa ligure", ["esterni", "mare"], "lighthouse"], ["Strada del Passo", "Dolomiti", ["esterni", "strada"], "desert"], ["Bosco dei Frati", "Appennino", ["esterni", "bosco"], "forest"], ["Lungomare Nord", "Riviera adriatica", ["esterni", "notte"], "coast"], ["Vicolo dei Neon", "Milano", ["esterni", "città"], "neon"]];
+    return `<div class="erp">${erpNav()}
+    <div class="e-h" style="margin-top:0"><h3>Location</h3><span class="btn">${ic(P.plus, 18)}Aggiungi location</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">${locs.map(([n, pl, tags, k]) => `<div class="dir"><div style="height:210px">${still(k, 420, 210)}</div><div style="padding:16px 18px 18px"><div style="font-size:19px;font-weight:600">${n}</div><div style="display:flex;gap:6px;align-items:center;color:#bbb;font-size:15px;margin-top:2px">${ic(P.pin, 16)}${pl}</div><div style="display:flex;gap:6px;margin-top:12px">${tags.map((t) => `<span class="chip">${t}</span>`).join("")}</div></div></div>`).join("")}</div></div>`;
+  },
+
+  "erp-rights": () => {
+    const rows = [["Luca Serra", "La domenica", "Orsini Pasta", ["TV", "Web", "Social"], "14/04/2024", "14/04/2025", 0], ["Anna Villa", "La domenica", "Orsini Pasta", ["TV", "Web"], "14/04/2024", "14/04/2025", 0], ["Pietro Neri", "La domenica", "Orsini Pasta", ["TV", "Web", "Social", "Cinema"], "14/04/2024", "14/10/2025", 0], ["Chiara Monti", "Ciliegia Summer", "Ciliegia Cosmetics", ["Web", "Social"], "01/03/2024", "01/09/2024", 1], ["Nicola Ferri", "Il viaggio", "Vela Mobility", ["TV", "Cinema"], "03/06/2024", "03/06/2025", 0], ["Marta Gentile", "Vendemmia", "Tramonto Vini", ["TV"], "05/02/2024", "05/08/2024", 1], ["Giorgio Sala", "Gelato d'autore", "Fiordaliso Gelati", ["TV", "Web"], "10/06/2023", "10/12/2023", 2], ["Elisa Riva", "Strade nuove", "Vela Mobility", ["Web", "Social"], "20/05/2024", "20/05/2025", 0]];
+    const st = [["Attivo", "var(--prod)"], ["In scadenza", "var(--chiu)"], ["Scaduto", "var(--persa)"]];
+    return `<div class="erp">${erpNav()}
+    <div class="e-h" style="margin-top:0"><h3>Diritti attori</h3><div class="seg" style="gap:10px">${["Attori", "Musiche", "Speaker"].map((t, i) => `<span class="${i ? "" : "on"}" style="${i ? "" : "color:var(--amber)"}">${t}</span>`).join("")}</div></div>
+    <div class="status" style="grid-template-columns:repeat(3,1fr);margin-bottom:30px">${[["Attivi", 18, "var(--prod)"], ["In scadenza nei prossimi 60 giorni", 4, "var(--chiu)"], ["Scaduti", 2, "var(--persa)"]].map(([t, n, c]) => `<div class="sc" style="background:${c};height:130px;flex-direction:row;gap:18px"><span class="n" style="font-size:58px">${n}</span><span class="t" style="font-size:20px;max-width:200px">${t}</span></div>`).join("")}</div>
+    <table class="e-tab"><tr>${["Attore", "Progetto", "Cliente", "Canali", "On air", "Scadenza", "Stato"].map((h) => `<th>${h}${ic(P.sort, 15)}</th>`).join("")}</tr>
+    ${rows.map(([n, pr, c, ch, o, d, s]) => `<tr><td class="nm">${n}</td><td>${pr}</td><td>${c}</td><td>${ch.map((x) => `<span class="chip" style="margin-right:4px">${x}</span>`).join("")}</td><td><span class="dt">${ic(P.clock, 16)}${o}</span></td><td><span class="dt">${ic(P.clock, 16)}${d}</span></td><td><span class="badge" style="background:${st[s][1]}">${st[s][0]}</span></td></tr>`).join("")}</table></div>`;
+  },
+
+  "ai-top100": () => {
+    const books = [["Il mare di sotto", "Giorgia Bellini", "Romanzo", "#0f2a3d", "#7fd0e0", "wave"], ["Le stanze vuote", "Fabio Orsini", "Giallo", "#2b2b2b", "#f2c069", "bars"], ["Cenere e grano", "Livia Martini", "Saga familiare", "#6b3d1e", "#f4e3c3", "circle"], ["Una notte a Torino", "Andrea Pace", "Noir", "#151530", "#ff6f91", "moon"], ["Il giardino d'inverno", "Sofia Ricci", "Romanzo", "#dfe8e4", "#2f4a32", "circle"], ["La ragazza del faro", "Tommaso Villa", "Mistero", "#1f3b4d", "#ffe9a8", "moon"]];
+    return `<div class="ai"><div class="waves">${waves(1440, 1400, "#3fa6c4", "#e8792a")}</div><div class="c">
+    <div class="a-nav"><span>← <u>Indietro</u></span><div class="mid">${wordmark("studio")}</div><span></span></div>
+    <div class="tabs"><div>Suggerimenti AI</div><div class="on">Top 100 del mese</div><div>Preferiti</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin:34px 0 26px"><div style="font-size:34px;font-weight:600">I più letti di settembre</div><div style="display:flex;gap:24px">${[["Periodo", "Settembre 2024"], ["Fonte", "Classifica librerie"]].map(([l, x]) => `<div><div style="font-weight:700;margin-bottom:8px">${l}</div><div class="pill" style="width:250px;height:48px;justify-content:space-between;background:var(--ai-gray);color:#fff">${x}${ic(P.chev, 16)}</div></div>`).join("")}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">${books.map(([t, a, g, bg, fg, sh], i) => `<div class="book"><div class="top" style="gap:22px;padding:20px 22px"><div class="cv" style="width:104px;height:154px">${cover(t.length > 14 ? t.replace(/ (\S+ \S+)$/, "|$1") : t, a, bg, fg, sh, fg)}</div><div class="info"><div class="rk"><b>${i + 1}</b><span class="ic">${ic(P.heart, 24, 1.8)}</span></div><h5 style="font-size:23px">${t}</h5><div class="au" style="font-size:16px">${a}</div><div class="ge">${g}</div><div class="stars" style="margin-top:auto">${[1, 2, 3, 4, 5].map((k) => ic(P.star, 17, 1.6).replace("<svg", `<svg style="fill:${k <= 4 - (i % 2) ? "#f2c069" : "none"}"`)).join("")}</div></div></div></div>`).join("")}</div>
+  </div></div>`;
+  },
+
+  "ai-moodboards": () => {
+    const boards = [["Notturno costiero", ["coast", "lighthouse", "neon", "diner"]], ["Polvere e strada", ["desert", "coast", "diner", "forest"]], ["Bosco d'inverno", ["forest", "lighthouse", "desert", "neon"]], ["Città dopo la pioggia", ["neon", "diner", "forest", "coast"]]];
+    return `<div class="ai"><div class="waves">${waves(1440, 1300, "#3fa6c4", "#3fa6c4")}</div><div class="c">
+    <div class="a-nav"><span>← <u>Indietro</u></span><div class="mid">${wordmark("studio")}</div><span></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px"><div style="font-size:30px;color:var(--ai-blue)">Moodboard avviate</div><span class="bt" style="border-radius:999px">${ic(P.plus, 16)}Crea Moodboard</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:44px">${boards.map(([t, ks]) => `<div style="border-radius:14px;overflow:hidden;box-shadow:0 18px 36px rgba(0,0,0,.4)"><div style="display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:300px;gap:3px;background:#111">${ks.slice(0, 3).map((k, i) => `<div style="${i ? "" : "grid-row:span 2"}">${still(k, i ? 300 : 600, i ? 150 : 300)}</div>`).join("")}</div><div style="display:flex;justify-content:space-between;align-items:center;background:var(--ai-blue);padding:16px 28px;font-size:18px;font-weight:500">${t}<span style="display:flex;gap:16px">${ic(P.dl, 22)}${ic(P.x, 22)}</span></div></div>`).join("")}</div>
+  </div></div>`;
+  },
+
   "storyboard-frame": () => sketch(1600, 900),
 };
 
@@ -624,48 +673,65 @@ function drawTitles() {
   });
 }
 
-/* ===================== closed stage curtains ===================== */
-// Two scarlet silk panels meeting in the middle. Folds are a sum of sines that widen toward the floor; the fold height
-// gives the shade and the fold slope a narrow specular band, the silky sheen.
+/* ===================== velvet curtains and silk veil ===================== */
+// Painted per pixel. "drape": closed stage curtain, parallel vertical folds of uneven width, gathered at the top.
+// "veil": the same cloth lying sideways, wide silk waves running across the frame, darker so screens stay readable.
+// Each fold is a sum of sines on a warped axis; the slope gives a soft lambert shade plus a velvet sheen on the
+// steep sides, the fold height darkens the creases.
 function drawCurtains() {
   const cv = document.querySelector(`#${v} canvas.drape`);
   if (!cv) return;
-  const W = cv.width, H = cv.height, ctx = cv.getContext("2d"), img = ctx.createImageData(W, H), px = img.data;
-  const folds = [[1, 1, 0], [.42, 2.07, 1.7], [.16, 3.3, 4.1]];
-  const base = Math.max(W, H) / 7.5; // fold width at the top
+  const W = cv.width, H = cv.height, mode = cv.dataset.mode || "drape", ctx = cv.getContext("2d");
+  const img = ctx.createImageData(W, H), px = img.data;
+  const veil = mode === "veil";
+  const fw = veil ? H / 3.2 : Math.max(150, W / 8.5); // fold width
+  const TAU = Math.PI * 2;
+  const folds = [[1, 1, 0], [.34, 2.3, 1.3], [.13, 4.1, .7]];
+  // cloth height at a point: along the fold axis `a`, across it `b` (both in px)
+  const heightAt = (a, b, t) => {
+    let w = a / fw + .22 * Math.sin(a / (fw * 1.9) + .5) + .12 * Math.sin(a / (fw * .83) + 2) + .04 * Math.sin(t * 3 + a / (fw * 4));
+    if (veil) w += .35 * Math.sin(b / (W * .22) + a / (fw * 3)); // waves drift across the frame
+    else if (t < .06) w += .16 * Math.sin(a / (fw * .23)) * (1 - t / .06); // gathered heading
+    let h = 0; for (const [amp, f, ph] of folds) h += amp * Math.sin(TAU * f * w + ph);
+    return h;
+  };
+  const ramp = [[0, [22, 0, 3]], [.35, [92, 3, 9]], [.7, [168, 12, 18]], [.95, [222, 38, 36]], [1.25, [255, 112, 96]]];
+  const color = (l) => {
+    for (let i = 1; i < ramp.length; i++) if (l <= ramp[i][0] || i === ramp.length - 1) {
+      const [l0, c0] = ramp[i - 1], [l1, c1] = ramp[i], k = Math.max(0, Math.min(1, (l - l0) / (l1 - l0)));
+      return c0.map((c, j) => c + (c1[j] - c) * k);
+    }
+  };
   for (let y = 0; y < H; y++) {
-    const t = y / H, spread = 1 + t * .55;
+    const t = y / H;
     for (let x = 0; x < W; x++) {
-      const dx = Math.abs(x - W / 2), right = x >= W / 2;
-      const u = (dx / (base * spread)) * 2 * Math.PI + (right ? .9 : 0) + Math.sin(t * 2.4 + dx * .002) * .35;
-      let h = 0, slope = 0;
-      for (const [a, f, ph] of folds) { h += a * Math.sin(f * u + ph); slope += a * f * Math.cos(f * u + ph); }
-      const n = (right ? 1 : -1) * slope / 2.4;
-      const shade = Math.pow(Math.max(0, .5 + .42 * Math.max(-1, Math.min(1, h / 1.3)) - .16 * n), 1.5);
-      const ripple = .6 + .4 * Math.sin(t * 3.1 + u * .35) ** 2; // the sheen drifts along each fold
-      const spec = (Math.pow(Math.max(0, 1 - Math.abs(n + .45) * 3), 8) * .9 + Math.pow(Math.max(0, 1 - Math.abs(n + .3) * 1.1), 3) * .28) * ripple;
-      let l = Math.max(.03, shade) * (1 - .35 * Math.pow(Math.abs(x / W - .5) * 2, 2));
-      if (dx < 8) l *= .3 + .7 * dx / 8; // seam where the panels meet
-      const i = (y * W + x) * 4;
-      px[i] = Math.min(255, 26 + 205 * l + 90 * spec);
-      px[i + 1] = Math.min(255, 1 + 8 * l + 95 * spec);
-      px[i + 2] = Math.min(255, 4 + 16 * l + 85 * spec);
-      px[i + 3] = 255;
+      const a = veil ? y : x, b = veil ? x : y, tt = veil ? x / W : t;
+      const h = heightAt(a, b, tt), s = (heightAt(a + 1.5, b, tt) - heightAt(a - 1.5, b, tt)) / 3 * fw / TAU;
+      const k = s * 1.15, len = Math.sqrt(1 + k * k);
+      const lambert = Math.max(0, (k * .42 + .9) / len);          // light from the upper left
+      const sheen = Math.pow(1 - 1 / len, 1.3) * (k > 0 ? 1 : .45);  // velvet glows on the lit steep side
+      const crease = .4 + .6 * Math.pow((h + 1.47) / 2.94, .9);
+      let l = crease * (.62 * lambert + .75 * sheen);
+      l *= veil ? .78 + .14 * Math.sin(x / W * Math.PI) : .82 + .22 * Math.sin(t * Math.PI * .9 + .2);
+      const c = color(l), i = (y * W + x) * 4;
+      px[i] = c[0]; px[i + 1] = c[1]; px[i + 2] = c[2]; px[i + 3] = 255;
     }
   }
   ctx.putImageData(img, 0, 0);
-  // stage light: a warm pool behind the title, a shadow under the top edge
-  const g = ctx.createRadialGradient(W / 2, H * .22, 0, W / 2, H * .22, W * .55);
-  g.addColorStop(0, "rgba(255,130,90,.14)"); g.addColorStop(1, "rgba(255,130,90,0)");
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-  const top = ctx.createLinearGradient(0, 0, 0, H * .12);
-  top.addColorStop(0, "rgba(20,0,2,.7)"); top.addColorStop(1, "rgba(20,0,2,0)");
-  ctx.fillStyle = top; ctx.fillRect(0, 0, W, H * .12);
+  if (!veil) {
+    // stage light behind the title, shadow under the top edge
+    const g = ctx.createRadialGradient(W / 2, H * .22, 0, W / 2, H * .22, W * .5);
+    g.addColorStop(0, "rgba(255,120,90,.12)"); g.addColorStop(1, "rgba(255,120,90,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const top = ctx.createLinearGradient(0, 0, 0, H * .08);
+    top.addColorStop(0, "rgba(16,0,2,.75)"); top.addColorStop(1, "rgba(16,0,2,0)");
+    ctx.fillStyle = top; ctx.fillRect(0, 0, W, H * .08);
+  }
 }
 
 /* ===================== screen flows for covers ===================== */
 // Coverflow: one screen facing the camera, the others turned away on both sides, like a row of posters.
-const HGT = { "erp-home": 1221, "erp-project": 1490, "erp-crew": 1370, "erp-storyboard": 900, "erp-brief": 880, "ai-home": 1000, "ai-scouting": 1472, "ai-moodboard": 1063, "ai-chat": 1250 };
+const HGT = { "erp-home": 1221, "erp-project": 1490, "erp-crew": 1370, "erp-storyboard": 900, "erp-brief": 880, "ai-home": 1000, "ai-scouting": 1472, "ai-moodboard": 1063, "ai-chat": 1250, "erp-directors": 1000, "erp-locations": 1030, "erp-rights": 1050, "ai-top100": 1150, "ai-moodboards": 1000 };
 const flows = {
   hero: { center: 1200, s: .5, items: [["ai-scouting", -3], ["erp-crew", -2], ["ai-home", -1], ["erp-home", 0], ["erp-storyboard", 1], ["ai-moodboard", 2], ["erp-project", 3]], step: 520, angle: 38, depth: 260 },
   card: { center: 600, s: .6, items: [["ai-home", -1], ["ai-moodboard", 1], ["erp-home", 0]], step: 420, angle: 34, depth: 220 },
@@ -690,22 +756,39 @@ function buildFlow() {
 }
 // Showcase: isometric columns of screens covering the canvas, each column cycling from a different start.
 function buildGrid(st) {
-  const order = ["erp-home", "ai-scouting", "erp-storyboard", "ai-moodboard", "erp-project", "ai-chat", "erp-crew", "ai-home", "erp-brief"];
-  const cfg = { x: -1382, y: 432, s: .4, cols: 7, len: 9800 }, gap = 90;
+  // Every screen appears once. Slots that only show a sliver are dropped, so the silk veil shows in between.
+  const ids = ["erp-home", "ai-scouting", "erp-storyboard", "ai-moodboard", "erp-rights", "ai-chat", "erp-project", "ai-top100", "erp-directors", "ai-home", "erp-crew", "ai-moodboards", "erp-locations", "erp-brief"];
+  const slotH = 1150, gap = 110, cols = 8, rows = 6;
+  const host = st.closest(".view"), box = host.getBoundingClientRect();
   const inner = document.createElement("div");
-  Object.assign(inner.style, { position: "absolute", left: cfg.x + "px", top: cfg.y + "px", transformOrigin: "0 0", transform: `scale(${cfg.s}) rotateX(52deg) rotateZ(-38deg)` });
-  for (let c = 0; c < cfg.cols; c++) {
-    let y = -((c * 737) % 1600), k = c * 3;
-    while (y < cfg.len) {
-      const id = order[k++ % order.length];
-      const f = document.createElement("iframe"); f.className = "shot"; f.src = `?v=${id}`;
-      Object.assign(f.style, { left: c * (1440 + gap) + "px", top: y + "px", width: "1440px", height: HGT[id] + "px" });
-      inner.appendChild(f);
-      y += HGT[id] + gap;
-    }
-  }
   st.style.perspective = "none";
   st.appendChild(inner);
+  const layout = (s) => {
+    inner.innerHTML = "";
+    Object.assign(inner.style, { position: "absolute", left: "0px", top: "0px", transformOrigin: "0 0", transform: `translate(${box.width * .5}px, ${box.height * .5}px) scale(${s}) rotateX(52deg) rotateZ(-38deg) translate(${-cols * (1440 + gap) / 2}px, ${-rows * (slotH + gap) / 2}px)` });
+    const slots = [];
+    for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) {
+      const d = document.createElement("div");
+      Object.assign(d.style, { position: "absolute", left: c * (1440 + gap) + "px", top: r * (slotH + gap) + (c % 2) * 420 + "px", width: "1440px", height: slotH + "px" });
+      inner.appendChild(d);
+      const b = d.getBoundingClientRect();
+      // visible share of the slot, approximated on its bounding box
+      const vw = Math.max(0, Math.min(b.right, box.right) - Math.max(b.left, box.left)), vh = Math.max(0, Math.min(b.bottom, box.bottom) - Math.max(b.top, box.top));
+      slots.push([d, (vw * vh) / (b.width * b.height), Math.hypot(b.left + b.width / 2 - box.left - box.width / 2, b.top + b.height / 2 - box.top - box.height / 2)]);
+    }
+    return slots;
+  };
+  let s = .4, slots;
+  for (; s < 1; s += .02) { slots = layout(s); if (slots.filter(([, f]) => f > .3).length <= ids.length) break; }
+  slots.sort((a, b) => a[2] - b[2]); // centre first, so the best-placed slots get screens
+  let k = 0;
+  slots.forEach(([d, f]) => {
+    if (f <= .3 || k >= ids.length) return d.remove();
+    const id = ids[k++], fr = document.createElement("iframe");
+    fr.className = "shot"; fr.src = `?v=${id}`;
+    Object.assign(fr.style, { left: d.style.left, top: d.style.top, width: "1440px", height: Math.min(HGT[id], slotH) + "px" });
+    d.replaceWith(fr);
+  });
 }
 </script>
 </body>
