@@ -1,0 +1,629 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Domus: anonymized rebuild of an all-in-one hospitality platform (guest app, smart TV homepage, front desk panel).
+     Fictional product name, properties, suites, guests, staff, channels and data. No client marks, no photos.
+     Views: one <section id> per screen or cover, picked with ?v=<id>. ?z=2 zooms a view for crisp phone renders. -->
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&display=block" rel="stylesheet">
+<style>
+  :root {
+    /* identity */
+    --terra: #d4553f; --terra-l: #ec8a72; --blush: #f4d8cc; --cream: #f5efe5; --sand: #e8dccb; --linen: #fbf7f1;
+    --ox: #5b2420; --ox-d: #3a1714; --walnut: #9b6a45; --olive: #858a5f;
+    /* product */
+    --ink: #2f3236; --mut: #8a8580; --line: #e6ddd0; --ok: #5f8f5a; --warn: #c98a2b; --bad: #c4473a;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; background: #fff; }
+  .view { display: none; position: relative; overflow: hidden; }
+  .view.on { display: block; }
+  .abs { position: absolute; }
+  svg { display: block; }
+
+  /* ================= product screens ================= */
+  .scr { font-family: "Jost", sans-serif; color: var(--ink); background: var(--cream); width: 1440px; height: 900px; overflow: hidden; position: relative; font-size: 15px; }
+  .scr.m { width: 390px; height: 844px; font-size: 13px; }
+  .scr.tv { width: 1920px; height: 1080px; font-size: 26px; color: #fff; background: var(--ox-d); }
+  .serif { font-family: "Bodoni Moda", serif; font-weight: 400; letter-spacing: -.01em; }
+  .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(91, 36, 32, .06); padding: 20px 22px; }
+  .h1 { font-size: 30px; font-weight: 600; letter-spacing: -.01em; }
+  .h2 { font-size: 20px; font-weight: 600; }
+  .h3 { font-size: 16px; font-weight: 600; }
+  .mut { color: var(--mut); }
+  .tp { color: var(--terra); }
+  .sm { font-size: 13px; } .xs { font-size: 12px; }
+  .row { display: flex; align-items: center; }
+  .col { display: flex; flex-direction: column; }
+  .sb { justify-content: space-between; }
+  .g4 { gap: 4px; } .g6 { gap: 6px; } .g8 { gap: 8px; } .g10 { gap: 10px; } .g12 { gap: 12px; } .g16 { gap: 16px; } .g20 { gap: 20px; } .g24 { gap: 24px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 42px; padding: 0 20px; border-radius: 999px; background: var(--terra); color: #fff; font-weight: 600; font-size: 14px; white-space: nowrap; letter-spacing: .02em; }
+  .btn.o { background: transparent; color: var(--terra); box-shadow: inset 0 0 0 1.5px var(--terra); }
+  .btn.d { background: var(--ox); }
+  .btn.sq { border-radius: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--blush); color: var(--ox); white-space: nowrap; }
+  .chip.on { background: var(--terra); color: #fff; }
+  .chip.ok { background: #e6efe2; color: var(--ok); } .chip.warn { background: #f8ecd6; color: #a46c17; } .chip.bad { background: #f6e0dc; color: var(--bad); } .chip.grey { background: #efe9e1; color: var(--mut); }
+  .av { border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 600; flex: none; }
+  .hr { height: 1px; background: var(--line); }
+  .input { height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; padding: 0 14px; color: var(--ink); font-size: 14px; gap: 10px; }
+  .input.ph { color: #b3aca4; }
+  .ta { border-radius: 10px; border: 1px solid var(--line); background: #fff; padding: 12px 14px; color: var(--ink); font-size: 14px; line-height: 1.5; }
+  .lbl { font-size: 11.5px; font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .1em; }
+  .tog { width: 46px; height: 28px; border-radius: 14px; background: #ddd4c8; position: relative; flex: none; }
+  .tog::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .tog.on { background: var(--terra); } .tog.on::after { left: 21px; }
+  .tog.s { width: 38px; height: 22px; } .tog.s::after { width: 16px; height: 16px; } .tog.s.on::after { left: 19px; }
+  .check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #cdc3b6; flex: none; display: grid; place-items: center; background: #fff; }
+  .check.on { background: var(--terra); border-color: var(--terra); color: #fff; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .t th { text-align: left; font-size: 11.5px; color: var(--mut); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .t td { padding: 12px 12px; border-bottom: 1px solid #f0e9df; white-space: nowrap; }
+  .fld { flex: 1 1 0; min-width: 0; } .col > .fld { flex: none; }
+  .ill { border-radius: 14px; overflow: hidden; flex: none; }
+  .ill svg { width: 100%; height: 100%; }
+
+  /* front desk shell */
+  .adm { display: grid; grid-template-columns: 248px 1fr; height: 100%; }
+  .side { background: var(--ox); color: rgba(255,255,255,.72); padding: 28px 18px; display: flex; flex-direction: column; gap: 3px; }
+  .side .it { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 14px; border-radius: 10px; font-size: 14.5px; font-weight: 500; }
+  .side .it.on { background: rgba(255,255,255,.12); color: #fff; }
+  .side .sub { padding-left: 46px; height: 34px; font-size: 13.5px; }
+  .side .sub.on { background: none; color: #fff; box-shadow: inset 2px 0 0 var(--terra-l); border-radius: 0; }
+  .side .grp { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.4); letter-spacing: .14em; text-transform: uppercase; padding: 18px 14px 6px; }
+  .amain { padding: 26px 40px; overflow: hidden; }
+  .top { display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
+  .omni { display: flex; align-items: center; gap: 10px; height: 44px; width: 420px; border-radius: 22px; background: #fff; color: #b3aca4; padding: 0 18px; font-size: 14px; box-shadow: inset 0 0 0 1px var(--line); }
+  .sel { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px; border-radius: 22px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; font-weight: 500; }
+  .ttl { font-size: 32px; font-family: "Bodoni Moda", serif; font-weight: 400; letter-spacing: -.01em; color: var(--ox); }
+
+  /* mobile */
+  .sbar { height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 6px 28px 0; font-weight: 600; font-size: 14px; }
+  .mhead { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+  .mbody { padding: 4px 20px; }
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; background: #fff; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 12px 8px 0; color: #a59d94; }
+  .tabbar div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; width: 66px; letter-spacing: .02em; }
+  .tabbar div.on { color: var(--terra); }
+  .home-ind { position: absolute; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); }
+  .segm { display: flex; background: #fff; border-radius: 999px; padding: 4px; box-shadow: inset 0 0 0 1px var(--line); }
+  .segm span { flex: 1; text-align: center; padding: 9px 0; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--mut); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .segm span.on { background: var(--terra); color: #fff; }
+
+  /* tv */
+  .tvbox { border-radius: 18px; overflow: hidden; background: rgba(255,255,255,.08); flex: none; position: relative; }
+  .tvbox.f { box-shadow: 0 0 0 5px var(--terra-l), 0 22px 50px rgba(0,0,0,.5); transform: scale(1.06); }
+  .tvt { font-size: 21px; color: rgba(255,255,255,.82); margin-top: 14px; }
+  .tvlbl { font-size: 22px; letter-spacing: .24em; font-weight: 500; color: var(--terra-l); margin-bottom: 18px; }
+
+  /* ================= identity ================= */
+  .title { font-family: "Bodoni Moda", serif; font-weight: 400; font-optical-sizing: none; font-variation-settings: "opsz" 26; color: var(--terra); letter-spacing: -.035em; line-height: .8; white-space: nowrap; }
+  .payoff { font-family: "Jost", sans-serif; font-weight: 400; color: var(--ox); letter-spacing: .3em; text-transform: uppercase; }
+  .stage { position: absolute; perspective: 2800px; }
+  .dev { position: absolute; transform-style: preserve-3d; }
+  .phone { position: absolute; background: #1b1716; border-radius: 64px; padding: 15px; box-shadow: 0 60px 90px rgba(58, 23, 20, .30), 0 0 0 2px #3a3230 inset; }
+  .phone iframe { display: block; width: 390px; height: 844px; border: 0; border-radius: 50px; background: #fff; }
+  .tvset { position: absolute; background: #121010; border-radius: 14px; padding: 14px; box-shadow: 0 70px 120px rgba(58, 23, 20, .34), 0 0 0 2px #2a2422 inset; }
+  .tvset iframe { display: block; width: 1920px; height: 1080px; border: 0; background: #000; }
+  .monitor { position: absolute; }
+  .monitor .bz { background: #1b1716; border-radius: 22px 22px 0 0; padding: 22px 22px 0; box-shadow: 0 0 0 2px #3a3230 inset; }
+  .monitor iframe { display: block; width: 1440px; height: 900px; border: 0; background: #fff; }
+  .monitor .chin { height: 70px; background: linear-gradient(#e9e3db, #d6cfc6); border-radius: 0 0 22px 22px; }
+  .monitor .neck { width: 260px; height: 190px; margin: 0 auto; background: linear-gradient(90deg, #c9c2b8, #ebe6df 50%, #c9c2b8); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); }
+  .monitor .foot { width: 560px; height: 26px; margin: 0 auto; border-radius: 6px 6px 14px 14px; background: linear-gradient(#e6e0d8, #bfb8ae); }
+  .monitor { filter: drop-shadow(0 60px 70px rgba(58, 23, 20, .28)); }
+  .shot { position: absolute; border: 0; border-radius: 14px; background: #fff; box-shadow: 0 40px 80px rgba(58, 23, 20, .22); }
+</style>
+</head>
+<body>
+<!-- Front desk screens 1440x900 -->
+<section class="view" id="a-login"></section>
+<section class="view" id="a-home"></section>
+<section class="view" id="a-stay"></section>
+<section class="view" id="a-guest"></section>
+<section class="view" id="a-invite"></section>
+<section class="view" id="a-services"></section>
+<section class="view" id="a-service-edit"></section>
+<section class="view" id="a-activate"></section>
+<section class="view" id="a-history"></section>
+<section class="view" id="a-structures"></section>
+<section class="view" id="a-structure-edit"></section>
+<section class="view" id="a-apartments"></section>
+<section class="view" id="a-apartment-edit"></section>
+<section class="view" id="a-tv"></section>
+<section class="view" id="a-users"></section>
+<!-- Guest app screens 390x844 -->
+<section class="view" id="m-login"></section>
+<section class="view" id="m-suite"></section>
+<section class="view" id="m-door"></section>
+<section class="view" id="m-lights"></section>
+<section class="view" id="m-climate"></section>
+<section class="view" id="m-services"></section>
+<section class="view" id="m-service"></section>
+<section class="view" id="m-orders"></section>
+<section class="view" id="m-profile"></section>
+<!-- Smart TV screens 1920x1080 -->
+<section class="view" id="tv-home"></section>
+<section class="view" id="tv-cast"></section>
+<section class="view" id="tv-service"></section>
+<section class="view" id="tv-login"></section>
+
+<!-- ============ HERO 2400x1200 ============ -->
+<section class="view" id="hero" style="width:2400px;height:1200px;background:var(--cream)">
+  <svg class="abs arches" data-kind="hero" width="2400" height="1200" style="left:0;top:0"></svg>
+  <div class="abs title" style="left:150px;top:400px;font-size:330px">domus</div>
+  <div class="abs payoff" style="left:166px;top:720px;font-size:34px">The connected stay</div>
+  <div class="stage" style="left:1100px;top:0;width:1300px;height:1200px">
+    <div class="dev" style="left:150px;top:205px;transform:rotateY(-8deg) scale(.5);transform-origin:0 0">
+      <div class="tvset"><iframe data-src="tv-home"></iframe></div>
+    </div>
+    <div class="dev" style="left:40px;top:640px;transform:rotateY(14deg) rotateX(3deg) scale(.42);transform-origin:0 0">
+      <div class="monitor"><div class="bz"><iframe data-src="a-home"></iframe></div><div class="chin"></div><div class="neck"></div><div class="foot"></div></div>
+    </div>
+    <div class="dev" style="left:900px;top:520px;transform:rotateY(-14deg) rotateZ(2deg) scale(.82);transform-origin:0 0">
+      <div class="phone"><iframe data-src="m-suite"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARD 1200x1500 ============ -->
+<section class="view" id="card" style="width:1200px;height:1500px;background:var(--cream)">
+  <svg class="abs arches" data-kind="card" width="1200" height="1500" style="left:0;top:0"></svg>
+  <div class="abs title" style="left:0;right:0;text-align:center;top:150px;font-size:290px">domus</div>
+  <div class="stage" style="left:0;top:0;width:1200px;height:1500px">
+    <div class="dev" style="left:60px;top:640px;transform:rotateY(18deg) rotateZ(-4deg) scale(.84);transform-origin:50% 0">
+      <div class="phone"><iframe data-src="m-door"></iframe></div>
+    </div>
+    <div class="dev" style="left:700px;top:640px;transform:rotateY(-18deg) rotateZ(4deg) scale(.84);transform-origin:50% 0">
+      <div class="phone"><iframe data-src="m-service"></iframe></div>
+    </div>
+    <div class="dev" style="left:380px;top:580px;transform:scale(.94);transform-origin:50% 0">
+      <div class="phone"><iframe data-src="m-climate"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOWCASE 2400x1350 (body) ============ -->
+<section class="view" id="showcase" style="width:2400px;height:1350px;background:#e6d7c4">
+  <svg class="abs arches" data-kind="soft" width="2400" height="1350" style="left:0;top:0"></svg>
+  <div class="abs grid3d" style="left:0;top:0;width:2400px;height:1350px"></div>
+</section>
+
+<!-- ============ ONE STAY 2400x1350 (body): every touchpoint of one stay ============ -->
+<section class="view" id="one-stay" style="width:2400px;height:1350px;background:var(--linen)">
+  <svg class="abs arches" data-kind="stay" width="2400" height="1350" style="left:0;top:0"></svg>
+  <div class="stage" style="left:0;top:0;width:2400px;height:1350px">
+    <div class="dev" style="left:110px;top:330px;transform:rotateY(12deg) scale(.56);transform-origin:0 0">
+      <div class="monitor"><div class="bz"><iframe data-src="a-stay"></iframe></div><div class="chin"></div><div class="neck"></div><div class="foot"></div></div>
+    </div>
+    <div class="dev" style="left:1060px;top:170px;transform:rotateY(-4deg) scale(.5);transform-origin:0 0">
+      <div class="tvset"><iframe data-src="tv-service"></iframe></div>
+    </div>
+    <div class="dev" style="left:1440px;top:640px;transform:rotateY(-12deg) rotateZ(2deg) scale(.76);transform-origin:0 0">
+      <div class="phone"><iframe data-src="m-lights"></iframe></div>
+    </div>
+    <div class="dev" style="left:1880px;top:560px;transform:rotateY(-16deg) rotateZ(3deg) scale(.76);transform-origin:0 0">
+      <div class="phone"><iframe data-src="m-orders"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const params = new URLSearchParams(location.search);
+const v = params.get("v") || "hero";
+document.getElementById(v).classList.add("on");
+if (params.get("z")) document.body.style.zoom = params.get("z");
+</script>
+<script>
+/* ===================== icons (lucide-style strokes) ===================== */
+const ic = (p, s = 20, w = 1.8, extra = "") => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}>${p}</svg>`;
+const P = {
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  bellc: '<path d="M4 18h16M5 18a7 7 0 0 1 14 0M12 8V6M10 6h4"/>',
+  cog: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  plus: '<path d="M5 12h14M12 5v14"/>', minus: '<path d="M5 12h14"/>',
+  chevR: '<path d="m9 6 6 6-6 6"/>', chevD: '<path d="m6 9 6 6 6-6"/>', chevL: '<path d="m15 6-6 6 6 6"/>',
+  check: '<path d="m5 12 5 5 9-10"/>', x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  dots: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+  cal: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  dl: '<path d="M12 4v11m-5-5 5 5 5-5M4 17v3h16v-3"/>',
+  edit: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  copy: '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  unlock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.8"/>',
+  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M16 7l3 3M14 9l2 2"/>',
+  door: '<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12.5" r="1"/>',
+  bulb: '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',
+  thermo: '<path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/>',
+  wifi: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01M2 9a14.5 14.5 0 0 1 20 0"/>',
+  phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/><path d="M8.5 9.5c0 3 2.5 5.5 5.5 5.5l1-1.3-1.8-1-.8.7a3.6 3.6 0 0 1-1.8-1.8l.7-.8-1-1.8z" stroke-width="1.2"/>',
+  tv: '<rect x="2" y="5" width="20" height="13" rx="2"/><path d="M8 22h8M12 18v4"/>',
+  cast: '<path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6M2 12a9 9 0 0 1 8 8M2 16a5 5 0 0 1 4 4M2 20h.01"/>',
+  bag: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/>',
+  receipt: '<path d="M4 2v20l3-2 2 2 3-2 3 2 2-2 3 2V2l-3 2-2-2-3 2-3-2-2 2z"/><path d="M8 9h8M8 13h6"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  building: '<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 21v-4h6v4M8 7h2M14 7h2M8 11h2M14 11h2"/>',
+  bed: '<path d="M2 20V6M2 16h20v4M22 16v-4a3 3 0 0 0-3-3h-8v7"/><circle cx="6.5" cy="11.5" r="2"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  send: '<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/>',
+  file: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
+  upl: '<path d="M12 16V4m-5 5 5-5 5 5M4 17v3h16v-3"/>',
+  card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  power: '<path d="M12 2v10M18.4 6.6a9 9 0 1 1-12.8 0"/>',
+  star: '<path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2 6.4 20.2l1.1-6.3L2.9 9.5l6.3-.9z"/>',
+  tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/>',
+  sqm: '<path d="M3 3h18v18H3zM3 9h6V3M15 21v-6h6"/>',
+  remote: '<rect x="7" y="2" width="10" height="20" rx="3"/><circle cx="12" cy="7" r="1.6"/><path d="M10 12h.01M14 12h.01M10 15h.01M14 15h.01"/>',
+  fan: '<path d="M12 12c0-4 1-8 4-8s2 5-4 8zM12 12c4 0 8 1 8 4s-5 2-8-4zM12 12c0 4-1 8-4 8s-2-5 4-8zM12 12c-4 0-8-1-8-4s5-2 8 4z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  shirt: '<path d="M20.4 6.6 16 4a4 4 0 0 1-8 0L3.6 6.6a1 1 0 0 0-.5 1.2l1.5 3.4a1 1 0 0 0 1.2.5L8 11v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-9l2.2.7a1 1 0 0 0 1.2-.5l1.5-3.4a1 1 0 0 0-.5-1.2z"/>',
+  chef: '<path d="M6 13.9A4 4 0 0 1 7.2 6a5 5 0 0 1 9.6 0A4 4 0 0 1 18 13.9V21H6z"/><path d="M6 17h12"/>',
+  sparkle: '<path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',
+  dumbbell: '<path d="M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11"/>',
+  car: '<path d="M5 17H3v-5l2-5h14l2 5v5h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5M3 12h18"/>',
+  spoon: '<path d="M3 11h18M5 11a7 7 0 0 0 14 0M12 3v2M9 4l.5 1.5M15 4l-.5 1.5"/>',
+  battery: '<rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor"/>',
+  signal: '<path d="M4 18v-2M9 18v-5M14 18V9M19 18V5"/>',
+};
+
+/* ===================== identity marks ===================== */
+// Domus mark: a round-headed doorway with its keystone
+const archMark = (s, c = "#d4553f") => `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><path d="M8 37V18a12 12 0 0 1 24 0v19" fill="none" stroke="${c}" stroke-width="3.2"/><path d="M14 37V19a6 6 0 0 1 12 0v18" fill="none" stroke="${c}" stroke-width="1.6"/><rect x="18" y="2.5" width="4" height="5" fill="${c}"/></svg>`;
+const word = (s = 1, c = "#d4553f") => `<div class="row g6" style="color:${c}">${archMark(28 * s, c)}<span style="font-family:'Bodoni Moda';font-size:${30 * s}px;letter-spacing:-.03em;line-height:1">domus</span></div>`;
+
+/* ===================== fictional data ===================== */
+const PAL = ["#d4553f", "#9b6a45", "#858a5f", "#5b2420", "#c98a2b", "#6f7f8c", "#b4677a", "#4f6b5c"];
+const hash = (s) => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+const ini = (n) => n.split(" ").map((x) => x[0]).slice(0, 2).join("");
+const av = (n, s = 36, c) => `<div class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s * .38)}px;background:${c || PAL[hash(n) % PAL.length]}">${ini(n)}</div>`;
+const STRUCT = [["Casa Ortensia", "Via delle Ortensie 14", 8], ["Palazzo Aurelia", "Via dei Cipressi 8", 12], ["Residenza Olmo", "Viale degli Olmi 3", 6]];
+const SUITES = [["Suite Ninfea", 45, 2, 0], ["Suite Glicine", 52, 2, 1], ["Loft Magnolia", 68, 3, 2], ["Penthouse Aurelia", 120, 4, 3], ["Studio Iris", 32, 2, 4], ["Suite Camelia", 48, 2, 5], ["Suite Peonia", 55, 3, 1], ["Loft Gelso", 74, 4, 2]];
+const GUESTS = ["Emma Lindqvist", "Daniel Hart", "Sofia Marini", "Lukas Brenner", "Claire Dubois", "Akira Sato", "Marta Ricci", "James Okafor", "Ana Ruiz", "Pietro Galli", "Hannah Weiss", "Omar Haddad"];
+// key, title, tag, from price, icon, colour pair
+const SERV = {
+  chef: ["Private chef", "Food", 180, P.chef, ["#d4553f", "#f4d8cc"]],
+  laundry: ["Laundry service", "Home", 35, P.shirt, ["#858a5f", "#e5e3d2"]],
+  cleaning: ["Extra cleaning", "Home", 40, P.sparkle, ["#9b6a45", "#efdfcd"]],
+  beauty: ["Personal beauty", "Wellness", 70, P.scissors, ["#b4677a", "#f3dde1"]],
+  shopper: ["Personal shopper", "City", 120, P.bag, ["#5b2420", "#ead2cc"]],
+  trainer: ["Personal trainer", "Wellness", 60, P.dumbbell, ["#4f6b5c", "#dbe4dc"]],
+  driver: ["Private driver", "Mobility", 90, P.car, ["#c98a2b", "#f5e6c9"]],
+  breakfast: ["Breakfast in the suite", "Food", 25, P.spoon, ["#d07a4f", "#f6e1d2"]],
+};
+const SKEYS = Object.keys(SERV);
+
+/* ===================== illustrations ===================== */
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+// A flat suite interior: arched window, wooden floor, sofa, lamp, plant. k picks the palette.
+function room(k = 0, w = 400, h = 260) {
+  const pals = [["#efe2d3", "#d4553f", "#c49a6c", "#e9c7b7"], ["#e7ddd0", "#858a5f", "#b98a5f", "#d9cdb6"], ["#f1e4d9", "#5b2420", "#a97b55", "#ead0c4"], ["#e9e0d6", "#c98a2b", "#9b6a45", "#dccfbf"], ["#efe6dc", "#b4677a", "#c39a70", "#ecd5d6"], ["#e5dfd5", "#4f6b5c", "#a8825c", "#d2d8cc"]];
+  const [wall, sofa, floor, rug] = pals[k % pals.length], f = k % 2 ? -1 : 1;
+  return `<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" width="${w}" height="${h}">
+    <defs><linearGradient id="sky${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7cdb5"/><stop offset="1" stop-color="#fbeee2"/></linearGradient></defs>
+    <rect width="400" height="260" fill="${wall}"/>
+    <g transform="translate(${f > 0 ? 0 : 400} 0) scale(${f} 1)">
+      <path d="M232 178V70a46 46 0 0 1 92 0v108z" fill="url(#sky${k})" stroke="#fff" stroke-width="6"/>
+      <path d="M278 24v154M232 110h92" stroke="#fff" stroke-width="3"/>
+      <ellipse cx="300" cy="150" rx="40" ry="14" fill="#e9b89e" opacity=".55"/>
+      <rect x="40" y="56" width="70" height="52" rx="2" fill="#fff"/><rect x="46" y="62" width="58" height="40" fill="${sofa}" opacity=".35"/><circle cx="66" cy="78" r="9" fill="${sofa}" opacity=".7"/>
+    </g>
+    <rect y="178" width="400" height="82" fill="${floor}"/>
+    ${[0, 1, 2, 3, 4, 5, 6].map((i) => `<path d="M${i * 66 - 20} 260 L${i * 60 + 10} 178" stroke="#000" stroke-opacity=".07" stroke-width="2"/>`).join("")}
+    <rect y="176" width="400" height="5" fill="#fff" opacity=".7"/>
+    <g transform="translate(${f > 0 ? 0 : 400} 0) scale(${f} 1)">
+      <ellipse cx="150" cy="222" rx="130" ry="22" fill="${rug}"/>
+      <path d="M60 206v-38a22 22 0 0 1 22-22h92a22 22 0 0 1 22 22v38z" fill="${sofa}"/>
+      <rect x="48" y="176" width="160" height="34" rx="17" fill="${sofa}"/><rect x="48" y="176" width="160" height="34" rx="17" fill="#000" opacity=".1"/>
+      <rect x="80" y="160" width="40" height="26" rx="10" fill="#fff" opacity=".75"/>
+      <ellipse cx="248" cy="214" rx="26" ry="8" fill="#7a4c30"/><rect x="246" y="190" width="4" height="24" fill="#7a4c30"/><ellipse cx="248" cy="190" rx="22" ry="6" fill="#8d5a39"/>
+      <path d="M352 210V98" stroke="#3b3330" stroke-width="3"/><path d="M336 98h32l-6-26h-20z" fill="#f2e3cc"/><ellipse cx="352" cy="212" rx="14" ry="4" fill="#3b3330"/>
+      <path d="M22 210h28l-4-26H26z" fill="#c8b8a4"/><path d="M36 186c-14-10-18-30-10-44 8 12 10 28 10 44zM36 186c4-18 16-30 30-32-2 16-14 28-30 32zM36 186c-10-4-20-14-22-26 12 2 20 12 22 26z" fill="#6f7f5c"/>
+    </g></svg>`;
+}
+// Service artwork: an arch niche on the service colour with its line icon
+function servArt(key, w, h, big = false) {
+  const [, , , icon, [c, bg]] = SERV[key];
+  const s = Math.min(w, h);
+  return `<div class="ill" style="width:${w}px;height:${h}px;background:${bg};position:relative;display:grid;place-items:center;border-radius:${big ? 0 : 14}px">
+    <svg class="abs" style="left:0;top:0" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><path d="M${w / 2 - s * .32} ${h + 4}V${h * .5}a${s * .32} ${s * .32} 0 0 1 ${s * .64} 0V${h + 4}" fill="${c}" opacity=".16"/><path d="M${w / 2 - s * .44} ${h + 4}V${h * .46}a${s * .44} ${s * .44} 0 0 1 ${s * .88} 0V${h + 4}" fill="none" stroke="${c}" stroke-opacity=".3" stroke-width="${Math.max(1.5, s * .012)}"/></svg>
+    <div style="color:${c};position:relative;margin-top:${s * .12}px">${ic(icon, s * .34, 1.4)}</div></div>`;
+}
+// A QR-like pattern (decorative, not encoding anything)
+function qr(size, seed = 3) {
+  const n = 29, c = size / n, r = rng(seed);
+  let s = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="${size}" height="${size}" fill="#fff"/>`;
+  const finder = (x, y) => `<rect x="${x * c}" y="${y * c}" width="${7 * c}" height="${7 * c}" fill="#1b1716"/><rect x="${(x + 1) * c}" y="${(y + 1) * c}" width="${5 * c}" height="${5 * c}" fill="#fff"/><rect x="${(x + 2) * c}" y="${(y + 2) * c}" width="${3 * c}" height="${3 * c}" fill="#1b1716"/>`;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    if ((i < 8 && j < 8) || (i > n - 9 && j < 8) || (i < 8 && j > n - 9)) continue;
+    if (r() < .48) s += `<rect x="${i * c}" y="${j * c}" width="${c + .3}" height="${c + .3}" fill="#1b1716"/>`;
+  }
+  return s + finder(0, 0) + finder(n - 7, 0) + finder(0, n - 7) + "</svg>";
+}
+// Fictional TV channels: a tile with a typographic logo
+const CH = [["Vela", "#1f5f8b", "700", "italic"], ["Orbis 24", "#b8322a", "700", ""], ["Cine Lux", "#2a2a2a", "500", ""], ["Atlas Sport", "#2f7d4f", "800", ""], ["Tempo", "#e0902a", "700", ""], ["Melodia", "#7d3c8c", "500", "italic"], ["Nord TV", "#3b4a6b", "700", ""], ["Arte Viva", "#a8553a", "500", "italic"], ["Kids 7", "#3a9ac2", "800", ""]];
+const chLogo = ([n, c, wt, st], w, h, fs) => `<div style="width:${w}px;height:${h}px;background:${c};display:grid;place-items:center;color:#fff;font-family:Jost;font-weight:${wt};font-style:${st || "normal"};font-size:${fs}px;letter-spacing:-.01em;border-radius:inherit">${n}</div>`;
+
+/* ===================== shells ===================== */
+const sbar = (dark) => `<div class="sbar" style="${dark ? "color:#fff" : ""}"><span>9:41</span><span class="row g6">${ic(P.signal, 16, 2.2)}${ic(P.wifi, 16, 2.2)}${ic(P.battery, 22, 1.6)}</span></div>`;
+const tabbar = (on) => `<div class="tabbar">${[["suites", "Suites", P.bed], ["services", "Services", P.bellc], ["orders", "Orders", P.receipt], ["automation", "Automation", P.bulb], ["you", "You", P.user]].map(([k, l, p]) => `<div class="${k === on ? "on" : ""}">${ic(p, 23, k === on ? 2 : 1.7)}${l}</div>`).join("")}<span class="home-ind"></span></div>`;
+const mhead = (title, back = true, right = "") => `<div class="mhead">${back ? `<span style="color:var(--ox)">${ic(P.chevL, 24)}</span>` : "<span></span>"}<b style="font-size:16px;font-weight:600">${title}</b>${right || `<span style="width:24px"></span>`}</div>`;
+const mob = (on, body, { head, nav = true } = {}) => `<div class="scr m">${sbar()}${head ?? `<div class="mhead">${word(.82)}<div class="row g12" style="color:var(--ox)">${ic(P.bell, 22)}${av("Emma Lindqvist", 32)}</div></div>`}<div class="mbody">${body}</div>${nav ? tabbar(on) : ""}</div>`;
+const autoTop = (on) => `<div class="segm" style="margin:6px 0 18px">${[["lights", "Lights", P.bulb], ["climate", "Climate", P.thermo], ["door", "Door", P.key]].map(([k, l, p]) => `<span class="${k === on ? "on" : ""}">${ic(p, 16)}${l}</span>`).join("")}</div>`;
+const wifiOk = `<div class="row g8 xs" style="color:var(--ok);font-weight:600;margin-bottom:14px">${ic(P.wifi, 15, 2)}Connected to the suite wifi</div>`;
+
+function side(on, sub) {
+  const it = (k, l, p, subs) => `<div class="it ${k === on ? "on" : ""}">${ic(p, 19)}${l}</div>${subs && k === on ? subs.map(([sk, sl]) => `<div class="it sub ${sk === sub ? "on" : ""}">${sl}</div>`).join("") : ""}`;
+  return `<div class="side"><div style="padding:0 10px 22px">${word(.95, "#fff")}</div>
+    ${it("home", "Stays", P.cal)}${it("invite", "Invite guest", P.send)}
+    <div class="grp">Catalogue</div>${it("services", "Services", P.bellc, [["all", "All services"], ["activate", "Activate"], ["history", "Booking history"]])}
+    <div class="grp">Properties</div>${it("properties", "Properties", P.building, [["structures", "Structures"], ["apartments", "Apartments"]])}${it("tv", "Television", P.tv)}
+    <div class="grp">Team</div>${it("users", "Users", P.users)}${it("settings", "Settings", P.cog)}
+    <div style="margin-top:auto" class="row g10">${av("Giada Conti", 36, "#d4553f")}<div><div style="color:#fff;font-size:14px;font-weight:500">Giada Conti</div><div style="font-size:12px">Concierge</div></div><span style="margin-left:auto">${ic(P.logout, 18)}</span></div></div>`;
+}
+const topbar = (struct = "Casa Ortensia") => `<div class="top"><div class="omni">${ic(P.search, 18)}Search guests, suites, services…</div><div class="sel">${ic(P.building, 17)}${struct}${ic(P.chevD, 16)}</div><div class="row g10" style="margin-left:auto;color:var(--ox)"><div class="sel" style="padding:0 12px">${flag("en", 20)}EN</div>${ic(P.bell, 22)}</div></div>`;
+const adm = (on, sub, body, struct) => `<div class="scr"><div class="adm">${side(on, sub)}<div class="amain">${topbar(struct)}${body}</div></div></div>`;
+// Small flags for the five content languages
+function flag(l, s = 22) {
+  const h = s * .7, F = {
+    it: `<rect width="3" height="2" fill="#fff"/><rect width="1" height="2" fill="#3f8f5a"/><rect x="2" width="1" height="2" fill="#c8453b"/>`,
+    en: `<rect width="3" height="2" fill="#2b3f7a"/><path d="M0 0l3 2M3 0 0 2" stroke="#fff" stroke-width=".45"/><path d="M0 0l3 2M3 0 0 2" stroke="#c8453b" stroke-width=".18"/><path d="M1.5 0v2M0 1h3" stroke="#fff" stroke-width=".6"/><path d="M1.5 0v2M0 1h3" stroke="#c8453b" stroke-width=".32"/>`,
+    de: `<rect width="3" height="2" fill="#1b1716"/><rect y=".67" width="3" height=".67" fill="#c8453b"/><rect y="1.33" width="3" height=".67" fill="#e7b33a"/>`,
+    fr: `<rect width="3" height="2" fill="#fff"/><rect width="1" height="2" fill="#2b3f7a"/><rect x="2" width="1" height="2" fill="#c8453b"/>`,
+    es: `<rect width="3" height="2" fill="#c8453b"/><rect y=".5" width="3" height="1" fill="#e7b33a"/>`,
+  };
+  return `<svg width="${s}" height="${h}" viewBox="0 0 3 2" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.08)">${F[l]}</svg>`;
+}
+const statusChip = (s) => ({ in: `<span class="chip ok">In house</span>`, arr: `<span class="chip warn">Arriving today</span>`, dep: `<span class="chip">Departing today</span>`, up: `<span class="chip grey">Upcoming</span>`, paid: `<span class="chip ok">Paid</span>`, pay: `<span class="chip warn">Needs to be paid</span>`, can: `<span class="chip bad">Canceled</span>`, on: `<span class="chip ok">Active</span>`, off: `<span class="chip grey">Hidden</span>` })[s];
+const field = (label, val, { ph, w, icon, right } = {}) => `<div class="col g6 fld" style="${w ? `width:${w}px;flex:none` : ""}"><span class="lbl">${label}</span><div class="input ${ph ? "ph" : ""}">${icon ? `<span class="mut">${ic(icon, 17)}</span>` : ""}<span style="flex:1">${val}</span>${right || ""}</div></div>`;
+
+/* ===================== screens ===================== */
+const builders = {
+  /* ================= front desk ================= */
+  "a-login": () => `<div class="scr" style="display:grid;grid-template-columns:1fr 1fr">
+    <div style="position:relative;overflow:hidden">${room(2, 720, 900)}<div class="abs" style="inset:0;background:linear-gradient(180deg,rgba(58,23,20,.0) 40%,rgba(58,23,20,.55))"></div><div class="abs serif" style="left:56px;bottom:60px;color:#fff;font-size:54px;line-height:1.05;font-style:italic">Every stay,<br>from one desk.</div></div>
+    <div class="col" style="justify-content:center;padding:0 120px;gap:18px">${word(1.4)}<div class="ttl" style="margin-top:30px">Staff sign in</div><span class="mut">Front desk and concierge panel</span>
+      ${field("Email", "giada.conti@casaortensia.it", { icon: P.mail })}${field("Password", "••••••••••••", { icon: P.lock, right: `<span class="mut">${ic(P.eye, 17)}</span>` })}
+      <span class="sm tp" style="font-weight:600">Forgot your password?</span><span class="btn sq" style="height:50px;margin-top:8px">Sign in</span></div></div>`,
+
+  "a-home": () => adm("home", null, `<div class="row sb" style="margin-bottom:20px"><div class="ttl">Stays</div><div class="row g10"><span class="btn o sq">${ic(P.dl, 17)}Export</span><span class="btn sq">${ic(P.plus, 17)}Invite guest</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px">${[["In house", 14, P.bed], ["Arriving today", 3, P.key], ["Departing today", 2, P.logout], ["Open service requests", 5, P.bellc]].map(([l, n, p], i) => `<div class="card row g16" style="padding:18px 20px"><div style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:${i === 3 ? "var(--terra)" : "var(--blush)"};color:${i === 3 ? "#fff" : "var(--ox)"}">${ic(p, 21)}</div><div><div style="font-size:28px;font-weight:600;line-height:1">${n}</div><div class="sm mut">${l}</div></div></div>`).join("")}</div>
+    <div class="card" style="padding:8px 14px"><table class="t"><tr><th>Guest</th><th>Suite</th><th>Check-in</th><th>Check-out</th><th>Guests</th><th>Language</th><th>Status</th><th></th></tr>
+    ${[["Emma Lindqvist", 0, "12 Oct", "19 Oct", 2, "en", "in"], ["Daniel Hart", 3, "14 Oct", "15 Oct", 4, "en", "dep"], ["Sofia Marini", 1, "15 Oct", "22 Oct", 2, "it", "arr"], ["Lukas Brenner", 2, "10 Oct", "24 Oct", 3, "de", "in"], ["Claire Dubois", 5, "15 Oct", "18 Oct", 1, "fr", "arr"], ["Akira Sato", 4, "11 Oct", "16 Oct", 2, "en", "in"], ["Ana Ruiz", 6, "13 Oct", "15 Oct", 2, "es", "dep"], ["James Okafor", 7, "15 Oct", "20 Oct", 4, "en", "arr"], ["Hannah Weiss", 0, "19 Oct", "26 Oct", 2, "de", "up"]].map(([g, s, a, d, n, l, st]) => `<tr><td><div class="row g10">${av(g, 32)}<b style="font-weight:500">${g}</b></div></td><td>${SUITES[s][0]}</td><td>${a}</td><td>${d}</td><td>${n}</td><td><div class="row g6">${flag(l, 20)}${l.toUpperCase()}</div></td><td>${statusChip(st)}</td><td class="mut">${ic(P.chevR, 17)}</td></tr>`).join("")}</table></div>`),
+
+  "a-stay": () => adm("home", null, `<div class="row g10 mut sm" style="margin-bottom:8px">${ic(P.chevL, 16)}Stays</div><div class="row sb" style="margin-bottom:20px"><div class="ttl">Emma Lindqvist · Suite Ninfea</div><div class="row g10"><span class="btn o sq">${ic(P.edit, 17)}Edit stay</span><span class="btn sq">${ic(P.receipt, 17)}Charge a service</span></div></div>
+    <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:20px">
+      <div class="col g20"><div class="card" style="padding:0;overflow:hidden"><div style="height:220px">${room(0, 690, 220)}</div><div class="row" style="padding:18px 22px;gap:34px">${[["Check-in", "12 Oct · 15:00"], ["Check-out", "19 Oct · 11:00"], ["Guests", "2 adults"], ["Language", "English"]].map(([l, x]) => `<div><div class="lbl">${l}</div><div style="font-weight:500;margin-top:4px">${x}</div></div>`).join("")}</div></div>
+        <div class="card"><div class="row sb"><b class="h3">Access and devices</b>${statusChip("in")}</div><div class="col g12" style="margin-top:14px">${[[P.key, "Suite door", "Code sent to the app", "Closed"], [P.door, "External door", "Opens from the app", "Closed"], [P.wifi, "Wifi", "Ortensia-Ninfea", "Online"], [P.tv, "Smart TV", "Linked to the suite · English", "On"], [P.thermo, "Climate", "Living room 21.5°", "Auto"]].map(([p, t, s, x]) => `<div class="row g12"><div style="width:38px;height:38px;border-radius:10px;background:var(--blush);color:var(--ox);display:grid;place-items:center">${ic(p, 18)}</div><div style="flex:1"><div style="font-weight:500">${t}</div><div class="xs mut">${s}</div></div><span class="sm mut">${x}</span></div>`).join("")}</div></div></div>
+      <div class="col g20"><div class="card"><div class="row g12">${av("Emma Lindqvist", 52)}<div><b class="h3">Emma Lindqvist</b><div class="sm mut">emma.lindqvist@mail.se · +46 70 123 45 67</div></div></div><div class="row g8" style="margin-top:14px"><span class="chip">Returning guest</span><span class="chip">3rd stay</span><span class="chip grey">App active</span></div></div>
+        <div class="card"><b class="h3">Services during this stay</b><div class="col" style="margin-top:8px">${[["chef", "14 Oct · 20:00", 180, "pay"], ["laundry", "13 Oct · 10:00", 35, "paid"], ["driver", "12 Oct · 13:30", 90, "paid"], ["trainer", "16 Oct · 08:00", 60, "can"]].map(([k, d, pr, st]) => `<div class="row g12" style="padding:11px 0;border-bottom:1px solid #f0e9df">${servArt(k, 44, 44)}<div style="flex:1"><div style="font-weight:500">${SERV[k][0]}</div><div class="xs mut">${d}</div></div><b style="font-weight:500">€${pr}</b>${statusChip(st)}</div>`).join("")}</div><div class="row sb" style="margin-top:14px"><span class="mut">Paid · to be paid</span><b class="h3">€125 · €180</b></div></div></div></div>`),
+
+  "a-guest": () => adm("home", null, `<div class="row g10 mut sm" style="margin-bottom:8px">${ic(P.chevL, 16)}Stays</div><div class="row sb" style="margin-bottom:20px"><div class="ttl">Guest details</div><span class="btn o sq">${ic(P.mail, 17)}Send message</span></div>
+    <div style="display:grid;grid-template-columns:380px 1fr;gap:20px"><div class="card col" style="align-items:center;text-align:center;gap:10px;padding:30px">${av("Lukas Brenner", 96)}<b class="h2" style="margin-top:6px">Lukas Brenner</b><span class="sm mut">Guest since 2021 · Business</span><div class="row g6">${flag("de")}<span class="sm">German</span></div><div class="hr" style="width:100%;margin:10px 0"></div>
+      ${[[P.mail, "lukas.brenner@mail.de"], [P.phone, "+49 151 2345 6789"], [P.cal, "Born 04/03/1984"], [P.globe, "Munich, Germany"]].map(([p, t]) => `<div class="row g10 sm" style="width:100%"><span class="mut">${ic(p, 17)}</span>${t}</div>`).join("")}</div>
+      <div class="col g20"><div class="card"><b class="h3">Guest history</b><table class="t" style="margin-top:8px"><tr><th>Suite</th><th>Structure</th><th>From</th><th>To</th><th>Nights</th><th>Services</th></tr>${[[2, 0, "10 Oct 2022", "24 Oct 2022", 14, 6], [2, 0, "02 May 2022", "16 May 2022", 14, 4], [6, 1, "11 Jan 2022", "18 Jan 2022", 7, 2], [3, 1, "20 Sep 2021", "27 Sep 2021", 7, 3]].map(([s, st, a, b, n, x]) => `<tr><td>${SUITES[s][0]}</td><td>${STRUCT[st][0]}</td><td>${a}</td><td>${b}</td><td>${n}</td><td>${x}</td></tr>`).join("")}</table></div>
+      <div class="card"><b class="h3">Preferences noted by the concierge</b><div class="ta" style="margin-top:12px;min-height:110px">Early check-in when possible. Works from the suite: desk lamp and a second monitor on arrival. Laundry every Tuesday. Prefers the bedroom at 19°.</div><div class="row g8" style="margin-top:14px">${["Early check-in", "Laundry weekly", "Quiet floor", "Sparkling water"].map((t) => `<span class="chip">${t}</span>`).join("")}</div></div></div></div>`),
+
+  "a-invite": () => adm("invite", null, `<div class="ttl" style="margin-bottom:6px">Invite a guest</div><div class="mut" style="margin-bottom:22px">The guest receives an email to download the app. The stay, the door codes and the TV language follow the booking.</div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:22px"><div class="card col g16" style="padding:26px"><div class="row g16">${field("First name", "Sofia")}${field("Last name", "Marini")}</div><div class="row g16">${field("Email", "sofia.marini@mail.it", { icon: P.mail })}${field("Phone number", "+39 347 765 4321", { icon: P.phone })}</div>
+      <div class="row g16">${field("Structure", "Casa Ortensia", { right: ic(P.chevD, 16) })}${field("Suite", "Suite Glicine", { right: ic(P.chevD, 16) })}</div><div class="row g16">${field("Check-in", "15/10/2022 · 15:00", { icon: P.cal })}${field("Check-out", "22/10/2022 · 11:00", { icon: P.cal })}</div>
+      <div class="row g16">${field("Number of people", "2", { w: 200 })}<div class="col g6" style="flex:1"><span class="lbl">Language</span><div class="row g8">${["it", "en", "de", "fr", "es"].map((l, i) => `<div class="input" style="flex:1;justify-content:center;${i === 0 ? "border-color:var(--terra);box-shadow:inset 0 0 0 1px var(--terra)" : ""}">${flag(l, 20)}${l.toUpperCase()}</div>`).join("")}</div></div></div>
+      <div class="row g10 sm"><span class="check on">${ic(P.check, 12, 3)}</span>Send the suite wifi and door instructions on the day of arrival</div><div class="row" style="justify-content:flex-end;gap:10px"><span class="btn o sq">Cancel</span><span class="btn sq">${ic(P.send, 16)}Send invite</span></div></div>
+      <div class="card col g12" style="background:var(--linen)"><span class="lbl">Email preview</span><div style="background:#fff;border-radius:12px;padding:26px;box-shadow:inset 0 0 0 1px var(--line)">${word(.9)}<div class="serif" style="font-size:30px;margin:22px 0 10px;color:var(--ox);font-style:italic">Welcome, Sofia</div><div class="sm" style="line-height:1.6;color:#5d5751">Your stay in Suite Glicine begins on 15 October. Download the app to open the doors, set the climate and book our services from your phone.</div><span class="btn" style="margin-top:20px">Download the app</span><div class="hr" style="margin:22px 0 14px"></div><div class="xs mut">Casa Ortensia · Via delle Ortensie 14</div></div></div></div>`),
+
+  "a-services": () => adm("services", "all", `<div class="row sb" style="margin-bottom:18px"><div class="ttl">All services</div><span class="btn sq">${ic(P.plus, 17)}Add service</span></div>
+    <div class="row g8" style="margin-bottom:18px">${["All", "Food", "Home", "Wellness", "City", "Mobility"].map((t, i) => `<span class="chip ${i === 0 ? "on" : ""}" style="height:32px;padding:0 16px;font-size:13px">${t}</span>`).join("")}</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">${SKEYS.map((k, i) => `<div class="card" style="padding:0;overflow:hidden">${servArt(k, 270, 150, true)}<div style="padding:14px 16px"><div class="row sb"><b style="font-weight:600">${SERV[k][0]}</b>${statusChip(i === 7 ? "off" : "on")}</div><div class="row sb sm" style="margin-top:8px"><span class="mut">${SERV[k][1]} · ${[3, 3, 2, 3, 2, 1, 3, 2][i]} structures</span><b style="font-weight:500">from €${SERV[k][2]}</b></div></div></div>`).join("")}</div>`),
+
+  "a-service-edit": () => adm("services", "all", `<div class="row g10 mut sm" style="margin-bottom:8px">${ic(P.chevL, 16)}All services</div><div class="row sb" style="margin-bottom:20px"><div class="ttl">Edit service</div><div class="row g10"><span class="btn o sq" style="color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)">${ic(P.trash, 16)}Delete service</span><span class="btn sq">Save</span></div></div>
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:22px"><div class="card col g16" style="padding:24px"><div class="row g8">${["it", "en", "de", "fr", "es"].map((l, i) => `<div class="row g8" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;${i === 1 ? "background:var(--terra);color:#fff" : "background:var(--linen);color:var(--mut)"}">${flag(l, 18)}${l.toUpperCase()}${i < 3 ? ic(P.check, 13, 2.6) : ""}</div>`).join("")}</div>
+      ${field("Title", "Private chef")}<div class="col g6"><span class="lbl">Description</span><div class="ta" style="height:150px">Business dinner, an evening with friends or a romantic occasion: a chef selected by the concierge cooks in your suite with seasonal ingredients, sets the table and leaves the kitchen tidy. Menus on request, allergies and diets welcome.</div></div>
+      <div class="row g16">${field("Price €", "180", { w: 160 })}${field("Position priority", "1", { w: 160 })}<div class="col g6" style="flex:1"><span class="lbl">Tags</span><div class="input g6"><span class="chip">Food</span><span class="chip">Evening</span><span class="chip">In-suite</span></div></div></div>
+      <div class="row g10 sm"><span class="tog s on"></span>Guests pay from the app</div></div>
+      <div class="col g20"><div class="card"><span class="lbl">Images</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">${servArt("chef", 196, 124)}${servArt("breakfast", 196, 124)}<div style="height:124px;border-radius:14px;border:1.5px dashed #d8cdbf;display:grid;place-items:center;color:var(--mut)" class="sm"><div class="col g6" style="align-items:center">${ic(P.upl, 22)}Upload image</div></div></div></div>
+      <div class="card"><span class="lbl">Shown on</span><div class="col g12" style="margin-top:12px">${[[P.phone, "Guest app", 1], [P.tv, "TV homepage", 1], [P.mail, "Welcome email", 0]].map(([p, t, on]) => `<div class="row g10"><span class="mut">${ic(p, 18)}</span><span style="flex:1">${t}</span><span class="tog s ${on ? "on" : ""}"></span></div>`).join("")}</div></div></div></div>`),
+
+  "a-activate": () => adm("services", "activate", `<div class="ttl" style="margin-bottom:6px">Activate services</div><div class="mut" style="margin-bottom:22px">Select one or more structures to activate a service. Guests see it in the app and on the TV from the next sync.</div>
+    <div class="card" style="padding:8px 14px"><table class="t"><tr><th>Service</th>${STRUCT.map(([n]) => `<th style="text-align:center">${n}</th>`).join("")}<th>Price</th></tr>${SKEYS.map((k, i) => `<tr><td><div class="row g12">${servArt(k, 40, 40)}<b style="font-weight:500">${SERV[k][0]}</b></div></td>${[0, 1, 2].map((s) => { const on = ![[5, 0], [2, 2], [4, 2], [7, 1], [7, 2], [5, 2]].some(([a, b]) => a === i && b === s); return `<td style="text-align:center"><span class="check ${on ? "on" : ""}" style="display:inline-grid">${on ? ic(P.check, 12, 3) : ""}</span></td>`; }).join("")}<td>€${SERV[k][2]}</td></tr>`).join("")}</table></div>
+    <div class="row" style="justify-content:flex-end;margin-top:18px;gap:10px"><span class="btn o sq">Reset</span><span class="btn sq">Activate service</span></div>`),
+
+  "a-history": () => adm("services", "history", `<div class="row sb" style="margin-bottom:18px"><div class="ttl">Booking history</div><div class="row g10"><div class="sel">${ic(P.cal, 17)}1 – 15 Oct 2022</div><span class="btn o sq">${ic(P.dl, 17)}Download CSV</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">${[["Bookings", "46"], ["Paid", "€6,480"], ["To be paid", "€720"]].map(([l, n]) => `<div class="card"><div class="lbl">${l}</div><div style="font-size:34px;font-weight:600;color:var(--ox);margin-top:6px">${n}</div></div>`).join("")}</div>
+    <div class="card" style="padding:8px 14px"><table class="t"><tr><th>Date</th><th>Time</th><th>Service</th><th>Guest</th><th>Suite</th><th>Price</th><th>Status</th></tr>${[["15 Oct", "20:00", "chef", "Emma Lindqvist", 0, 180, "pay"], ["15 Oct", "09:30", "trainer", "Lukas Brenner", 2, 60, "paid"], ["14 Oct", "18:00", "beauty", "Claire Dubois", 5, 70, "paid"], ["14 Oct", "11:00", "cleaning", "Daniel Hart", 3, 40, "paid"], ["14 Oct", "08:00", "breakfast", "Akira Sato", 4, 25, "paid"], ["13 Oct", "16:00", "shopper", "Ana Ruiz", 6, 120, "pay"], ["13 Oct", "10:00", "laundry", "Emma Lindqvist", 0, 35, "paid"], ["12 Oct", "13:30", "driver", "Emma Lindqvist", 0, 90, "paid"], ["12 Oct", "07:00", "trainer", "Pietro Galli", 1, 60, "can"]].map(([d, t, k, g, s, pr, st]) => `<tr><td>${d}</td><td>${t}</td><td><div class="row g10">${servArt(k, 30, 30)}${SERV[k][0]}</div></td><td>${g}</td><td>${SUITES[s][0]}</td><td>€${pr}</td><td>${statusChip(st)}</td></tr>`).join("")}</table></div>`),
+
+  "a-structures": () => adm("properties", "structures", `<div class="row sb" style="margin-bottom:20px"><div class="ttl">All structures</div><span class="btn sq">${ic(P.plus, 17)}Add structure</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">${STRUCT.map(([n, a, cnt], i) => `<div class="card" style="padding:0;overflow:hidden"><div style="height:200px">${room([3, 2, 5][i], 360, 200)}</div><div style="padding:18px 20px"><div class="row sb"><b class="h3">${n}</b>${statusChip("on")}</div><div class="sm mut" style="margin-top:4px">${a}</div><div class="row g16 sm" style="margin-top:14px">${[[P.bed, `${cnt} suites`], [P.tv, `${cnt} TVs`], [P.bellc, `${[7, 8, 4][i]} services`]].map(([p, t]) => `<span class="row g6">${ic(p, 16)}${t}</span>`).join("")}</div></div></div>`).join("")}
+      <div class="card col g10" style="grid-column:span 3;flex-direction:row;align-items:center;gap:18px"><div style="width:44px;height:44px;border-radius:50%;background:var(--blush);color:var(--ox);display:grid;place-items:center">${ic(P.wifi, 20)}</div><div style="flex:1"><b style="font-weight:500">Automation gateways</b><div class="sm mut">Each structure has its own gateway on the local network. The guest app reaches it only from the suite wifi.</div></div><span class="chip ok">3 of 3 online</span></div></div>`),
+
+  "a-structure-edit": () => adm("properties", "structures", `<div class="row g10 mut sm" style="margin-bottom:8px">${ic(P.chevL, 16)}All structures</div><div class="row sb" style="margin-bottom:20px"><div class="ttl">Edit structure</div><div class="row g10"><span class="btn o sq">Hide</span><span class="btn sq">Save</span></div></div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:22px"><div class="card col g16" style="padding:24px">${field("Structure name", "Casa Ortensia")}${field("Structure address", "Via delle Ortensie 14")}<div class="row g16">${field("Structure phone", "+39 345 012 3456", { icon: P.phone })}${field("Structure WhatsApp", "+39 345 012 3456", { icon: P.chat })}</div>
+      <div class="row g16">${field("Structure door code", "4 8 1 7 •", { icon: P.door })}${field("Gateway address", "10.0.4.2 · port 5050", { icon: P.wifi })}</div><div class="row g16">${field("Wifi SSID", "Ortensia-Guest", { icon: P.wifi })}${field("Wifi password", "••••••••••", { icon: P.lock })}</div></div>
+      <div class="col g20"><div class="card"><span class="lbl">TV homepage</span><div class="col g12" style="margin-top:14px">${[["Show concierge phone", 1], ["Show WhatsApp", 1], ["Cast to TV guide", 1], ["Live channels", 1], ["Services slider", 1]].map(([t, on]) => `<div class="row g10"><span style="flex:1">${t}</span><span class="tog s ${on ? "on" : ""}"></span></div>`).join("")}</div></div>
+      <div class="card"><span class="lbl">Policies</span><div class="col g10" style="margin-top:12px">${["Check-in from 15:00, check-out by 11:00", "No smoking inside the suites", "Pets on request"].map((t) => `<div class="row g10 sm" style="padding:10px 12px;border-radius:10px;background:var(--linen)"><span style="flex:1">${t}</span><span class="mut">${ic(P.edit, 15)}</span></div>`).join("")}<span class="sm tp row g6" style="font-weight:600">${ic(P.plus, 15)}Add policy</span></div></div></div></div>`),
+
+  "a-apartments": () => adm("properties", "apartments", `<div class="row sb" style="margin-bottom:20px"><div class="ttl">All apartments</div><div class="row g10"><div class="sel">All structures${ic(P.chevD, 16)}</div><span class="btn sq">${ic(P.plus, 17)}Add apartment</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">${SUITES.map(([n, m, g, k], i) => `<div class="card" style="padding:0;overflow:hidden"><div style="height:150px">${room(k, 270, 150)}</div><div style="padding:14px 16px"><b style="font-weight:600">${n}</b><div class="xs mut" style="margin-top:2px">${STRUCT[[0, 0, 1, 1, 2, 0, 2, 1][i]][0]}</div><div class="row g12 xs" style="margin-top:10px;color:#6c665f">${[[P.sqm, `${m} sqm`], [P.users, `${g} guests`], [P.bulb, `${[8, 9, 11, 16, 6, 8, 10, 12][i]} devices`]].map(([p, t]) => `<span class="row g4">${ic(p, 14)}${t}</span>`).join("")}</div></div></div>`).join("")}</div>`),
+
+  "a-apartment-edit": () => adm("properties", "apartments", `<div class="row g10 mut sm" style="margin-bottom:8px">${ic(P.chevL, 16)}All apartments</div><div class="row sb" style="margin-bottom:20px"><div class="ttl">Edit apartment</div><div class="row g10"><span class="btn o sq" style="color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)">${ic(P.trash, 16)}Delete apartment</span><span class="btn sq">Save</span></div></div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:22px"><div class="card col g16" style="padding:24px"><div class="row g16">${field("Apartment name", "Suite Ninfea")}${field("Structure", "Casa Ortensia", { right: ic(P.chevD, 16) })}</div><div class="row g16">${field("Apartment sqm", "45", { icon: P.sqm })}${field("Number of people", "2", { icon: P.users })}${field("Temperature", "17° – 26°", { icon: P.thermo })}</div>
+      <div class="row g16">${field("Apartment door code", "2 9 0 5 •", { icon: P.key })}${field("External door code", "4 8 1 7 •", { icon: P.door })}</div><div class="row g16">${field("Apartment wifi SSID", "Ortensia-Ninfea", { icon: P.wifi })}${field("Apartment wifi password", "••••••••••", { icon: P.lock, right: `<span class="mut">${ic(P.eye, 16)}</span>` })}</div>
+      <div class="col g6"><span class="lbl">Amenities</span><div class="row g8" style="flex-wrap:wrap">${["Kitchen", "Washing machine", "Air conditioning", "Smart TV", "Nespresso", "Desk", "Bathtub", "Balcony"].map((t, i) => `<span class="chip ${i < 6 ? "on" : ""}" style="height:30px">${t}</span>`).join("")}</div></div></div>
+      <div class="col g20"><div class="card" style="padding:0;overflow:hidden"><div style="height:190px">${room(0, 470, 190)}</div><div class="row g8" style="padding:12px">${[1, 4, 2].map((k) => `<div style="flex:1;height:64px;border-radius:10px;overflow:hidden">${room(k, 140, 64)}</div>`).join("")}</div></div>
+      <div class="card"><span class="lbl">Devices</span><div class="col g10" style="margin-top:12px">${[[P.bulb, "Lights", "6 circuits"], [P.thermo, "Climate", "2 zones"], [P.key, "Doors", "Suite + external"], [P.tv, "Smart TV", "Serial linked"]].map(([p, t, s]) => `<div class="row g10 sm"><span class="tp">${ic(p, 17)}</span><span style="flex:1;font-weight:500">${t}</span><span class="mut">${s}</span></div>`).join("")}</div></div></div></div>`),
+
+  "a-tv": () => adm("tv", null, `<div class="row sb" style="margin-bottom:20px"><div class="ttl">Television</div><div class="row g10"><span class="btn o sq">${ic(P.upl, 17)}Import channel list</span><span class="btn sq">${ic(P.plus, 17)}Add channel</span></div></div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:22px"><div class="card" style="padding:8px 14px"><table class="t"><tr><th>#</th><th>Channel</th><th>Language</th><th>Frequency</th><th>Visible</th></tr>${CH.map((c, i) => `<tr><td class="mut">${i + 1}</td><td><div class="row g12"><div style="width:64px;height:38px;border-radius:8px;overflow:hidden">${chLogo(c, 64, 38, 12)}</div>${c[0]}</div></td><td><div class="row g6">${flag(["it", "en", "it", "en", "it", "it", "de", "fr", "en"][i], 20)}${["IT", "EN", "IT", "EN", "IT", "IT", "DE", "FR", "EN"][i]}</div></td><td class="mut">${[514, 522, 538, 554, 570, 586, 602, 618, 634][i]} MHz</td><td><span class="tog s ${i === 6 ? "" : "on"}"></span></td></tr>`).join("")}</table></div>
+      <div class="col g20"><div class="card"><span class="lbl">Screens</span><div class="col g10" style="margin-top:12px">${[["Suite Ninfea", "Living room", 1], ["Suite Glicine", "Living room", 1], ["Suite Camelia", "Bedroom", 1], ["Penthouse Aurelia", "Living room", 0]].map(([s, r, on]) => `<div class="row g10 sm" style="padding:10px 12px;border-radius:10px;background:var(--linen)"><span class="tp">${ic(P.tv, 18)}</span><div style="flex:1"><div style="font-weight:500">${s}</div><div class="xs mut">${r}</div></div><span class="chip ${on ? "ok" : "grey"}">${on ? "Synced" : "Offline"}</span></div>`).join("")}</div></div>
+      <div class="card"><span class="lbl">Channel order</span><div class="sm" style="margin-top:10px;line-height:1.55;color:#5d5751">Channels in the guest's language come first. Each TV reads the language from the current stay and refreshes its homepage every six hours.</div></div></div></div>`),
+
+  "a-users": () => adm("users", null, `<div class="row sb" style="margin-bottom:20px"><div class="ttl">All users</div><span class="btn sq">${ic(P.plus, 17)}New user</span></div>
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:22px"><div class="card" style="padding:8px 14px"><table class="t"><tr><th>Name</th><th>Email</th><th>Role</th><th>Structures</th><th></th></tr>${[["Marco Bassi", "Admin", "All"], ["Giada Conti", "Concierge", "Casa Ortensia"], ["Elisa Fontana", "Concierge", "Palazzo Aurelia"], ["Tommaso Riva", "Concierge", "Residenza Olmo"], ["Irene Sala", "Front desk", "Palazzo Aurelia"], ["Nicola Ferri", "Maintenance", "All"]].map(([n, r, s]) => `<tr><td><div class="row g10">${av(n, 32)}<b style="font-weight:500">${n}</b></div></td><td class="mut">${n.toLowerCase().replace(" ", ".")}@domus.app</td><td><span class="chip ${r === "Admin" ? "on" : ""}">${r}</span></td><td>${s}</td><td class="mut">${ic(P.dots, 18)}</td></tr>`).join("")}</table></div>
+      <div class="card col g16" style="padding:24px"><b class="h3">New user</b>${field("Email", "name@domus.app", { ph: 1, icon: P.mail })}${field("Role", "Select role", { ph: 1, right: ic(P.chevD, 16) })}<div class="col g6"><span class="lbl">Structures</span>${STRUCT.map(([n], i) => `<div class="row g10 sm" style="margin-top:4px"><span class="check ${i === 1 ? "on" : ""}">${i === 1 ? ic(P.check, 12, 3) : ""}</span>${n}</div>`).join("")}</div><span class="btn sq" style="margin-top:6px">${ic(P.send, 16)}Send invitation</span></div></div>`),
+
+  /* ================= guest app ================= */
+  "m-login": () => `<div class="scr m" style="background:var(--ox-d)"><div class="abs" style="inset:0">${room(0, 390, 844)}</div><div class="abs" style="inset:0;background:linear-gradient(180deg,rgba(58,23,20,.15),rgba(58,23,20,.2) 30%,rgba(58,23,20,.92) 62%)"></div>
+    <div class="abs" style="left:0;right:0;top:0">${sbar(true)}</div><div class="abs col g12" style="left:28px;right:28px;bottom:54px;color:#fff">${word(1.2, "#fff")}<div class="serif" style="font-size:40px;font-style:italic;line-height:1.05;margin:14px 0 10px">Your home<br>in town</div>
+    <div class="input" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff">${ic(P.mail, 17)}emma.lindqvist@mail.se</div><div class="input" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff">${ic(P.lock, 17)}••••••••••</div>
+    <span class="btn" style="height:50px;margin-top:4px">Login</span><div class="row sb sm" style="color:rgba(255,255,255,.8)"><span>Forgot your password?</span><span>Have a <b style="color:#fff">sneak peek</b></span></div><div class="sm" style="text-align:center;color:rgba(255,255,255,.7);margin-top:4px">Don't have an account? <b style="color:#fff">Create</b></div></div></div>`,
+
+  "m-suite": () => mob("suites", `<div class="serif tp" style="font-size:20px;font-style:italic">Welcome to</div><div class="serif" style="font-size:36px;color:var(--ox);line-height:1.05;margin-bottom:12px">Suite Ninfea</div>
+    <div class="card" style="padding:0;overflow:hidden"><div style="height:150px">${room(0, 350, 150)}</div><div class="row sb" style="padding:12px 16px"><div><div class="lbl">Check-in</div><b style="font-weight:500">12 Oct</b></div><span class="mut">${ic(P.chevR, 18)}</span><div><div class="lbl">Check-out</div><b style="font-weight:500">19 Oct</b></div><div><div class="lbl">Guests</div><b style="font-weight:500">2</b></div></div></div>
+    <div class="row g10" style="margin:14px 0">${[[P.key, "Open door"], [P.bulb, "Lights"], [P.thermo, "21.5°"]].map(([p, l], i) => `<div class="card col g8" style="flex:1;padding:14px 10px;align-items:center;${i === 0 ? "background:var(--terra);color:#fff" : ""}"><span style="${i ? "color:var(--terra)" : ""}">${ic(p, 24)}</span><b class="xs" style="font-weight:600">${l}</b></div>`).join("")}</div>
+    <div class="card row g12" style="padding:14px 16px"><div style="width:38px;height:38px;border-radius:50%;background:var(--blush);color:var(--ox);display:grid;place-items:center">${ic(P.wifi, 18)}</div><div style="flex:1"><div class="xs mut">Wifi · Ortensia-Ninfea</div><b class="sm" style="font-weight:500;letter-spacing:.12em">ninfea·4471</b></div><span class="tp">${ic(P.copy, 18)}</span></div>
+    <div class="card" style="margin-top:12px;padding:14px 16px"><b class="sm" style="font-weight:600">How can we help you?</b><div class="row g8" style="margin-top:10px"><span class="btn o" style="flex:1;height:38px">${ic(P.phone, 16)}Call</span><span class="btn" style="flex:1;height:38px;background:#4f8a5b">${ic(P.chat, 16)}WhatsApp</span></div></div>`),
+
+  "m-door": () => mob("automation", `<div class="h1" style="font-size:26px;color:var(--ox)">Automation</div>${autoTop("door")}${wifiOk}
+    ${[["External door", "Main entrance · Via delle Ortensie 14", "Closed"], ["Suite door", "Suite Ninfea · 2nd floor", "Closed"]].map(([t, s, st], i) => `<div class="card col" style="align-items:center;text-align:center;padding:16px 18px;margin-bottom:12px"><div style="width:${i ? 92 : 76}px;height:${i ? 92 : 76}px;border-radius:50%;display:grid;place-items:center;${i ? "background:var(--terra);color:#fff;box-shadow:0 0 0 10px var(--blush)" : "border:1.5px solid var(--terra);color:var(--terra)"}">${ic(i ? P.unlock : P.lock, i ? 38 : 30, 1.6)}</div><b class="h3" style="margin-top:12px">${t}</b><span class="xs mut">${s}</span><span class="btn ${i ? "" : "o"}" style="margin-top:10px;width:100%;height:40px">${ic(P.key, 16)}Open door</span><span class="xs mut" style="margin-top:8px">${t}: <b style="color:var(--ink);font-weight:500">${i ? "opening…" : st}</b></span></div>`).join("")}`),
+
+  "m-lights": () => mob("automation", `<div class="h1" style="font-size:26px;color:var(--ox)">Automation</div>${autoTop("lights")}${wifiOk}
+    <div class="card" style="padding:4px 16px">${[["Living room · ceiling", 1], ["Living room · floor lamp", 1], ["Kitchen", 0], ["Dining table", 1], ["Bedroom · ceiling", 0], ["Bedside lamps", 0], ["Bathroom mirror", 0], ["Entrance", 1]].map(([t, on], i) => `<div class="row g12" style="height:49px;${i ? "border-top:1px solid #f0e9df" : ""}"><span style="color:${on ? "var(--terra)" : "#c9bfb3"}">${ic(P.bulb, 20)}</span><span style="flex:1;font-weight:500">${t}</span><span class="tog ${on ? "on" : ""}"></span></div>`).join("")}</div>
+    <div class="row g10" style="margin-top:14px"><span class="btn o" style="flex:1;height:40px">${ic(P.power, 16)}All off</span><span class="btn" style="flex:1;height:40px">${ic(P.sun, 16)}Welcome scene</span></div>`),
+
+  "m-climate": () => {
+    const R = 112, a0 = 140, a1 = 400, val = 21.5, mn = 17, mx = 26, at = a0 + ((val - mn) / (mx - mn)) * (a1 - a0);
+    const pt = (a, r) => [160 + r * Math.cos((a * Math.PI) / 180), 150 + r * Math.sin((a * Math.PI) / 180)];
+    const arc = (from, to, r) => { const [x1, y1] = pt(from, r), [x2, y2] = pt(to, r); return `M${x1} ${y1} A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x2} ${y2}`; };
+    const [kx, ky] = pt(at, R);
+    return mob("automation", `<div class="h1" style="font-size:26px;color:var(--ox)">Automation</div>${autoTop("climate")}${wifiOk}
+      <div class="card col" style="align-items:center;padding:16px 10px 18px"><b class="h3">Living room</b><svg width="320" height="250" viewBox="0 0 320 250"><path d="${arc(a0, a1, R)}" stroke="#efe6da" stroke-width="16" fill="none" stroke-linecap="round"/><path d="${arc(a0, at, R)}" stroke="url(#cg)" stroke-width="16" fill="none" stroke-linecap="round"/><defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" stop-color="#e9b48f"/><stop offset="1" stop-color="#d4553f"/></linearGradient></defs>
+        ${Array.from({ length: 37 }, (_, i) => { const a = a0 + (i * (a1 - a0)) / 36, [x1, y1] = pt(a, R - 22), [x2, y2] = pt(a, R - (i % 4 ? 27 : 31)); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d9cfc2" stroke-width="1.5"/>`; }).join("")}
+        <circle cx="${kx}" cy="${ky}" r="13" fill="#fff" stroke="#d4553f" stroke-width="4"/><text x="160" y="160" text-anchor="middle" font-family="Bodoni Moda" font-size="62" fill="#5b2420">21.5°</text><text x="160" y="192" text-anchor="middle" font-family="Jost" font-size="14" fill="#8a8580">Now 20.8° · heating</text><text x="78" y="244" font-family="Jost" font-size="13" fill="#8a8580">17°</text><text x="226" y="244" font-family="Jost" font-size="13" fill="#8a8580">26°</text></svg>
+        <div class="row g24" style="margin-top:-6px"><span class="btn o" style="width:56px;height:56px;padding:0;border-radius:50%">${ic(P.minus, 22)}</span><span class="btn" style="width:56px;height:56px;padding:0;border-radius:50%">${ic(P.plus, 22)}</span></div></div>
+      <div class="row g10" style="margin-top:12px">${[["Bedroom", "19.0°"], ["Bathroom", "23.0°"]].map(([t, x]) => `<div class="card row g10" style="flex:1;padding:12px 14px"><span class="tp">${ic(P.thermo, 18)}</span><div><div class="xs mut">${t}</div><b style="font-weight:500">${x}</b></div></div>`).join("")}</div>`);
+  },
+
+  "m-services": () => mob("services", `<div class="lbl" style="color:var(--terra);letter-spacing:.2em">Our services</div><div class="serif" style="font-size:30px;color:var(--ox);margin:4px 0 12px">For your stay</div>
+    <div class="row g6" style="margin-bottom:14px">${["All", "Food", "Home", "Wellness", "City"].map((t, i) => `<span class="chip ${i === 0 ? "on" : ""}" style="height:30px">${t}</span>`).join("")}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${["chef", "laundry", "beauty", "driver", "trainer", "shopper"].map((k) => `<div class="card" style="padding:0;overflow:hidden">${servArt(k, 165, 104, true)}<div style="padding:10px 12px"><b class="sm" style="font-weight:600">${SERV[k][0]}</b><div class="xs mut">from €${SERV[k][2]}</div></div></div>`).join("")}</div>`),
+
+  "m-service": () => `<div class="scr m">${servArt("chef", 390, 330, true)}<div class="abs" style="left:0;right:0;top:0">${sbar()}<div class="mhead"><span class="btn" style="width:40px;height:40px;padding:0;background:#fff;color:var(--ox)">${ic(P.chevL, 20)}</span><span class="btn" style="width:40px;height:40px;padding:0;background:#fff;color:var(--ox)">${ic(P.star, 18)}</span></div></div>
+    <div class="abs" style="left:0;right:0;top:300px;bottom:0;background:var(--cream);border-radius:28px 28px 0 0;padding:24px 22px"><div class="row g6"><span class="chip">Food</span><span class="chip">Evening</span></div><div class="serif" style="font-size:32px;color:var(--ox);margin:10px 0 8px">Private chef</div>
+    <div class="sm" style="line-height:1.6;color:#5d5751">A chef selected by the concierge cooks in your suite with seasonal ingredients, sets the table and leaves the kitchen tidy.</div>
+    <div class="row g8 xs mut" style="margin:12px 0">${ic(P.building, 15)}Available in Casa Ortensia</div>
+    <div class="row g10">${field("Date", "14 Oct", { icon: P.cal })}${field("Time", "20:00", { icon: P.clock })}</div>
+    <div class="row sb" style="margin-top:18px"><div><div class="xs mut">Price</div><div class="serif" style="font-size:28px;color:var(--ox)">€180</div></div><span class="btn" style="height:50px;width:190px">Book now</span></div></div></div>`,
+
+  "m-orders": () => mob("orders", `<div class="h1" style="font-size:26px;color:var(--ox);margin-bottom:14px">Orders</div>
+    ${[["chef", "14 Oct · 20:00", 180, "pay"], ["laundry", "13 Oct · 10:00", 35, "paid"], ["driver", "12 Oct · 13:30", 90, "paid"], ["trainer", "16 Oct · 08:00", 60, "can"]].map(([k, d, pr, st]) => `<div class="card" style="padding:12px;margin-bottom:12px"><div class="row g12">${servArt(k, 58, 58)}<div style="flex:1"><b style="font-weight:600">${SERV[k][0]}</b><div class="xs mut">${d}</div><div style="margin-top:6px">${statusChip(st)}</div></div><div class="serif" style="font-size:22px;color:var(--ox)">€${pr}</div></div>${st === "pay" ? `<span class="btn" style="width:100%;height:40px;margin-top:12px">${ic(P.card, 16)}Pay €${pr}</span>` : ""}</div>`).join("")}`),
+
+  "m-profile": () => mob("you", `<div class="row g12" style="margin:4px 0 16px">${av("Emma Lindqvist", 58)}<div style="flex:1"><div class="h2">Emma Lindqvist</div><span class="xs tp row g4" style="font-weight:600">${ic(P.edit, 13)}edit</span></div></div>
+    <div class="card" style="padding:14px 16px;background:var(--ox);color:#fff"><div class="xs" style="opacity:.7;letter-spacing:.14em;text-transform:uppercase">My stay</div><div class="serif" style="font-size:22px;margin-top:4px">Suite Ninfea</div><div class="sm" style="opacity:.8">12 – 19 Oct · Casa Ortensia</div></div>
+    <div class="h3" style="margin:18px 0 8px">Account</div><div class="card" style="padding:4px 16px">${[[P.phone, "+46 70 123 45 67"], [P.cal, "18/06/1990"], [P.mail, "emma.lindqvist@mail.se"], [P.globe, "Language", "English"]].map(([p, t, r], i) => `<div class="row g12 sm" style="height:48px;${i ? "border-top:1px solid #f0e9df" : ""}"><span class="mut">${ic(p, 18)}</span><span style="flex:1">${t}</span>${r ? `<b style="font-weight:500">${r}</b>` : ""}</div>`).join("")}</div>
+    <div class="card" style="padding:4px 16px;margin-top:12px">${[[P.lock, "Change password"], [P.history, "Stay history"], [P.star, "Leave a feedback"], [P.file, "Terms & Conditions"]].map(([p, t], i) => `<div class="row g12 sm" style="height:48px;${i ? "border-top:1px solid #f0e9df" : ""}"><span class="tp">${ic(p, 18)}</span><span style="flex:1;font-weight:500">${t}</span><span class="mut">${ic(P.chevR, 16)}</span></div>`).join("")}</div>
+    <div class="sm" style="text-align:center;color:var(--bad);font-weight:600;margin-top:16px">Logout</div>`),
+
+  /* ================= smart tv ================= */
+  "tv-home": () => `<div class="scr tv" style="background:radial-gradient(circle at 78% 10%,#6e2c26,#3a1714 55%,#2a100e)"><svg class="abs" style="left:1040px;top:-40px;opacity:.14" width="900" height="760" viewBox="0 0 900 760"><path d="M90 760V420a360 360 0 0 1 720 0v340" fill="none" stroke="#ec8a72" stroke-width="34"/><path d="M230 760V430a220 220 0 0 1 440 0v330" fill="none" stroke="#ec8a72" stroke-width="14"/></svg>
+    <div class="abs row sb" style="left:110px;right:110px;top:80px;align-items:flex-start"><div>${word(2.1, "#fff")}<div class="row g24" style="margin-top:30px;font-size:26px">${[[P.phone, "+39 345 012 3456"], [P.chat, "+39 345 012 3456"]].map(([p, t]) => `<span class="row g12"><span style="color:var(--terra-l)">${ic(p, 30)}</span>${t}</span>`).join("")}</div><div class="serif" style="font-size:64px;font-style:italic;margin-top:60px;line-height:1">Welcome to Suite Ninfea</div><div style="font-size:26px;color:rgba(255,255,255,.75);margin-top:14px">Casa Ortensia · Enjoy your stay</div></div>
+      <div class="col" style="align-items:flex-end;text-align:right;gap:14px;background:rgba(255,255,255,.08);border-radius:22px;padding:26px 30px;font-size:22px;color:rgba(255,255,255,.85)"><span class="row g12" style="font-size:28px;color:#fff;font-weight:500">${ic(P.cast, 34)}Cast to this TV</span><span>Need help to cast?</span><span class="row g10">Press <span style="width:30px;height:30px;border-radius:50%;background:#c8453b;display:inline-block"></span> on your remote</span></div></div>
+    <div class="abs" style="left:110px;right:0;bottom:70px"><div class="tvlbl">SERVICES</div><div class="row g24" style="margin-bottom:46px">${["chef", "laundry", "beauty", "driver", "trainer", "shopper", "breakfast"].map((k, i) => `<div><div class="tvbox ${i === 0 ? "f" : ""}">${servArt(k, 290, 170, true)}</div><div class="tvt">${SERV[k][0]}</div></div>`).join("")}</div>
+    <div class="tvlbl">CHANNELS</div><div class="row g24">${CH.slice(0, 7).map((c, i) => `<div><div class="tvbox" style="width:230px;height:120px">${chLogo(c, 230, 120, 34)}</div><div class="tvt">${i + 1} · ${c[0]}</div></div>`).join("")}</div></div></div>`,
+
+  "tv-cast": () => `<div class="scr tv" style="background:var(--ox-d)"><svg class="abs" style="right:-120px;top:-60px;opacity:.12" width="900" height="1200" viewBox="0 0 900 1200"><path d="M120 1200V450a330 330 0 0 1 660 0v750" fill="none" stroke="#ec8a72" stroke-width="40"/><path d="M260 1200V470a190 190 0 0 1 380 0v730" fill="none" stroke="#ec8a72" stroke-width="16"/></svg>
+    <div class="abs" style="left:120px;top:90px">${word(1.6, "#fff")}</div><div class="abs" style="left:120px;top:250px;width:980px"><div class="serif" style="font-size:84px;color:var(--terra-l);line-height:1">Cast to this TV</div><div style="font-size:30px;color:rgba(255,255,255,.8);margin:22px 0 50px">Would you like to stream on this TV?</div>
+    ${["Scan the QR code to connect to the wifi", "Choose a compatible app on your smartphone and press the cast icon", "While connected to the wifi you can also control your suite automation using our app", "Enjoy!"].map((t, i) => `<div class="row g24" style="margin-bottom:34px;align-items:flex-start"><div style="width:58px;height:58px;border-radius:50%;flex:none;border:2px solid var(--terra-l);display:grid;place-items:center;font-size:26px;color:var(--terra-l)">${i + 1}</div><div style="font-size:30px;line-height:1.35;padding-top:8px">${t}</div></div>`).join("")}</div>
+    <div class="abs col" style="right:180px;top:230px;width:520px;align-items:center;background:#fff;border-radius:30px;padding:44px;color:var(--ink)">${qr(400, 7)}<div class="row g12" style="margin-top:34px;font-size:28px;font-weight:500">${ic(P.wifi, 30)}Ortensia-Ninfea</div><div class="row g12" style="margin-top:12px;font-size:28px;color:var(--mut)">${ic(P.lock, 28)}ninfea·4471</div></div>
+    <div class="abs row g12" style="left:120px;bottom:70px;font-size:24px;color:rgba(255,255,255,.7)"><span class="row g10" style="padding:14px 26px;border-radius:999px;background:var(--terra);color:#fff;box-shadow:0 0 0 5px rgba(236,138,114,.45)">${ic(P.chevL, 26)}Go back</span></div></div>`,
+
+  "tv-service": () => `<div class="scr tv" style="background:var(--ox-d)"><div class="abs" style="left:0;top:0;width:900px;height:1080px">${servArt("chef", 900, 1080, true)}</div><div class="abs" style="left:0;top:0;width:900px;height:1080px;background:linear-gradient(90deg,rgba(58,23,20,0) 70%,rgba(58,23,20,1))"></div>
+    <div class="abs" style="left:1000px;top:120px;width:800px">${word(1.3, "#fff")}<div class="tvlbl" style="margin-top:120px">FOOD · EVENING</div><div class="serif" style="font-size:96px;line-height:1">Private chef</div>
+    <div style="font-size:30px;line-height:1.55;color:rgba(255,255,255,.82);margin-top:36px">Business dinner, an evening with friends or a romantic occasion: a chef selected by the concierge cooks in your suite with seasonal ingredients, sets the table and leaves the kitchen tidy. Menus on request, allergies and diets welcome.</div>
+    <div class="row g24" style="margin-top:50px"><div class="serif" style="font-size:60px;color:var(--terra-l)">€180</div><div style="font-size:24px;color:rgba(255,255,255,.7);line-height:1.4">Book from the app<br>or call the concierge</div></div>
+    <span class="row g10" style="display:inline-flex;margin-top:60px;padding:16px 30px;border-radius:999px;background:var(--terra);font-size:26px;box-shadow:0 0 0 5px rgba(236,138,114,.45)">${ic(P.chevL, 26)}Go back</span></div></div>`,
+
+  "tv-login": () => `<div class="scr tv" style="background:radial-gradient(circle at 50% 40%,#5b2420,#2a100e 70%)"><svg class="abs" style="left:560px;top:120px;opacity:.16" width="800" height="960" viewBox="0 0 800 960"><path d="M60 960V400a340 340 0 0 1 680 0v560" fill="none" stroke="#ec8a72" stroke-width="30"/></svg>
+    <div class="abs col" style="left:0;right:0;top:220px;align-items:center;text-align:center">${word(2.6, "#fff")}<div class="serif" style="font-size:56px;font-style:italic;margin-top:60px">Link this TV to a suite</div><div style="font-size:26px;color:rgba(255,255,255,.7);margin-top:14px">Serial number 0K3H-7Q21-XN58 · Hospitality mode</div>
+    <div class="col g20" style="width:760px;margin-top:56px"><div class="row sb" style="height:84px;border-radius:18px;padding:0 30px;background:rgba(255,255,255,.1);font-size:28px">${ic(P.building, 32)}<span style="flex:1;text-align:left;margin-left:18px">Casa Ortensia</span>${ic(P.chevD, 30)}</div><div class="row sb" style="height:84px;border-radius:18px;padding:0 30px;background:rgba(255,255,255,.1);font-size:28px;box-shadow:0 0 0 5px var(--terra-l)">${ic(P.bed, 32)}<span style="flex:1;text-align:left;margin-left:18px">Suite Ninfea</span>${ic(P.chevD, 30)}</div><span class="row" style="justify-content:center;height:84px;border-radius:999px;background:var(--terra);font-size:30px;font-weight:500;margin-top:10px">Connect</span></div></div></div>`,
+};
+
+/* ===================== identity: arches ===================== */
+// A round-headed arch from its base centre, width and height
+const arch = (cx, base, w, h, attrs) => `<path d="M${cx - w / 2} ${base}V${base - h + w / 2}a${w / 2} ${w / 2} 0 0 1 ${w} 0V${base}" ${attrs}/>`;
+function drawArches() {
+  document.querySelectorAll(`#${v} svg.arches`).forEach((svg) => {
+    const k = svg.dataset.kind, W = +svg.getAttribute("width"), H = +svg.getAttribute("height");
+    let s = "";
+    if (k === "hero") {
+      // an enfilade of doorways receding behind the devices
+      s += `<rect x="0" y="${H - 150}" width="${W}" height="150" fill="#ebe0d1"/>`;
+      s += arch(1760, H - 150, 1180, 1120, `fill="#f0dccd"`);
+      [[1760, 1180, 1120], [1760, 980, 960], [1760, 800, 800], [1760, 640, 650], [1760, 500, 520]].forEach(([cx, w, h], i) => { s += arch(cx, H - 150 - i * 34, w, h, `fill="${["#f0dccd", "#ecd0c0", "#e7c3b2", "#e2b6a4", "#dda996"][i]}" stroke="#d4553f" stroke-opacity="${.18 + i * .06}" stroke-width="3"`); });
+    } else if (k === "card") {
+      s += `<rect x="0" y="${H - 170}" width="${W}" height="170" fill="#ebe0d1"/>`;
+      [[1000, 1040], [860, 920], [720, 800], [580, 680]].forEach(([w, h], i) => { s += arch(600, H - 170 - i * 28, w, h, `fill="${["#f0dccd", "#ecd0c0", "#e7c3b2", "#e2b6a4"][i]}" stroke="#d4553f" stroke-opacity="${.18 + i * .06}" stroke-width="3"`); });
+    } else if (k === "soft") {
+      for (let i = 0; i < 9; i++) s += arch(140 + i * 280, H + 20, 200, 420 + (i % 3) * 120, `fill="${i % 2 ? "#e0cfba" : "#ddcab3"}" stroke="#d4553f" stroke-opacity=".16" stroke-width="3"`);
+    } else if (k === "stay") {
+      s += `<rect x="0" y="${H - 170}" width="${W}" height="170" fill="#efe5d8"/>`;
+      s += arch(1540, H - 170, 1100, 1120, `fill="#f2dfd2"`) + arch(1540, H - 170 - 30, 900, 960, `fill="#ecd0c0" stroke="#d4553f" stroke-opacity=".2" stroke-width="3"`);
+      s += arch(520, H - 170, 760, 860, `fill="#efe3d4" stroke="#d4553f" stroke-opacity=".14" stroke-width="3"`);
+    }
+    svg.innerHTML = s;
+  });
+}
+function loadDevices() {
+  document.querySelectorAll(`#${v} iframe[data-src]`).forEach((f) => { f.src = `?v=${f.dataset.src}`; });
+}
+// Showcase: isometric grid of front desk screens, each used once; slots that would show only a sliver are dropped
+function buildGrid() {
+  const host = document.querySelector(`#${v} .grid3d`);
+  if (!host) return;
+  const ids = ["a-stay", "a-home", "a-service-edit", "a-apartment-edit", "a-history", "a-services", "a-tv", "a-invite", "a-structures", "a-guest", "a-activate", "a-apartments", "a-structure-edit", "a-users", "a-login"];
+  const SW = 1440, SH = 900, gap = 90, cols = 8, rows = 7;
+  const box = host.getBoundingClientRect();
+  const inner = document.createElement("div");
+  host.appendChild(inner);
+  const layout = (s) => {
+    inner.innerHTML = "";
+    Object.assign(inner.style, { position: "absolute", left: "0px", top: "0px", transformOrigin: "0 0", transform: `translate(${box.width * .5}px, ${box.height * .5}px) scale(${s}) rotateX(52deg) rotateZ(-38deg) translate(${-cols * (SW + gap) / 2}px, ${-rows * (SH + gap) / 2}px)` });
+    const slots = [];
+    for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) {
+      const d = document.createElement("div");
+      Object.assign(d.style, { position: "absolute", left: c * (SW + gap) + "px", top: r * (SH + gap) + (c % 2) * 380 + "px", width: SW + "px", height: SH + "px" });
+      inner.appendChild(d);
+      const b = d.getBoundingClientRect();
+      const vw = Math.max(0, Math.min(b.right, box.right) - Math.max(b.left, box.left)), vh = Math.max(0, Math.min(b.bottom, box.bottom) - Math.max(b.top, box.top));
+      slots.push([d, (vw * vh) / (b.width * b.height), Math.hypot(b.left + b.width / 2 - box.left - box.width / 2, b.top + b.height / 2 - box.top - box.height / 2)]);
+    }
+    return slots;
+  };
+  let s = .3, slots;
+  for (; s < 1; s += .02) { slots = layout(s); if (slots.filter(([, f]) => f > .3).length <= ids.length) break; }
+  slots.sort((a, b) => a[2] - b[2]);
+  let k = 0;
+  slots.forEach(([d, f]) => {
+    if (f <= .3 || k >= ids.length) return d.remove();
+    const fr = document.createElement("iframe");
+    fr.className = "shot"; fr.src = `?v=${ids[k++]}`;
+    Object.assign(fr.style, { left: d.style.left, top: d.style.top, width: SW + "px", height: SH + "px" });
+    d.replaceWith(fr);
+  });
+  document.body.setAttribute("data-slots", k);
+}
+
+const run = async () => {
+  // load every face up front: text built later would otherwise stay invisible (display=block) when the render ends
+  await Promise.all(["300", "400", "500", "600", "700"].map((w) => document.fonts.load(`${w} 16px Jost`)).concat(["400", "500"].map((w) => document.fonts.load(`${w} 16px "Bodoni Moda"`)), document.fonts.load(`italic 400 16px "Bodoni Moda"`)));
+  await document.fonts.ready;
+  const el = document.getElementById(v);
+  if (builders[v]) el.innerHTML = builders[v]();
+  if (builders[v]) Object.assign(el.style, v.startsWith("m-") ? { width: "390px", height: "844px" } : v.startsWith("tv-") ? { width: "1920px", height: "1080px" } : { width: "1440px", height: "900px" });
+  drawArches();
+  loadDevices();
+  buildGrid();
+};
+run();
+</script>
+</body>
+</html>
