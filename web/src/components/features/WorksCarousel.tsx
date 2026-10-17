@@ -11,12 +11,24 @@ const DRAG_THRESHOLD_PX = 6;
 const FRICTION = 0.95;
 /** Below this speed (px/ms) the glide stops */
 const MIN_VELOCITY = 0.02;
+/** Idle drift speed in px/ms (about 18px per second) */
+const AUTO_SPEED = 0.018;
+/** The drift waits this long after the last touch, drag, wheel or key press */
+const RESUME_DELAY_MS = 5000;
+/** A scroll position further than this from the drift's own means the user moved the track */
+const USER_SCROLL_TOLERANCE_PX = 2;
 
 export function WorksCarousel({ works }: { works: Work[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ isDown: false, startX: 0, startScroll: 0, didDrag: false, lastX: 0, lastT: 0, velocity: 0 });
   const glideFrameRef = useRef(0);
+  // Fractional drift position (scrollLeft may round it) and the time of the last user interaction
+  const autoRef = useRef({ pos: 0, lastInteraction: -Infinity, isVisible: false });
   const [isDragging, setIsDragging] = useState(false);
+
+  const markInteraction = () => {
+    autoRef.current.lastInteraction = performance.now();
+  };
 
   /** Distance between the same card in two consecutive copies. */
   const getLoopWidth = useCallback(() => {
@@ -39,6 +51,7 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     if (!track) return;
     const centerOnMiddleCopy = () => {
       track.scrollLeft = getLoopWidth();
+      autoRef.current.pos = track.scrollLeft;
     };
     centerOnMiddleCopy();
     const observer = new ResizeObserver(centerOnMiddleCopy);
@@ -49,11 +62,54 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     };
   }, [getLoopWidth]);
 
+  // Idle drift: advance very slowly while the track is on screen and nobody has touched it for a while
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const visibility = new IntersectionObserver(([entry]) => {
+      autoRef.current.isVisible = entry.isIntersecting;
+    });
+    visibility.observe(track);
+
+    let frame = 0;
+    let lastT = performance.now();
+    const step = (now: number) => {
+      const auto = autoRef.current;
+      const dt = Math.min(now - lastT, 50); // no jump after a background tab
+      lastT = now;
+      const isIdle =
+        auto.isVisible &&
+        now - auto.lastInteraction > RESUME_DELAY_MS &&
+        !dragRef.current.isDown &&
+        glideFrameRef.current === 0 &&
+        !track.contains(document.activeElement);
+      if (isIdle) {
+        auto.pos += AUTO_SPEED * dt;
+        track.scrollLeft = auto.pos;
+      }
+      frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      visibility.disconnect();
+    };
+  }, []);
+
   // Teleport by one copy when drifting into the outer copies → seamless loop
   const handleScroll = () => {
     const track = trackRef.current;
     const loopWidth = getLoopWidth();
     if (!track || loopWidth === 0) return;
+    const auto = autoRef.current;
+
+    // Native scrolling (touch, trackpad, momentum) moved the track: pause the drift and follow it
+    if (Math.abs(track.scrollLeft - auto.pos) > USER_SCROLL_TOLERANCE_PX) {
+      markInteraction();
+      auto.pos = track.scrollLeft;
+    }
 
     let shift = 0;
     if (track.scrollLeft < loopWidth * 0.5) shift = loopWidth;
@@ -61,12 +117,14 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     if (shift === 0) return;
 
     track.scrollLeft += shift;
+    auto.pos += shift;
     // Keep an in-progress mouse drag consistent with the jump
     dragRef.current.startScroll += shift;
   };
 
   // Mouse drag-to-scroll with momentum (touch and trackpads scroll natively)
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    markInteraction();
     if (event.pointerType !== "mouse" || !trackRef.current) return;
     stopGlide();
     dragRef.current = {
@@ -112,7 +170,12 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       lastT = now;
       track.scrollLeft += v * dt;
       v *= Math.pow(FRICTION, dt / 16);
-      glideFrameRef.current = Math.abs(v) > MIN_VELOCITY ? requestAnimationFrame(step) : 0;
+      if (Math.abs(v) > MIN_VELOCITY) {
+        glideFrameRef.current = requestAnimationFrame(step);
+      } else {
+        glideFrameRef.current = 0;
+        markInteraction(); // the 5 second pause starts when the glide settles
+      }
     };
     glideFrameRef.current = requestAnimationFrame(step);
   };
@@ -122,9 +185,15 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     if (!drag.isDown) return;
     drag.isDown = false;
     setIsDragging(false);
+    markInteraction();
     // A pause before release means the user stopped: no glide
     const isFresh = event.timeStamp - drag.lastT < 80;
     if (drag.didDrag && isFresh && Math.abs(drag.velocity) > MIN_VELOCITY) glide(drag.velocity);
+  };
+
+  const handleWheel = () => {
+    stopGlide();
+    markInteraction();
   };
 
   // Swallow the click that ends a drag so cards don't navigate
@@ -150,7 +219,9 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerLeave={endDrag}
-      onWheel={stopGlide}
+      onWheel={handleWheel}
+      onTouchStart={markInteraction}
+      onKeyDown={markInteraction}
       onClickCapture={handleClickCapture}
       className={`no-scrollbar relative flex gap-6 overflow-x-auto px-7 pb-7 pt-2 ${
         isDragging ? "cursor-grabbing select-none" : "cursor-grab"
