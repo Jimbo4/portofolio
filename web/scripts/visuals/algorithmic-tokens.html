@@ -1,0 +1,302 @@
+<!doctype html>
+<!--
+  Visuals for the Algorithmic Tokens case study (Matcha model: the title, large, in the project's own identity).
+  Identity used only in these images: minimal, crypto, metaverse. Deep space black (#05070b) around the tokens' own
+  #0d1117, a cyan wireframe floor that fades into the horizon, the seven token colors as the only accents, and a
+  spectrum mark made of seven short bars in those colors. Title in Unbounded, labels in JetBrains Mono.
+
+  Tokens are drawn from the bar widths and colors measured on the original 350px PNGs (the corner logo is left out).
+
+  Views (render with scripts/render-visual.sh):
+    hero        2400x1200          three.js, tokens floating over the grid
+    card        1200x1500 → 960    three.js, tokens stacked under the title
+    collection  1800x1013          three.js, the seven tokens standing in a row
+    anatomy     1800x1013          2D, how one token encodes its code (SWIFTSHADER=0)
+    t-<id>      1050x1050 → 840    one flat token, e.g. t-adaboost (SWIFTSHADER=0)
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=block" rel="stylesheet">
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  :root { --space: #05070b; --token: #0d1117; --cyan: #33e1ff; --ink: #eef3f8; --dim: rgba(238, 243, 248, .55); }
+  html, body { overflow: hidden; background: var(--space); }
+  .view { display: none; position: relative; overflow: hidden; background: var(--space); }
+  .view.on { display: block; }
+  .abs { position: absolute; }
+  canvas.scene { position: absolute; inset: 0; }
+  .title {
+    font-family: "Unbounded", sans-serif; font-weight: 700; color: var(--ink); letter-spacing: -0.035em; line-height: .96;
+    text-shadow: 0 0 60px rgba(51, 225, 255, .18);
+  }
+  /* Spectrum mark: one short bar per token color */
+  .spectrum { display: flex; flex-direction: column; gap: var(--gap, 10px); }
+  .spectrum i { display: block; height: var(--h, 10px); }
+  .mono { font-family: "JetBrains Mono", monospace; }
+
+  /* Anatomy */
+  .grid-bg {
+    background-color: var(--space);
+    background-image:
+      linear-gradient(rgba(51, 225, 255, .055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(51, 225, 255, .055) 1px, transparent 1px);
+    background-size: 60px 60px; background-position: -1px -1px;
+  }
+  .rule-row { display: grid; grid-template-columns: 70px 1fr; gap: 0 18px; }
+  .rule-row .n { font-size: 18px; color: var(--cyan); letter-spacing: .12em; }
+  .rule-row .k { font-size: 18px; color: var(--dim); letter-spacing: .22em; text-transform: uppercase; }
+  .rule-row .v { font-family: "Unbounded", sans-serif; font-weight: 500; font-size: 46px; color: var(--ink); letter-spacing: -0.03em; margin-top: 8px; }
+  .rule-row .s { font-size: 19px; color: var(--dim); margin-top: 10px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO 2400x1200 ============ -->
+<section class="view" id="hero" style="width:2400px;height:1200px">
+  <canvas class="scene" width="2400" height="1200" data-layout="hero"></canvas>
+  <div class="abs" style="left:150px;top:150px">
+    <div class="spectrum" data-spectrum style="--h:12px;--gap:9px;width:150px;margin-bottom:64px"></div>
+    <div class="title" style="font-size:168px">Algorithmic<br>Tokens</div>
+  </div>
+</section>
+
+<!-- ============ CARD 1200x1500 ============ -->
+<section class="view" id="card" style="width:1200px;height:1500px">
+  <canvas class="scene" width="1200" height="1500" data-layout="card"></canvas>
+  <div class="abs" style="left:90px;top:100px">
+    <div class="spectrum" data-spectrum style="--h:10px;--gap:8px;width:120px;margin-bottom:52px"></div>
+    <div class="title" style="font-size:132px">Algorithmic<br>Tokens</div>
+  </div>
+</section>
+
+<!-- ============ COLLECTION 1800x1013 ============ -->
+<section class="view" id="collection" style="width:1800px;height:1013px">
+  <canvas class="scene" width="1800" height="1013" data-layout="collection"></canvas>
+</section>
+
+<!-- ============ ANATOMY 1800x1013 ============ -->
+<section class="view grid-bg" id="anatomy" style="width:1800px;height:1013px">
+  <canvas class="abs token2d" data-token="adaboost" width="720" height="720" style="left:150px;top:190px;box-shadow:0 0 0 1px rgba(109,19,230,.6),0 0 120px rgba(109,19,230,.35)"></canvas>
+  <!-- 80-column ruler over the bar area: x from 20/350 to 330/350 of the token -->
+  <div class="abs mono" id="ruler" style="top:118px;height:52px"></div>
+  <!-- Brace along the bars: their count follows the length of the code -->
+  <svg class="abs" id="brace" width="80" height="720" style="left:870px;top:190px" fill="none" stroke="#33e1ff" stroke-width="2"></svg>
+  <div class="abs" style="left:1000px;top:190px;width:680px;display:flex;flex-direction:column;gap:58px">
+    <div class="rule-row mono"><div class="n">01</div><div><div class="k">Length</div><div class="v">Log scale</div><div class="s">The number of bars grows<br>with the length of the code.</div></div></div>
+    <div class="rule-row mono"><div class="n">02</div><div><div class="k">Width</div><div class="v">80 columns</div><div class="s">A full bar is a line of<br>80 characters.</div></div></div>
+    <div class="rule-row mono"><div class="n">03</div><div><div class="k">Color</div><div class="v" style="display:flex;align-items:center;gap:22px"><span style="width:44px;height:44px;background:#6d13e6;box-shadow:0 0 40px rgba(109,19,230,.8)"></span>#6d13e6</div><div class="s">The first six hex digits of<br>keccak256(code).</div></div></div>
+  </div>
+</section>
+
+<script>
+  // Measured on the original PNGs: bar widths in px on a 350px canvas (bars start at x=20, one every 20px, 10px tall)
+  window.TOKENS = {
+    helloworld: { name: "Hello, World!", lang: "Python", color: "#e47801", bars: [86] },
+    bubblesort: { name: "Bubble Sort", lang: "Java", color: "#1aa724", bars: [148, 167, 152, 135, 51] },
+    fibonacci: { name: "Recursive Fibonacci", lang: "JavaScript", color: "#a76192", bars: [217, 97, 70, 71, 74, 65] },
+    adaboost: { name: "AdaBoost", lang: "Python", color: "#6d13e6", bars: [12, 31, 80, 139, 279, 293, 147, 131, 131, 129] },
+    alexnet: { name: "AlexNet", lang: "Python", color: "#bf9b97", bars: [59, 39, 61, 40, 149, 129, 183, 146, 166, 142] },
+    googlenet: { name: "GoogleNet", lang: "Python", color: "#f7ff1b", bars: [59, 132, 163, 62, 135, 135, 158, 168, 122, 153] },
+    resnet: { name: "ResNet", lang: "Python", color: "#0938e0", bars: [90, 109, 24, 121, 62, 148, 172, 141, 160, 171] },
+  };
+  window.ORDER = ["helloworld", "bubblesort", "fibonacci", "adaboost", "alexnet", "googlenet", "resnet"];
+
+  // Draw one token on a square canvas context, at any size
+  window.drawToken = (ctx, id, size) => {
+    const t = TOKENS[id], s = size / 350;
+    ctx.fillStyle = "#0d1117";
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = t.color;
+    t.bars.forEach((w, i) => ctx.fillRect(Math.round(20 * s), Math.round((20 + 20 * i) * s), Math.round(w * s), Math.round(10 * s)));
+  };
+
+  // Pick the view from ?v=
+  const v = new URLSearchParams(location.search).get("v") || "hero";
+  if (v.startsWith("t-")) {
+    const id = v.slice(2);
+    document.body.insertAdjacentHTML("beforeend",
+      `<section class="view on" style="width:1050px;height:1050px"><canvas class="token2d" data-token="${id}" width="1050" height="1050"></canvas></section>`);
+  } else {
+    document.getElementById(v).classList.add("on");
+  }
+
+  for (const c of document.querySelectorAll(".view.on canvas.token2d")) drawToken(c.getContext("2d"), c.dataset.token, c.width);
+  for (const el of document.querySelectorAll("[data-spectrum]")) {
+    el.innerHTML = ORDER.map((id) => `<i style="background:${TOKENS[id].color};width:${40 + (TOKENS[id].bars.length * 6)}%"></i>`).join("");
+  }
+
+  // Anatomy: ruler and brace sized on the token canvas
+  if (v === "anatomy") {
+    const left = 150, size = 720, s = size / 350;
+    const ruler = document.getElementById("ruler");
+    const x0 = left + 20 * s, x1 = left + 330 * s;
+    ruler.style.left = x0 + "px";
+    ruler.style.width = (x1 - x0) + "px";
+    let html = `<div style="position:absolute;left:0;right:0;bottom:0;height:2px;background:#33e1ff"></div>`;
+    for (let c = 0; c <= 80; c += 10) {
+      const x = (c / 80) * (x1 - x0);
+      const major = c % 40 === 0;
+      html += `<div style="position:absolute;left:${x - 1}px;bottom:0;width:2px;height:${major ? 18 : 10}px;background:#33e1ff"></div>`;
+      if (major) html += `<div style="position:absolute;left:${x}px;top:0;transform:translateX(-50%);font-size:17px;color:#33e1ff;letter-spacing:.08em">${c}</div>`;
+    }
+    ruler.innerHTML = html;
+    const n = TOKENS.adaboost.bars.length, top = 20 * s, bottom = (20 + 20 * (n - 1) + 10) * s, mid = (top + bottom) / 2;
+    document.getElementById("brace").innerHTML =
+      `<path d="M14 ${top} Q34 ${top} 34 ${top + 24} L34 ${mid - 24} Q34 ${mid} 54 ${mid} Q34 ${mid} 34 ${mid + 24} L34 ${bottom - 24} Q34 ${bottom} 14 ${bottom}"/>`;
+  }
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+  // Tokens as thin glowing slabs over an endless wireframe floor
+  import * as THREE from "three";
+  import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+  import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+  import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+  import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+  // Per view: camera, and per token position [x, y, z] and rotation [x, y, z] in radians
+  const layouts = {
+    hero: {
+      fov: 34, cam: [0, 3.4, 11], look: [0, 1.6, 0], floor: -1.1,
+      tokens: {
+        helloworld: { p: [1.6, 4.0, -7], r: [0.05, -0.5, 0.04] },
+        fibonacci: { p: [6.6, 4.2, -6.5], r: [0.08, -0.3, -0.05] },
+        bubblesort: { p: [3.9, 3.3, -3.2], r: [0.02, -0.42, 0.03] },
+        googlenet: { p: [7.3, 2.0, -2.8], r: [-0.04, -0.55, 0.02] },
+        adaboost: { p: [2.0, 1.0, 1.4], r: [-0.05, -0.38, -0.02] },
+        resnet: { p: [5.0, 0.8, 0.6], r: [0.03, -0.25, 0.04] },
+        alexnet: { p: [-3.3, 0.15, 1.8], r: [0.0, -0.12, -0.03] },
+      },
+    },
+    card: {
+      fov: 40, cam: [0, 7.4, 13.4], look: [0, 0.8, 0], floor: -3,
+      tokens: {
+        helloworld: { p: [-2.7, -1.4, -5], r: [-0.25, 0.35, 0.03] },
+        bubblesort: { p: [0.2, -1.1, -6], r: [-0.25, 0.08, -0.03] },
+        fibonacci: { p: [3.0, -1.5, -4.6], r: [-0.25, -0.35, 0.02] },
+        adaboost: { p: [-1.7, -1.6, -1.6], r: [-0.3, 0.3, -0.04] },
+        alexnet: { p: [1.8, -1.8, -2.2], r: [-0.3, -0.3, 0.03] },
+        googlenet: { p: [-0.9, -1.7, 1.6], r: [-0.35, 0.18, 0.02] },
+        resnet: { p: [2.3, -1.9, 2.4], r: [-0.35, -0.4, -0.04] },
+      },
+    },
+    collection: {
+      fov: 32, cam: [-2.4, 2.4, 16.5], look: [-0.5, 1.2, -0.75], floor: 0,
+      tokens: Object.fromEntries(window.ORDER.map((id, i) => [id, { p: [(i - 3) * 2.35, 1.3, -i * 0.25], r: [0, 0.32 - i * 0.02, 0] }])),
+    },
+  };
+
+  const canvas = document.querySelector(".view.on canvas.scene");
+  if (canvas) {
+    await document.fonts.ready;
+    const L = layouts[canvas.dataset.layout];
+    const width = canvas.width, height = canvas.height;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(width, height, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    const space = new THREE.Color(0x05070b);
+    const scene = new THREE.Scene();
+    scene.background = space;
+    scene.fog = new THREE.Fog(space, 9, 34);
+
+    const camera = new THREE.PerspectiveCamera(L.fov, width / height, 0.1, 200);
+    camera.position.set(...L.cam);
+    camera.lookAt(...L.look);
+
+    // Horizon glow: a soft cyan and violet haze where the floor meets the sky
+    const glowTex = (stops) => {
+      const c = document.createElement("canvas"); c.width = c.height = 256;
+      const g = c.getContext("2d"), grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+      stops.forEach(([o, col]) => grad.addColorStop(o, col));
+      g.fillStyle = grad; g.fillRect(0, 0, 256, 256);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+    };
+    const haze = new THREE.Mesh(
+      new THREE.PlaneGeometry(90, 26),
+      new THREE.MeshBasicMaterial({ map: glowTex([[0, "rgba(51,225,255,.16)"], [.4, "rgba(90,70,255,.06)"], [1, "rgba(0,0,0,0)"]]), transparent: true, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }),
+    );
+    haze.position.set(L.look[0], L.floor + 1, -40);
+    scene.add(haze);
+
+    // Wireframe floor: anti-aliased grid drawn in a shader, a fine line every unit and a bright one every 4,
+    // fading out with distance so it melts into the horizon
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(400, 400),
+      new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, extensions: { derivatives: true },
+        uniforms: { color: { value: new THREE.Color(0x33e1ff) }, cam: { value: camera.position } },
+        vertexShader: `varying vec3 wp; void main() { vec4 w = modelMatrix * vec4(position, 1.); wp = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+        fragmentShader: `
+          uniform vec3 color; uniform vec3 cam; varying vec3 wp;
+          float grid(vec2 p, float step, float width) {
+            vec2 g = abs(fract(p / step - .5) - .5) / fwidth(p / step);
+            return 1. - min(min(g.x, g.y) / width, 1.);
+          }
+          void main() {
+            float fine = grid(wp.xz, 1., 1.0) * .16;
+            float major = grid(wp.xz, 4., 1.3) * .62;
+            float d = distance(wp.xz, cam.xz);
+            float fade = 1. - smoothstep(6., 38., d);
+            gl_FragColor = vec4(color, max(fine, major) * fade);
+          }`,
+      }),
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = L.floor;
+    scene.add(floor);
+
+    // Token slab: flat token face on the front, dark body, edges in the token color
+    const faceTex = (id) => {
+      const c = document.createElement("canvas"); c.width = c.height = 1050;
+      window.drawToken(c.getContext("2d"), id, 1050);
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+      return t;
+    };
+    const slab = new THREE.BoxGeometry(2, 2, 0.07);
+    const edges = new THREE.EdgesGeometry(slab);
+    const body = new THREE.MeshBasicMaterial({ color: 0x0a0e14 });
+
+    for (const [id, item] of Object.entries(L.tokens)) {
+      const color = new THREE.Color(window.TOKENS[id].color);
+      const face = new THREE.MeshBasicMaterial({ map: faceTex(id) });
+      const group = new THREE.Group();
+      group.add(new THREE.Mesh(slab, [body, body, body, body, face, body]));
+      const rim = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: color.clone().lerp(new THREE.Color(0xffffff), 0.25) }));
+      group.add(rim);
+      // Halo behind the slab in its own color
+      const halo = new THREE.Mesh(
+        new THREE.PlaneGeometry(4.6, 4.6),
+        new THREE.MeshBasicMaterial({ map: glowTex([[0, "rgba(255,255,255,.26)"], [.4, "rgba(255,255,255,.06)"], [1, "rgba(255,255,255,0)"]]), color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }),
+      );
+      halo.position.z = -0.12;
+      group.add(halo);
+      group.position.set(...item.p);
+      group.rotation.set(...item.r);
+      scene.add(group);
+
+      // Light pool on the floor under each token
+      const pool = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.6, 2.6),
+        new THREE.MeshBasicMaterial({ map: glowTex([[0, "rgba(255,255,255,.3)"], [1, "rgba(255,255,255,0)"]]), color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }),
+      );
+      pool.rotation.x = -Math.PI / 2;
+      pool.position.set(item.p[0], L.floor + 0.01, item.p[2]);
+      scene.add(pool);
+    }
+
+    const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(width, height, { type: THREE.HalfFloatType, samples: 4 }));
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(width, height), 0.4, 0.5, 0.45));
+    composer.addPass(new OutputPass());
+    composer.render();
+  }
+</script>
+
+</body>
+</html>

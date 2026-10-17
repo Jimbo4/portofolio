@@ -1,0 +1,107 @@
+---
+name: Algorithmic Tokens
+internalRef: NFT # internal only, never rendered: which real project this is
+pillar: grow
+date: "2022-04"
+tags: ["Web3", "NFT", "Ethereum", "Generative Art"]
+role: Blockchain Developer & Product Owner
+blurb: Famous algorithms minted as NFTs on Ethereum, each one drawn by its own code.
+description: >-
+  A collection of NFTs on Ethereum with one token for each famous algorithm. A script reads the code of the algorithm
+  and draws the token from it: the length, the width of the lines and the hash of the code decide how it looks. I
+  came up with the concept, wrote the generator and the smart contract, and published the collection on OpenSea.
+cover:
+  card: /images/case-studies/algorithmic-tokens/card.webp
+  hero: /images/case-studies/algorithmic-tokens/hero.webp
+  alt: The words Algorithmic Tokens in white next to seven square tokens with colored bars, floating over a cyan wireframe grid that fades into a dark horizon
+---
+
+## Code as a collectible
+
+2022 was the year of the metaverse. Brands bought land in virtual worlds, NFT marketplaces traded billions and every company was looking for its way into Web3. The AI consultancy I worked at wanted one too, in a form that said something about its own craft.
+
+Algorithmic Tokens is a collection of non-fungible tokens on Ethereum, one for each famous algorithm, from Hello, World! to the neural networks behind modern computer vision. Nobody draws the tokens by hand: a script reads the source code of each algorithm and derives the image from it, so every token is a portrait of its code.
+
+## A collection for an AI company
+
+The project was a business experiment and a way to show what the company knew best. It had to:
+
+- **Enter the Web3 conversation** while NFTs and the metaverse were at their peak, with a collection the company owned and could show.
+- **Show the craft** by putting AlexNet, GoogleNet, ResNet and AdaBoost, models the team worked with every day, next to the classics every developer knows.
+- **Let the code draw itself**: the same code always gives the same token, with no hand-made choices in between.
+- **Live on chain**: minted on Ethereum and traded on OpenSea, with a creator fee on every resale.
+- **Take part in the Metaverse Summit** in Milan in 2022 with a real project to show and talk about.
+
+## Seven algorithms
+
+The first drop holds seven tokens, ordered here from the shortest code to the longest.
+
+<TokenSlider label="The seven Algorithmic Tokens">
+  <Token name="Hello, World!" language="Python" color="#e47801" bars="1" src="/images/case-studies/algorithmic-tokens/token-helloworld.webp" alt="Square dark token with a single short orange bar in the top left corner">
+    The first program almost everyone writes. One line of code becomes a single bar.
+  </Token>
+  <Token name="Bubble Sort" language="Java" color="#1aa724" bars="5" src="/images/case-studies/algorithmic-tokens/token-bubblesort.webp" alt="Square dark token with five green bars, four of similar length and a short one at the bottom">
+    The textbook sorting algorithm: it walks through a list and swaps neighbours until nothing is out of order.
+  </Token>
+  <Token name="Recursive Fibonacci" language="JavaScript" color="#a76192" bars="6" src="/images/case-studies/algorithmic-tokens/token-fibonacci.webp" alt="Square dark token with six mauve bars, a long one on top and five shorter ones below">
+    A function that calls itself to build the Fibonacci sequence, the classic example of recursion.
+  </Token>
+  <Token name="AdaBoost" language="Python" color="#6d13e6" bars="10" src="/images/case-studies/algorithmic-tokens/token-adaboost.webp" alt="Square dark token with ten violet bars that grow from a tiny one to two almost full-width bars and then settle at medium length">
+    A machine learning method that combines many weak classifiers into a strong one.
+  </Token>
+  <Token name="AlexNet" language="Python" color="#bf9b97" bars="10" src="/images/case-studies/algorithmic-tokens/token-alexnet.webp" alt="Square dark token with ten dusty pink bars, four short ones on top and six longer ones below">
+    The convolutional neural network that won the ImageNet challenge in 2012 and started the deep learning wave.
+  </Token>
+  <Token name="GoogleNet" language="Python" color="#f7ff1b" bars="10" src="/images/case-studies/algorithmic-tokens/token-googlenet.webp" alt="Square dark token with ten bright yellow bars of medium length, two of them short">
+    A 2014 network for image recognition built from inception modules, which look at an image at several scales at once.
+  </Token>
+  <Token name="ResNet" language="Python" color="#0938e0" bars="10" src="/images/case-studies/algorithmic-tokens/token-resnet.webp" alt="Square dark token with ten deep blue bars of varying length, the third one very short">
+    A deep network whose residual connections made it possible to train hundreds of layers, the base of much of computer vision since 2015.
+  </Token>
+</TokenSlider>
+
+## How a token is drawn
+
+The generator turns three properties of the code into three visual rules. Together they make every token unique and repeatable: anyone who runs the same code through the generator gets the same image.
+
+<Figure src="/images/case-studies/algorithmic-tokens/anatomy.webp" alt="The AdaBoost token, large, with an 80-column ruler above its bars, a brace along the ten bars, and three numbered notes: length on a log scale, width in 80 columns, and the color #6d13e6 from the keccak256 hash of the code" width="1800" height="1013" caption="AdaBoost, read through the three rules." />
+
+<Principles>
+  <Principle label="Length">
+    The number of bars follows the length of the code on a logarithmic scale, so a one-liner and a neural network fit in the same frame.
+  </Principle>
+  <Principle label="Width">
+    Each bar is measured against the 80 characters per line that most style guides recommend: a bar across the whole token is a full line.
+  </Principle>
+  <Principle label="Color">
+    The color is the first six hex digits of the keccak256 hash of the code, the hash function Ethereum itself relies on. Change one character and the color changes.
+  </Principle>
+</Principles>
+
+## From script to OpenSea
+
+I took the project from the idea to the marketplace, writing the code at every step.
+
+<Steps>
+  <Step label="Pick the algorithms">
+    I chose a first set that goes from the first program anyone writes to the models the company worked with, in Python, Java and JavaScript.
+  </Step>
+  <Step label="Write the generator">
+    A Python script reads each source file, measures its length and its lines, hashes it with keccak256 and draws the token as a square image.
+  </Step>
+  <Step label="Prototype the contract">
+    I wrote a custom ERC-1155 contract in Solidity to mint the tokens with their metadata, and deployed it on an Ethereum testnet to try the whole minting flow.
+  </Step>
+  <Step label="Publish on OpenSea">
+    For the public release I moved the collection to OpenSea's shared storefront on Ethereum, with a name and description for every token, the collection page and a 3% creator fee.
+  </Step>
+  <Step label="Bring it to the summit">
+    The collection gave the company a concrete Web3 project to bring to the Metaverse Summit in Milan in 2022.
+  </Step>
+</Steps>
+
+## Seven tokens on chain
+
+Algorithmic Tokens lives on Ethereum as a collection of seven unique tokens, each one generated from the code it represents. The same generator can turn any other algorithm into a new token with the same rules, so the collection can grow one algorithm at a time.
+
+<Figure src="/images/case-studies/algorithmic-tokens/collection.webp" alt="The seven tokens standing in a row on a cyan wireframe grid, from the single orange bar of Hello, World! to the blue bars of ResNet, each casting a soft pool of its own color on the floor" width="1800" height="1013" caption="The full collection, from Hello, World! to ResNet." />
