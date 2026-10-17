@@ -23,23 +23,6 @@ export const placeholderWorks: Work[] = [
     ],
   },
   {
-    slug: "forma-studio",
-    name: "Forma Studio",
-    tags: ["Platform", "B2B"],
-    date: "2024-01",
-    year: "2024",
-    blurb: "One delivery system for ten parallel client projects.",
-    description:
-      "A shared delivery framework that let one team run ten client projects a year with consistent quality.",
-    cover: { kind: "art", art: "forma" },
-    pillar: "lead",
-    isPlaceholder: true,
-    kpis: [
-      { value: "10", caption: "Projects per Year" },
-      { value: "−24%", caption: "Delivery Cost" },
-    ],
-  },
-  {
     slug: "flow-os",
     name: "FlowOS",
     tags: ["AI", "Productivity"],

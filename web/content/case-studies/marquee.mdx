@@ -1,0 +1,95 @@
+---
+name: Marquee
+pillar: lead
+date: "2024-08"
+tags: ["Web App", "ERP", "Generative AI"]
+role: Team Leader & Project Manager
+blurb: A production ERP and a creative AI studio for one of Italy's leading film and TV producers.
+description: >-
+  Two web tools for one of Italy's leading film and TV production companies and its commercials division: an ERP that
+  follows every commercial from tender to shooting, and an AI studio that speeds up scouting, moodboards and
+  storyboards. I led the team that designed and built them.
+cover:
+  card: /images/case-studies/marquee/card.webp
+  hero: /images/case-studies/marquee/hero.webp
+  alt: The word MARQUEE spelled in glowing light bulbs on closed scarlet theatre curtains, above a fan of dark dashboard screens
+---
+
+## Behind the camera
+
+A production company that makes films, TV series and commercials runs on two kinds of work. One is organisation: tenders, deadlines, directors, actors, locations, rights and contracts. The other is ideas: which story to adapt next, what a scene should look like, how to explain it to a client before anything is shot.
+
+Marquee is the name I use here for the two tools my team built for one of Italy's leading film and TV production companies and its commercials division: a production ERP that holds every project in one place, and an AI studio that helps the creative teams get from an idea to something they can show.
+
+## One company, two ways of working
+
+Producers lived in spreadsheets, shared folders and email threads, while writers and creatives spent days on research and references before a project could even be pitched. The work had to:
+
+- **Give every commercial one sheet**, from the first tender to the go ahead and the shooting, with client, agency, crew, locations and files together.
+- **Show the whole slate at a glance**, so a producer knows how many projects are in tender, in production, closing or lost.
+- **Keep rights under control**: actors, music and voice-overs, with channels, on-air dates and expiry dates.
+- **Cut the manual data entry**, letting AI read a brief or a call recording and fill in the project.
+- **Speed up creative prototyping** with storyboards, moodboards and book scouting for future series and films.
+- **Fit the company's own tools**: single sign-on, the shared drive the teams already used, and phones on set.
+
+<Figure src="/images/case-studies/marquee/showcase.webp" alt="Isometric grid of dark dashboard screens: coloured status cards, project tables, a pencil storyboard in an orange dialog, moodboard images and book suggestions" width="1800" height="1013" caption="The two tools, rebuilt here with a fictional brand, fictional projects and painted stand-in images." />
+
+## The production desk
+
+The ERP opens on the company's slate: five status cards (tender, production, closing, re-edition, lost) that also filter the project table below. Each project has its own sheet, with an accordion for the registry, the timing from tender to go ahead, the crew and the files. Directors are tracked as presented or not presented with their reels, and actors with their channels, on-air dates and contracts. When a project is created, its folders on the shared drive are created with it, and the app installs on a phone for producers on set.
+
+<Screens layout="pair">
+  <Figure src="/images/case-studies/marquee/production-desk.webp" alt="Production ERP home: five coloured status cards with project counts above a table of projects with status badges, dates and producers" width="1200" height="1017" caption="The slate: status cards filter the project table." sizes="(max-width: 768px) 100vw, 380px" />
+  <Figure src="/images/case-studies/marquee/project-sheet.webp" alt="Project sheet with name, client and status, registry fields with tags, and a timing line from tender start to shooting" width="1200" height="1017" caption="One sheet per project, with the timing from tender to shooting." sizes="(max-width: 768px) 100vw, 380px" />
+</Screens>
+
+## AI inside the workflow
+
+Inside the ERP, AI takes on the slowest parts of starting a commercial.
+
+<Steps>
+  <Step label="Read the brief">
+    The producer uploads the agency brief or the recording of the kick-off call. Audio is transcribed first, then the model extracts client, agency, description, dates and tags.
+  </Step>
+  <Step label="Confirm the fields">
+    Every extracted value is shown next to its field with a checkbox. The producer keeps what is right and the project sheet fills itself in.
+  </Step>
+  <Step label="Sketch the shot">
+    From a short description of a scene, the image tool draws a storyboard or a shootingboard frame, saved with the project and ready for the treatment.
+  </Step>
+</Steps>
+
+<Figure src="/images/case-studies/marquee/storyboard.webp" alt="Orange dialog titled Crea immagine with Storyboard selected, a scene description in Italian and a pencil sketch of a vintage car on a hill road with a red camera-move arrow" width="1440" height="900" caption="A storyboard frame generated from a one-line scene description." />
+
+## A studio for ideas
+
+The second tool is for the people who develop series and films. Three AI tools sit behind a simple home page: scouting suggests books worth adapting, explains why each one could work as a series or a film and shows the month's top 100 with review sentiment; moodboards turn a written mood into a set of reference images; and a document assistant turns a treatment or an episode outline into synopses, scene lists and character sheets.
+
+<Screens layout="trio">
+  <Figure src="/images/case-studies/marquee/scouting.webp" alt="Scouting page: a request for crime novels to adapt into a series and three suggested books with covers, ratings and reasons" width="960" height="707" caption="Scouting: books to adapt, with the reason each one could become a series." sizes="(max-width: 640px) 100vw, 380px" />
+  <Figure src="/images/case-studies/marquee/moodboard.webp" alt="Moodboard page titled Notturno costiero with a written mood and six generated images of coasts, a lighthouse, neon streets and a desert road" width="960" height="707" caption="Moodboards: a written mood becomes a set of references." sizes="(max-width: 640px) 100vw, 380px" />
+  <Figure src="/images/case-studies/marquee/script-chat.webp" alt="Chat with an AI assistant that turns an attached episode outline into a list of scenes with locations and characters" width="960" height="707" caption="Document assistant: from a treatment to a scene list." sizes="(max-width: 640px) 100vw, 380px" />
+</Screens>
+
+## How I led the team
+
+I ran both products as team leader and project manager, between the company's producers and creative teams on one side and the people building the tools on the other.
+
+<Disciplines>
+  <Discipline label="Product and backlog">
+    I gathered needs from producers and creatives, turned them into a roadmap and kept one backlog ordered by what saved them the most time.
+  </Discipline>
+  <Discipline label="Design">
+    I set the direction for both interfaces: a dark, colour-coded desk for production work and a lighter, card-based studio for creative tools.
+  </Discipline>
+  <Discipline label="Development and AI">
+    I organised the work of the developers across front end, back end and AI services, and reviewed each feature against the producers' real workflow before release.
+  </Discipline>
+  <Discipline label="Cloud and security">
+    Separate staging and production environments, infrastructure as code and single sign-on with the company accounts, so the tools could hold contracts and rights safely.
+  </Discipline>
+</Disciplines>
+
+## Two tools in daily use
+
+The production desk keeps the commercials division's slate, crews, rights and files in one place, and the AI studio gives the creative teams a faster way from an idea to a reference, a frame or a list of scenes. Both kept growing after launch, with new fields, flows and AI tools added as the teams asked for them.

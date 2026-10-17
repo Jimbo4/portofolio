@@ -1,0 +1,712 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Marquee: anonymized rebuild of a production ERP and a creative AI platform for a film, TV and commercials producer.
+     Fictional brand, people, clients, books and images. No client marks, no photos of people. -->
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Palanquin:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&family=Poiret+One&display=block" rel="stylesheet">
+<style>
+  :root {
+    /* production ERP */
+    --bg: #1d1d1b; --setting: #3d3d3d; --set2: #4a4a48; --amber: #dc8a1d; --line: #5a5a58;
+    --gara: #3450b4; --prod: #3a7c27; --chiu: #b0640f; --ried: #7d1791; --persa: #b42225;
+    /* creative AI platform */
+    --ai-gray: #3e3e3e; --ai-blue: #5b89ce; --ai-card: #e0eafa;
+    /* identity */
+    --velvet: #0c0907; --gold: #f2c069; --gold-d: #b9822f; --cream: #fff3d6;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; background: #000; }
+  .view { display: none; position: relative; overflow: hidden; }
+  .view.on { display: block; }
+  .abs { position: absolute; }
+  svg { display: block; }
+
+  /* ================= production ERP ================= */
+  .erp { font-family: "Palanquin", sans-serif; background: var(--bg); color: #fff; padding: 32px 80px 56px; }
+  .e-nav { display: flex; align-items: center; justify-content: space-between; padding-bottom: 56px; }
+  .e-right { display: flex; align-items: center; gap: 32px; }
+  .e-search { width: 380px; height: 46px; border-radius: 23px; background: var(--setting); display: flex; align-items: center; gap: 12px; padding: 0 18px; color: #aaa; font-size: 16px; }
+  .e-menu { height: 48px; padding: 0 18px; border-radius: 10px; background: var(--setting); display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 500; }
+  .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--amber); display: grid; place-items: center; font-weight: 600; font-size: 15px; box-shadow: 0 0 0 2px #fff; }
+  .avatar.sm { width: 32px; height: 32px; font-size: 12px; box-shadow: none; }
+  .wm { display: flex; align-items: center; gap: 12px; }
+  .wm b { font-family: "Limelight", serif; font-weight: 400; font-size: 27px; letter-spacing: .06em; color: var(--gold); }
+  .wm span { font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: #bbb; padding-top: 4px; }
+  .bulbs { display: flex; gap: 4px; }
+  .bulbs i { width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #fff8e4, var(--gold) 55%, var(--gold-d)); box-shadow: 0 0 6px rgba(242,192,105,.9); }
+
+  .status { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+  .sc { position: relative; height: 216px; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .sc::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 80% 0%, rgba(255,255,255,.22), transparent 60%), linear-gradient(160deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.35)); }
+  .sc svg.deco { position: absolute; right: 10px; top: 10px; width: 46px; height: 46px; opacity: .35; }
+  .sc .n { position: relative; font-size: 86px; font-weight: 600; line-height: 1; text-shadow: 0 4px 14px rgba(0,0,0,.35); }
+  .sc .t { position: relative; font-size: 26px; font-weight: 600; }
+  .sc.sel { box-shadow: 0 0 0 3px #fff; }
+  .e-h { display: flex; align-items: center; justify-content: space-between; margin: 44px 0 18px; }
+  .e-h h3 { font-size: 28px; font-weight: 600; color: var(--amber); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 10px; background: var(--amber); color: #fff; font-size: 16px; font-weight: 500; }
+  .btn.ghost { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.6); }
+  table.e-tab { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .e-tab th { text-align: left; font-weight: 500; color: #ddd; padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .e-tab th svg { display: inline-block; vertical-align: -3px; margin-left: 6px; opacity: .7; }
+  .e-tab td { padding: 14px 14px; border-bottom: 1px solid #333331; color: #eee; white-space: nowrap; }
+  .e-tab td.nm { color: #fff; font-weight: 500; }
+  .badge { display: inline-block; min-width: 108px; text-align: center; padding: 3px 12px; border-radius: 999px; font-size: 14px; font-weight: 500; color: #fff; }
+  .dt { display: inline-flex; align-items: center; gap: 8px; }
+  .dt svg { color: var(--amber); }
+  .pager { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; color: #bbb; font-size: 15px; }
+  .pager span.b { height: 36px; padding: 0 14px; border-radius: 8px; background: var(--setting); display: grid; place-items: center; color: #fff; }
+
+  .e-title { text-align: center; font-size: 34px; font-weight: 600; color: var(--amber); margin-bottom: 20px; }
+  .panel { background: var(--setting); border-radius: 14px; padding: 30px 34px; }
+  .fgrid { display: grid; gap: 22px 26px; }
+  .fl { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+  .inp { height: 46px; border-radius: 10px; background: #fff; color: #222; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-size: 16px; }
+  .inp.area { height: 96px; align-items: flex-start; padding-top: 12px; line-height: 1.45; }
+  .chips { min-height: 46px; border-radius: 10px; background: #fff; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: #f3e3c9; color: #6b4206; font-size: 14px; font-weight: 500; }
+  .acc { border-bottom: 1px solid var(--line); }
+  .acc-h { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; font-size: 22px; font-weight: 600; }
+  .acc-h .l { display: flex; align-items: center; gap: 12px; }
+  .acc-h .l svg { color: var(--amber); }
+  .acc-b { padding: 4px 0 30px; }
+  .sub { font-size: 21px; font-weight: 600; color: var(--amber); margin: 6px 0 16px; }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 8px; }
+  .timeline::before { content: ""; position: absolute; left: 20px; right: 20px; top: 15px; height: 3px; background: var(--amber); border-radius: 2px; }
+  .tl { position: relative; padding-top: 42px; }
+  .tl::before { content: ""; position: absolute; left: 8px; top: 4px; width: 24px; height: 24px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 5px var(--setting); }
+  .tl.todo::before { background: #6a6a68; }
+  .tl.now::before { background: #fff; box-shadow: 0 0 0 5px var(--setting), 0 0 0 9px rgba(220,138,29,.55); }
+  .tl .k { font-size: 14.5px; color: #ccc; line-height: 1.3; min-height: 38px; }
+  .tl .d { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; height: 38px; padding: 0 12px; border-radius: 8px; background: #fff; color: #222; font-size: 15px; }
+  .loc { display: flex; gap: 16px; align-items: center; }
+  .loc .ph { width: 132px; height: 78px; border-radius: 10px; overflow: hidden; }
+
+  .dirs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .dir { background: var(--set2); border-radius: 12px; overflow: hidden; }
+  .dir .reel { height: 120px; position: relative; }
+  .dir .reel .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 46px; height: 46px; border-radius: 50%; background: rgba(0,0,0,.45); display: grid; place-items: center; box-shadow: inset 0 0 0 2px rgba(255,255,255,.8); }
+  .dir .b { padding: 12px 14px 14px; display: flex; align-items: center; gap: 10px; }
+  .dir .b div { flex: 1; } .dir .b strong { display: block; font-size: 16px; font-weight: 600; } .dir .b small { font-size: 13.5px; color: #bbb; }
+  .tag-ok { font-size: 12.5px; padding: 2px 8px; border-radius: 6px; background: rgba(58,124,39,.9); }
+  .tag-no { font-size: 12.5px; padding: 2px 8px; border-radius: 6px; background: #6a6a68; }
+  .actors { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+  .actors th { text-align: left; font-weight: 500; color: #ccc; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .actors td { padding: 12px; border-bottom: 1px solid #4a4a48; }
+  .apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .app { position: relative; height: 196px; border-radius: 14px; overflow: hidden; padding: 22px 24px; }
+  .app h4 { position: relative; display: flex; gap: 10px; font-size: 22px; font-weight: 600; }
+  .app p { position: relative; font-size: 15.5px; line-height: 1.45; margin-top: 14px; color: #f5f0e6; max-width: 92%; }
+  .app.off { background: #4a4a48; color: #aaa; }
+
+  /* dialogs */
+  .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.62); }
+  .dialog { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 16px; box-shadow: 0 40px 90px rgba(0,0,0,.6); }
+  .seg { display: inline-flex; gap: 8px; }
+  .seg span { padding: 6px 14px; border-radius: 999px; font-size: 15px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.7); }
+  .seg span.on { background: #fff; color: var(--amber); font-weight: 600; box-shadow: none; }
+  .check { width: 20px; height: 20px; border-radius: 5px; background: var(--amber); display: grid; place-items: center; flex: none; }
+  .check.off { background: transparent; box-shadow: inset 0 0 0 2px #888; }
+
+  /* ================= creative AI platform ================= */
+  .ai { font-family: "Geist", sans-serif; color: #fff; background: #1c1c1a; position: relative; padding: 26px 92px 64px; }
+  .ai > .waves { position: absolute; inset: 0; pointer-events: none; }
+  .ai > .c { position: relative; }
+  .a-nav { display: grid; grid-template-columns: 140px 1fr 140px; align-items: center; margin-bottom: 70px; font-size: 16px; }
+  .a-nav .mid { display: flex; justify-content: center; }
+  .a-nav .r { text-align: right; text-decoration: underline; text-underline-offset: 4px; }
+  .a-h1 { font-size: 54px; font-weight: 600; letter-spacing: -.02em; text-align: center; }
+  .a-p { font-size: 19px; color: #e6e6e6; text-align: center; margin-top: 16px; }
+  .a-h2 { font-size: 34px; font-weight: 600; margin: 64px 0 22px; }
+  .tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .tool { position: relative; background: var(--ai-card); color: #111; border-radius: 16px; padding: 30px 30px 74px; min-height: 260px; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+  .tool h4 { display: flex; align-items: center; gap: 10px; font-size: 26px; font-weight: 600; color: #111; }
+  .tool h4 svg { color: var(--ai-blue); }
+  .tool p { font-size: 17px; line-height: 1.5; margin-top: 22px; color: #222; }
+  .tool .go { position: absolute; right: 18px; bottom: 18px; width: 48px; height: 48px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .tool .go i { width: 40px; height: 40px; border-radius: 50%; background: var(--ai-blue); display: grid; place-items: center; }
+  .tabs { display: flex; background: var(--ai-gray); border-radius: 12px; padding: 0 10px; box-shadow: 0 6px 18px rgba(0,0,0,.3); }
+  .tabs div { padding: 18px 34px; font-size: 16px; font-weight: 600; color: #ccc; position: relative; }
+  .tabs div.on { color: #fff; }
+  .tabs div.on::after { content: ""; position: absolute; left: 34px; right: 34px; bottom: 10px; height: 2px; background: var(--ai-blue); }
+  .prompt { background: var(--ai-gray); border-radius: 18px; padding: 24px 26px 20px; box-shadow: 0 10px 26px rgba(0,0,0,.3); }
+  .prompt .q { font-size: 19px; color: #fff; line-height: 1.45; }
+  .prompt .q.ph { color: #ddd; }
+  .prompt .row { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 12px; font-size: 15.5px; background: #2d2d2b; color: #ddd; }
+  .pill.on { background: var(--ai-blue); color: #fff; }
+  .resp { background: var(--ai-gray); border-radius: 18px; padding: 26px 28px; margin-top: 26px; }
+  .resp .who { display: flex; gap: 16px; align-items: flex-start; }
+  .bot { width: 52px; height: 52px; border-radius: 50%; border: 4px solid var(--ai-blue); background: #2a2a28; display: grid; place-items: center; flex: none; }
+  .resp .ask { color: #aaa; font-size: 16px; display: flex; gap: 8px; }
+  .resp .ans { font-size: 19px; font-weight: 700; margin: 18px 0 18px; }
+  .books { display: flex; flex-direction: column; gap: 22px; }
+  .book { background: #343432; border-radius: 16px; overflow: hidden; }
+  .book .top { display: flex; gap: 28px; padding: 24px 28px; }
+  .book .cv { width: 128px; height: 190px; border-radius: 6px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,.45); flex: none; }
+  .book .info { flex: 1; display: flex; flex-direction: column; }
+  .rk { display: flex; justify-content: space-between; align-items: center; }
+  .rk b { width: 42px; height: 42px; border-radius: 12px; background: var(--ai-blue); display: grid; place-items: center; font-size: 20px; }
+  .rk .ic { display: flex; gap: 18px; color: #fff; }
+  .book h5 { font-size: 27px; font-weight: 700; margin-top: 4px; }
+  .book .au { font-size: 18px; color: #ccc; margin-top: 2px; }
+  .book .ge { font-size: 16px; color: #999; margin-top: 4px; }
+  .book .st { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+  .stars { display: flex; gap: 3px; color: #f2c069; }
+  .book .ft { background: #262624; padding: 14px 28px; font-size: 15.5px; color: #ddd; line-height: 1.5; }
+  .bt { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 12px; background: var(--ai-blue); color: #fff; font-size: 16px; font-weight: 500; }
+  .mood { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .mood .im { border-radius: 14px; overflow: hidden; height: 268px; position: relative; box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+  .chat { display: flex; flex-direction: column; gap: 18px; }
+  .msg { max-width: 76%; border-radius: 16px; padding: 18px 22px; font-size: 16.5px; line-height: 1.6; background: #262624; }
+  .msg.me { align-self: flex-end; background: #333331; }
+  .msg .hd { display: flex; justify-content: space-between; font-size: 12.5px; letter-spacing: .06em; font-weight: 600; margin-bottom: 8px; color: var(--ai-blue); }
+  .msg.me .hd { color: #f0b25c; }
+  .msg .hd span { color: #888; font-weight: 400; letter-spacing: 0; }
+  .att { display: flex; gap: 8px; align-items: center; color: var(--ai-blue); margin-bottom: 8px; font-size: 15px; }
+  .msg ol { padding-left: 22px; margin-top: 6px; } .msg li { margin: 4px 0; }
+  .msg h6 { font-size: 17px; font-weight: 700; margin: 10px 0 2px; color: #fff; }
+
+  /* ================= covers ================= */
+  .velvet { background: var(--velvet); }
+  .spot { position: absolute; inset: 0; background:
+      radial-gradient(42% 60% at 50% -6%, rgba(255,196,110,.26), rgba(255,170,70,.07) 55%, transparent 80%),
+      radial-gradient(70% 50% at 50% 115%, rgba(150,30,20,.35), transparent 70%); }
+  .curtain { position: absolute; top: 0; bottom: 0; width: 15%; background:
+      repeating-linear-gradient(90deg, rgba(90,14,12,.9) 0 18px, rgba(40,6,6,.95) 34px, rgba(110,20,16,.85) 52px, rgba(40,6,6,.95) 70px); }
+  .curtain.l { left: 0; -webkit-mask: linear-gradient(90deg, #000 20%, transparent); mask: linear-gradient(90deg, #000 20%, transparent); }
+  .curtain.r { right: 0; -webkit-mask: linear-gradient(270deg, #000 20%, transparent); mask: linear-gradient(270deg, #000 20%, transparent); }
+  .grain { position: absolute; inset: -50%; opacity: .14; mix-blend-mode: overlay; pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .stage3d { position: absolute; left: 0; right: 0; perspective: 2600px; }
+  .shot { position: absolute; border: 0; background: #1d1d1b; border-radius: 10px; transform-origin: 50% 0; box-shadow: 0 50px 90px rgba(0,0,0,.65), 0 0 0 1px rgba(242,192,105,.18); }
+  .payoff { font-family: "Poiret One", sans-serif; color: #e9d6b0; letter-spacing: .32em; text-transform: uppercase; text-align: center; }
+  .rule { height: 2px; background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent); opacity: .7; }
+  canvas.bulbs-title, canvas.drape { position: absolute; }
+  canvas.drape { left: 0; top: 0; }
+  #hero .payoff, #card .payoff { color: #ffe6c2; text-shadow: 0 2px 10px rgba(40,0,0,.9), 0 0 2px rgba(40,0,0,.8); }
+  #hero .rule, #card .rule { opacity: .9; box-shadow: 0 1px 6px rgba(40,0,0,.8); }
+</style>
+</head>
+<body>
+
+<!-- Screens are generated by the builders below; covers place them in iframes. -->
+<section class="view" id="erp-home" style="width:1440px"></section>
+<section class="view" id="erp-project" style="width:1440px"></section>
+<section class="view" id="erp-crew" style="width:1440px"></section>
+<section class="view" id="erp-storyboard" style="width:1440px"></section>
+<section class="view" id="erp-brief" style="width:1440px"></section>
+<section class="view" id="ai-home" style="width:1440px"></section>
+<section class="view" id="ai-scouting" style="width:1440px"></section>
+<section class="view" id="ai-moodboard" style="width:1440px"></section>
+<section class="view" id="ai-chat" style="width:1440px"></section>
+<!-- single images used by the body -->
+<section class="view" id="storyboard-frame" style="width:1600px;height:900px"></section>
+
+<!-- ============ HERO 2400x1200 ============ -->
+<section class="view" id="hero" style="width:2400px;height:1200px;background:#3a0306">
+  <canvas class="drape" width="2400" height="1200"></canvas>
+  <canvas class="bulbs-title" data-text="MARQUEE" data-size="250" data-gap="19" style="left:0;top:70px" width="2400" height="420"></canvas>
+  <div class="abs rule" style="left:880px;width:640px;top:500px"></div>
+  <div class="abs payoff" style="left:0;right:0;top:526px;font-size:34px">Production &amp; creative AI suite</div>
+  <div class="stage3d" data-flow="hero" style="top:640px;height:600px"></div>
+  <div class="abs" style="left:0;right:0;bottom:0;height:160px;background:linear-gradient(transparent,rgba(30,2,4,.85))"></div>
+  <div class="grain"></div>
+</section>
+
+<!-- ============ CARD 1200x1500 ============ -->
+<section class="view" id="card" style="width:1200px;height:1500px;background:#3a0306">
+  <canvas class="drape" width="1200" height="1500"></canvas>
+  <canvas class="bulbs-title" data-text="MARQUEE" data-size="150" data-gap="13.5" style="left:0;top:150px" width="1200" height="300"></canvas>
+  <div class="abs rule" style="left:330px;width:540px;top:470px"></div>
+  <div class="abs payoff" style="left:0;right:0;top:494px;font-size:24px">Production &amp; creative AI suite</div>
+  <div class="stage3d" data-flow="card" style="top:640px;height:900px"></div>
+  <div class="abs" style="left:0;right:0;bottom:0;height:200px;background:linear-gradient(transparent,rgba(30,2,4,.88))"></div>
+  <div class="grain"></div>
+</section>
+
+<!-- ============ SHOWCASE 2400x1350 (body) ============ -->
+<section class="view velvet" id="showcase" style="width:2400px;height:1350px">
+  <div class="spot"></div>
+  <div class="stage3d" data-flow="showcase" style="top:0;height:1350px"></div>
+  <div class="grain"></div>
+</section>
+
+<script>
+  const v = new URLSearchParams(location.search).get("v") || "hero";
+  document.getElementById(v).classList.add("on");
+</script>
+<script>
+/* ===================== icons ===================== */
+const ic = (p, s = 20, w = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  chev: '<path d="m6 9 6 6 6-6"/>', chevUp: '<path d="m18 15-6-6-6 6"/>',
+  plus: '<path d="M5 12h14M12 5v14"/>',
+  sort: '<path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  cal: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/>',
+  dash: '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+  spark: '<path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>',
+  folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  film: '<rect x="2.5" y="3" width="19" height="18" rx="2"/><path d="M7 3v18M17 3v18M2.5 8H7M2.5 13H7M2.5 18H7M17 8h4.5M17 13h4.5M17 18h4.5"/>',
+  clap: '<path d="M4 11h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="m4 11-.9-3.5 15.4-4 .9 3.5z"/><path d="m8.5 6 2.2 3M13.4 4.7l2.2 3"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  doc: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  repeat: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/>',
+  clip: '<path d="m21 11-8.6 8.6a6 6 0 0 1-8.5-8.5l8.6-8.6a4 4 0 0 1 5.7 5.7L9.6 16.8a2 2 0 0 1-2.8-2.8L14.7 6"/>',
+  send: '<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',
+  dl: '<path d="M12 4v11m-5-5 5 5 5-5M4 17v3h16v-3"/>',
+  refresh: '<path d="M21 12a9 9 0 1 1-2.6-6.4L21 8M21 3v5h-5"/>',
+  arrowUR: '<path d="M7 17 17 7M8 7h9v9"/>',
+  books: '<path d="M4 4h4v16H4zM10 4h4v16h-4z"/><path d="m16 5 3.8-1 3 15.5-3.8 1z"/>',
+  collage: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h9M12 3v18M12 15h9"/>',
+  docs: '<path d="M15 2H8a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V7z"/><path d="M15 2v5h5M4 7v13a1 1 0 0 0 1 1h11"/>',
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',
+  upload: '<path d="M12 16V4m-5 5 5-5 5 5M4 17v3h16v-3"/>',
+  check: '<path d="m5 12 5 5 9-10"/>',
+  star: '<path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2 6.4 20.2l1.1-6.3L2.9 9.5l6.3-.9z"/>',
+  copy: '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  play: '<path d="M8 5v14l11-7z"/>',
+};
+const bulbRow = (n) => `<div class="bulbs">${"<i></i>".repeat(n)}</div>`;
+const wordmark = (sub) => `<div class="wm">${bulbRow(3)}<b>MARQUEE</b><span>${sub}</span></div>`;
+
+/* ===================== fictional pictures ===================== */
+// Painted cinematic stills (no photos): sky gradient, silhouettes, a light source and film grain.
+let uid = 0;
+function still(kind, w, h) {
+  const id = "s" + uid++;
+  const grain = `<filter id="${id}g"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>`;
+  const sky = (stops) => `<linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1">${stops.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join("")}</linearGradient>`;
+  const hills = (pts, fill, op = 1) => `<path d="M0 ${h}L${pts.map(([x, y]) => `${x * w} ${y * h}`).join(" L")} L${w} ${h}Z" fill="${fill}" opacity="${op}"/>`;
+  let defs = "", body = "";
+  if (kind === "coast") {
+    defs = sky([[0, "#2b1b3d"], [.45, "#c4553a"], [.62, "#f4a65a"], [.63, "#2a3a55"], [1, "#0e1626"]]);
+    body = `<rect width="${w}" height="${h}" fill="url(#${id}s)"/><circle cx="${w * .62}" cy="${h * .6}" r="${h * .09}" fill="#ffd98a"/>
+      <rect x="0" y="${h * .63}" width="${w}" height="${h * .37}" fill="#162238"/>
+      ${[...Array(9)].map((_, i) => `<rect x="${w * (.5 + Math.sin(i) * .08)}" y="${h * (.66 + i * .035)}" width="${w * (.22 - i * .02)}" height="2.5" fill="#ffcf7a" opacity="${.7 - i * .07}"/>`).join("")}
+      ${hills([[0, .5], [.12, .42], [.22, .55], [.3, .62], [.3, 1]], "#120d14")}
+      <path d="M0 ${h * .82} Q${w * .25} ${h * .72} ${w * .3} ${h * .64}" stroke="#3b2a2a" stroke-width="${h * .03}" fill="none"/>`;
+  } else if (kind === "neon") {
+    defs = sky([[0, "#090a1a"], [.6, "#1a1240"], [1, "#0b0a14"]]);
+    body = `<rect width="${w}" height="${h}" fill="url(#${id}s)"/>
+      ${[[.04, .18, .3], [.24, .3, .22], [.6, .12, .26], [.78, .22, .3]].map(([x, ww, y]) => `<rect x="${x * w}" y="${y * h}" width="${ww * w}" height="${h}" fill="#141228"/>`).join("")}
+      <rect x="${w * .08}" y="${h * .38}" width="${w * .12}" height="${h * .05}" rx="4" fill="#ff3d8b" opacity=".9"/><rect x="${w * .08}" y="${h * .38}" width="${w * .12}" height="${h * .05}" rx="4" fill="none" stroke="#ff9cc4" stroke-width="2" filter="blur(2px)"/>
+      <rect x="${w * .64}" y="${h * .3}" width="${w * .08}" height="${h * .18}" rx="4" fill="#27d3e6" opacity=".85"/>
+      <rect x="0" y="${h * .78}" width="${w}" height="${h * .22}" fill="#0c0b18"/>
+      <rect x="${w * .07}" y="${h * .8}" width="${w * .14}" height="${h * .2}" fill="#ff3d8b" opacity=".25"/><rect x="${w * .63}" y="${h * .8}" width="${w * .1}" height="${h * .2}" fill="#27d3e6" opacity=".22"/>
+      ${[...Array(40)].map((_, i) => `<line x1="${(i * 97) % w}" y1="${(i * 53) % h}" x2="${(i * 97) % w - 6}" y2="${(i * 53) % h + 22}" stroke="#8fa7ff" stroke-width="1" opacity=".35"/>`).join("")}
+      <path d="M${w * .44} ${h} L${w * .45} ${h * .66} Q${w * .47} ${h * .6} ${w * .49} ${h * .66} L${w * .5} ${h}Z" fill="#05050a"/><circle cx="${w * .47}" cy="${h * .6}" r="${h * .028}" fill="#05050a"/>`;
+  } else if (kind === "desert") {
+    defs = sky([[0, "#f7c98b"], [.55, "#f39a5b"], [.56, "#c46a3b"], [1, "#6e3320"]]);
+    body = `<rect width="${w}" height="${h}" fill="url(#${id}s)"/><circle cx="${w * .3}" cy="${h * .48}" r="${h * .13}" fill="#fff0c8" opacity=".9"/>
+      ${hills([[0, .56], [.15, .46], [.28, .5], [.4, .44], [.55, .52], [.7, .43], [.85, .5], [1, .47]], "#a8553a", .8)}
+      <path d="M${w * .47} ${h} L${w * .5} ${h * .56} L${w * .52} ${h * .56} L${w * .62} ${h}Z" fill="#3a2520"/>
+      <path d="M${w * .545} ${h} L${w * .51} ${h * .58}" stroke="#f5d48a" stroke-width="3" stroke-dasharray="14 12"/>
+      <rect x="${w * .505}" y="${h * .6}" width="${w * .03}" height="${h * .025}" rx="2" fill="#1b1110"/>`;
+  } else if (kind === "forest") {
+    defs = sky([[0, "#b8c6c2"], [.6, "#7e9590"], [1, "#2b3a37"]]);
+    body = `<rect width="${w}" height="${h}" fill="url(#${id}s)"/>
+      ${[...Array(18)].map((_, i) => { const x = (i * 0.061 + (i % 3) * .013) * w, ww = 8 + (i % 4) * 6, op = .25 + (i % 5) * .15; return `<rect x="${x}" y="0" width="${ww}" height="${h}" fill="#1f2a28" opacity="${op}"/>`; }).join("")}
+      <rect x="0" y="${h * .5}" width="${w}" height="${h * .2}" fill="#dfe8e4" opacity=".35"/>
+      <path d="M${w * .5} ${h * .82} l-${w * .015} ${h * .16} h${w * .03}z" fill="#2a1414"/><circle cx="${w * .5}" cy="${h * .8}" r="${h * .022}" fill="#2a1414"/>
+      <rect x="0" y="${h * .86}" width="${w}" height="${h * .14}" fill="#1c2624"/>`;
+  } else if (kind === "lighthouse") {
+    defs = sky([[0, "#0d1b33"], [.5, "#29507a"], [.7, "#5d84a6"], [.71, "#163050"], [1, "#0a1628"]]);
+    body = `<rect width="${w}" height="${h}" fill="url(#${id}s)"/>
+      <path d="M${w * .7} ${h * .3} L${w * .05} ${h * .12} L${w * .05} ${h * .34}Z" fill="#fff4cc" opacity=".22"/>
+      ${hills([[.5, .74], [.62, .62], [.9, .6], [1, .66]], "#0b1220")}
+      <path d="M${w * .69} ${h * .62} L${w * .7} ${h * .32} L${w * .72} ${h * .32} L${w * .73} ${h * .62}Z" fill="#e8e2d4"/>
+      <rect x="${w * .697}" y="${h * .27}" width="${w * .026}" height="${h * .05}" fill="#ffe9a8"/><circle cx="${w * .71}" cy="${h * .295}" r="${h * .05}" fill="#ffe9a8" opacity=".35"/>
+      ${[...Array(6)].map((_, i) => `<rect x="${w * (.1 + i * .07)}" y="${h * (.76 + i * .03)}" width="${w * .18}" height="2" fill="#9fc0de" opacity=".35"/>`).join("")}`;
+  } else if (kind === "diner") {
+    defs = sky([[0, "#2a1810"], [1, "#120a06"]]);
+    body = `<rect width="${w}" height="${h}" fill="url(#${id}s)"/>
+      <rect x="${w * .08}" y="${h * .14}" width="${w * .5}" height="${h * .42}" fill="#365a73"/><rect x="${w * .08}" y="${h * .14}" width="${w * .5}" height="${h * .42}" fill="none" stroke="#5a3a24" stroke-width="10"/>
+      <line x1="${w * .33}" y1="${h * .14}" x2="${w * .33}" y2="${h * .56}" stroke="#5a3a24" stroke-width="8"/>
+      <ellipse cx="${w * .72}" cy="${h * .12}" rx="${w * .07}" ry="${h * .03}" fill="#ffcc77"/><path d="M${w * .72} ${h * .14} L${w * .5} ${h * .9} L${w * .95} ${h * .9}Z" fill="#ffcc77" opacity=".14"/>
+      <rect x="0" y="${h * .66}" width="${w}" height="${h * .08}" fill="#8c2d22"/><rect x="0" y="${h * .74}" width="${w}" height="${h * .26}" fill="#2a1a12"/>
+      <path d="M${w * .66} ${h * .66} q0 -${h * .1} ${w * .03} -${h * .1} h${w * .02} q${w * .03} 0 ${w * .03} ${h * .1}z" fill="#f2efe8"/>`;
+  }
+  return `<svg width="100%" height="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice"><defs>${defs}${grain}</defs>${body}<rect width="${w}" height="${h}" filter="url(#${id}g)" fill="#fff"/></svg>`;
+}
+
+// Pencil storyboard frame: wide shot of a car on a coastal road, camera move arrows, hatching.
+function sketch(w, h, opts = {}) {
+  const id = "k" + uid++;
+  const ink = "#2b2b2b";
+  const hatch = (x, y, ww, hh, step = 9) => [...Array(Math.ceil((ww + hh) / step))].map((_, i) => `<line x1="${x + i * step}" y1="${y}" x2="${x + i * step - hh}" y2="${y + hh}"/>`).join("");
+  return `<svg width="100%" height="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice">
+  <defs><filter id="${id}"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="4"/></filter>
+  <clipPath id="${id}c"><rect width="${w}" height="${h}"/></clipPath></defs>
+  <rect width="${w}" height="${h}" fill="#f4f0e6"/>
+  <g filter="url(#${id})" stroke="${ink}" fill="none" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#${id}c)">
+    <path d="M0 ${h * .44} C${w * .1} ${h * .36} ${w * .18} ${h * .3} ${w * .3} ${h * .33} S${w * .48} ${h * .24} ${w * .6} ${h * .3} S${w * .82} ${h * .26} ${w} ${h * .32}" stroke-width="2.4"/>
+    <path d="M${w * .02} ${h * .43} C${w * .12} ${h * .38} ${w * .2} ${h * .34} ${w * .3} ${h * .36}" stroke-width="1.2" opacity=".6"/>
+    <circle cx="${w * .78}" cy="${h * .17}" r="${h * .06}" stroke-width="2"/>
+    ${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => { const a = i * Math.PI / 4; return `<line x1="${w * .78 + Math.cos(a) * h * .085}" y1="${h * .17 + Math.sin(a) * h * .085}" x2="${w * .78 + Math.cos(a) * h * .11}" y2="${h * .17 + Math.sin(a) * h * .11}" stroke-width="1.6"/>`; }).join("")}
+    <path d="M0 ${h * .62} C${w * .2} ${h * .58} ${w * .35} ${h * .5} ${w * .55} ${h * .5} S${w * .85} ${h * .56} ${w} ${h * .54}" stroke-width="3"/>
+    <path d="M0 ${h * .74} C${w * .25} ${h * .7} ${w * .4} ${h * .6} ${w * .58} ${h * .6} S${w * .86} ${h * .66} ${w} ${h * .66}" stroke-width="3"/>
+    <path d="M0 ${h * .68} C${w * .22} ${h * .64} ${w * .38} ${h * .555} ${w * .56} ${h * .555} S${w * .86} ${h * .61} ${w} ${h * .6}" stroke-width="1.6" stroke-dasharray="18 14"/>
+    <g stroke-width="1" opacity=".55">${hatch(0, h * .76, w, h * .24, 12)}</g>
+    <path d="M0 ${h * .62} L0 ${h * .5} C${w * .08} ${h * .47} ${w * .12} ${h * .52} ${w * .2} ${h * .5} L${w * .26} ${h * .57}" stroke-width="2"/>
+    <g stroke-width=".9" opacity=".5">${hatch(0, h * .5, w * .22, h * .1, 10)}</g>
+    <g transform="translate(${w * .36} ${h * .5}) scale(${w / 560})" stroke-width="${2.6 * 560 / w}">
+      <path d="M0 0 L8 -26 Q14 -40 34 -42 L98 -44 Q118 -44 128 -28 L140 -6 L150 -2 Q156 2 154 10 L150 18 L-6 20 Q-12 14 -10 4Z"/>
+      <path d="M22 -26 L30 -38 L70 -40 L72 -24Z M80 -24 L78 -40 L106 -40 Q116 -38 120 -26Z" stroke-width="1.8"/>
+      <circle cx="22" cy="20" r="15"/><circle cx="22" cy="20" r="6" stroke-width="1.4"/><circle cx="120" cy="20" r="15"/><circle cx="120" cy="20" r="6" stroke-width="1.4"/>
+      <g stroke-width="1.2" opacity=".7"><line x1="-30" y1="-20" x2="-70" y2="-20"/><line x1="-26" y1="-6" x2="-80" y2="-6"/><line x1="-30" y1="8" x2="-62" y2="8"/></g>
+    </g>
+    <g stroke="#c0392b" stroke-width="3.2">
+      <path d="M${w * .2} ${h * .9} C${w * .4} ${h * .97} ${w * .62} ${h * .96} ${w * .8} ${h * .86}"/>
+      <path d="M${w * .8} ${h * .86} l-30 2 M${w * .8} ${h * .86} l-12 26"/>
+    </g>
+    <rect x="${w * .05}" y="${h * .06}" width="${w * .9}" height="${h * .88}" stroke-width="1.4" stroke-dasharray="6 8" opacity=".55"/>
+  </g>
+  ${opts.label === false ? "" : `<g font-family="Palanquin" fill="${ink}"><text x="${w * .06}" y="${h * .055 + 4}" font-size="${h * .035}" font-weight="600">SC 04 · SH 02</text><text x="${w * .94}" y="${h * .055 + 4}" font-size="${h * .035}" text-anchor="end">WIDE · DOLLY →</text></g>`}
+  </svg>`;
+}
+
+// Typographic book covers for fictional titles.
+function cover(title, author, bg, fg, shape, au = fg) {
+  const s = { circle: `<circle cx="64" cy="98" r="34" fill="${fg}" opacity=".9"/>`, wave: `<path d="M0 110 Q32 86 64 110 T128 110 V190 H0z" fill="${fg}" opacity=".85"/>`, bars: [0, 1, 2, 3].map((i) => `<rect x="${18 + i * 24}" y="${64 + i * 10}" width="14" height="${70 - i * 10}" fill="${fg}"/>`).join(""), moon: `<circle cx="70" cy="92" r="30" fill="${fg}"/><circle cx="82" cy="84" r="28" fill="${bg}"/>` }[shape];
+  return `<svg width="128" height="190" viewBox="0 0 128 190"><rect width="128" height="190" fill="${bg}"/>${s}${title.split("|").map((t, i) => `<text x="12" y="${28 + i * 17}" font-family="Geist" font-weight="700" font-size="14" fill="${fg}">${t}</text>`).join("")}<text x="12" y="176" font-family="Geist" font-size="10" fill="${au}" opacity=".9">${author}</text><rect width="6" height="190" fill="#000" opacity=".18"/></svg>`;
+}
+
+/* ===================== waves (AI platform background) ===================== */
+function waves(w, h, color1, color2) {
+  let s = `<svg width="${w}" height="${h}"><defs><linearGradient id="wg1" x1="0" x2="1"><stop offset="0" stop-color="${color1}"/><stop offset="1" stop-color="${color2}"/></linearGradient></defs>`;
+  for (let i = 0; i < 46; i++) {
+    const ph = i * .09, amp = 60 + i * 1.6;
+    const pts = [...Array(36)].map((_, k) => { const y = (k / 35) * h; const x = 70 + Math.sin(k * .45 + ph) * amp * .5 + Math.sin(k * .17 + ph * 2) * 40; return `${x.toFixed(1)},${y.toFixed(1)}`; });
+    const pts2 = [...Array(36)].map((_, k) => { const y = (k / 35) * h; const x = w - 90 + Math.sin(k * .38 - ph) * amp * .55 + Math.cos(k * .21 + ph) * 34; return `${x.toFixed(1)},${y.toFixed(1)}`; });
+    s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${color1}" stroke-width=".8" opacity="${.16 + (i % 6) * .025}"/>`;
+    s += `<polyline points="${pts2.join(" ")}" fill="none" stroke="${color2}" stroke-width=".8" opacity="${.16 + (i % 6) * .025}"/>`;
+  }
+  return s + "</svg>";
+}
+
+/* ===================== data (all fictional) ===================== */
+const ST = { Gara: "var(--gara)", Produzione: "var(--prod)", Chiusura: "var(--chiu)", Riedizione: "var(--ried)", Perse: "var(--persa)" };
+const projects = [
+  ["La domenica", "Orsini Pasta", "Studio Ottanta", "Produzione", "12/03/2024", "14/04/2024", "GR"],
+  ["Prima luce", "Brezza Acqua Minerale", "Brera Creative", "Gara", "—", "—", "LM"],
+  ["Strade nuove", "Vela Mobility", "Officina Nove", "Produzione", "02/04/2024", "20/05/2024", "AF"],
+  ["Ciliegia Summer", "Ciliegia Cosmetics", "Atelier Sud", "Chiusura", "15/01/2024", "01/03/2024", "GR"],
+  ["Segnale forte", "Nimbo Telecom", "Studio Ottanta", "Gara", "—", "—", "SC"],
+  ["Gelato d'autore", "Fiordaliso Gelati", "Brera Creative", "Riedizione", "08/05/2023", "10/06/2024", "LM"],
+  ["Vendemmia", "Tramonto Vini", "Casa Lanterna", "Chiusura", "20/12/2023", "05/02/2024", "AF"],
+  ["Natale in famiglia", "Panificio Dorato", "Officina Nove", "Perse", "—", "—", "SC"],
+  ["Notti d'estate", "Ciliegia Cosmetics", "Atelier Sud", "Gara", "—", "—", "GR"],
+  ["Il viaggio", "Vela Mobility", "Officina Nove", "Riedizione", "11/09/2023", "03/06/2024", "LM"],
+];
+const decoIcon = { Gara: P.trophy, Produzione: P.clap, Chiusura: P.doc, Riedizione: P.repeat, Perse: P.x };
+
+const erpNav = () => `<div class="e-nav">${wordmark("production")}<div class="e-right"><div class="e-search">${ic(P.search, 20)}Cerca progetti, registi, attori…</div><div class="e-menu">${ic(P.dash, 20)}Campagne ${ic(P.chev, 18)}</div><div class="avatar">GR</div></div></div>`;
+const field = (l, val, extra = "") => `<div><div class="fl">${l}</div><div class="inp ${extra}">${val}</div></div>`;
+const chips = (l, arr) => `<div><div class="fl">${l}</div><div class="chips">${arr.map((t) => `<span class="chip">${t} ${ic(P.x, 12, 2.4)}</span>`).join("")}</div></div>`;
+const accH = (icon, t, open) => `<div class="acc-h"><span class="l">${ic(icon, 24)}${t}</span>${ic(open ? P.chevUp : P.chev, 24)}</div>`;
+const statusSelect = (s) => `<div><div class="fl">Stato Progetto</div><div class="inp"><span class="badge" style="background:${ST[s]}">${s}</span>${ic(P.chev, 18)}</div></div>`;
+
+const builders = {
+  "erp-home": () => `<div class="erp">${erpNav()}
+    <div class="status">${Object.entries({ Gara: 7, Produzione: 5, Chiusura: 4, Riedizione: 3, Perse: 6 }).map(([t, n]) => `<div class="sc ${t === "Produzione" ? "sel" : ""}" style="background:${ST[t]}">${ic(decoIcon[t], 150, 1.2).replace("<svg", '<svg class="deco"')}<span class="n">${n}</span><span class="t">${t}</span></div>`).join("")}</div>
+    <div class="e-h"><h3>Progetti</h3><span class="btn">${ic(P.plus, 18)}Nuovo Progetto</span></div>
+    <table class="e-tab"><tr>${["Nome Progetto", "Cliente", "Agenzia", "Stato", "Go Ahead", "Data On Air", "Producer"].map((h) => `<th>${h}${h === "Producer" ? "" : ic(P.sort, 15)}</th>`).join("")}</tr>
+    ${projects.map(([n, c, a, s, g, o, p]) => `<tr><td class="nm">${n}</td><td>${c}</td><td>${a}</td><td><span class="badge" style="background:${ST[s]}">${s}</span></td><td>${g === "—" ? "—" : `<span class="dt">${ic(P.clock, 16)}${g}</span>`}</td><td>${o === "—" ? "—" : `<span class="dt">${ic(P.clock, 16)}${o}</span>`}</td><td><span class="avatar sm">${p}</span></td></tr>`).join("")}</table>
+    <div class="pager">Pagina 1 di 3<span class="b">Precedente</span><span class="b">Successiva</span></div></div>`,
+
+  "erp-project": () => `<div class="erp">${erpNav()}
+    <div class="e-title">La domenica</div>
+    <div class="panel">
+      <div class="fgrid" style="grid-template-columns:1fr 1fr 1fr">${field("Nome", "La domenica")}${field("Cliente", "Orsini Pasta")}${statusSelect("Produzione")}</div>
+      <div class="acc" style="margin-top:14px">${accH(P.info, "Anagrafica", true)}<div class="acc-b">
+        <div class="fgrid" style="grid-template-columns:2fr 1fr">${field("Descrizione", "Spot 30\" e cutdown 15\" per la campagna di primavera. Una famiglia si ritrova al pranzo della domenica: tono caldo, luce naturale, set in casa di campagna.", "area")}
+          <div><div class="fl">Producer</div><div class="chips" style="height:96px;align-items:flex-start;padding-top:12px">${["GR", "AF"].map((x) => `<span class="avatar sm">${x}</span>`).join("")}</div></div></div>
+        <div class="fgrid" style="grid-template-columns:1fr 1fr 1fr;margin-top:22px">${field("Agenzia", "Studio Ottanta")}${chips("Case di produzione", ["Lanterna Film"])}${chips("Creativi", ["A. Moretti", "F. Galli"])}</div>
+        <div style="margin-top:22px">${chips("Tags", ["food", "famiglia", "interni", "primavera", "30\" + 15\""])}</div>
+        <div class="sub" style="margin-top:34px">Timing</div>
+        <div class="timeline">${[["Avvio Gara", "08/01/2024"], ["Presentazione regie", "19/01/2024"], ["Call con regie", "26/01/2024"], ["Presentazione trattamento preventivo", "09/02/2024"], ["Go ahead", "12/03/2024"], ["Shooting", "21/03/2024", "now"]].map(([k, d, c], i) => `<div class="tl ${c || (i > 4 ? "" : "")}"><div class="k">${k}</div><div class="d">${ic(P.cal, 16)}${d}</div></div>`).join("")}</div>
+        <div class="sub" style="margin-top:34px">Location</div>
+        <div class="loc"><div class="ph">${still("diner", 264, 156)}</div><div class="inp" style="width:460px">Casale delle Querce · Val d'Orcia ${ic(P.chev, 18)}</div><span class="btn ghost">${ic(P.plus, 18)}Aggiungi location</span></div>
+      </div></div>
+      <div class="acc">${accH(P.folder, "File di progetto", false)}</div>
+      <div class="acc">${accH(P.users, "Crew", false)}</div>
+      <div class="acc" style="border:0">${accH(P.spark, "AI Apps", false)}</div>
+    </div></div>`,
+
+  "erp-crew": () => {
+    const dirs = [["Elena Marchi", "Lanterna Film", 1, "coast"], ["Tommaso Rinaldi", "Lanterna Film", 1, "forest"], ["Giulia Ferraro", "Nord Est Pictures", 0, "neon"], ["Marco Bellandi", "Nord Est Pictures", 0, "desert"]];
+    return `<div class="erp">${erpNav()}
+    <div class="e-title">La domenica</div>
+    <div class="panel">
+      <div class="acc">${accH(P.info, "Anagrafica", false)}</div>
+      <div class="acc">${accH(P.users, "Crew", true)}<div class="acc-b">
+        <div class="sub">Regie</div>
+        <div class="dirs">${dirs.map(([n, c, ok, k]) => `<div class="dir"><div class="reel">${still(k, 330, 120)}<span class="play">${ic(P.play, 20, 2)}</span></div><div class="b"><span class="avatar sm">${n.split(" ").map((x) => x[0]).join("")}</span><div><strong>${n}</strong><small>${c}</small></div><span class="${ok ? "tag-ok" : "tag-no"}">${ok ? "Presentata" : "Non presentata"}</span></div></div>`).join("")}</div>
+        <div class="sub" style="margin-top:30px">Attori</div>
+        <table class="actors"><tr><th>Nome</th><th>Ruolo</th><th>Canali</th><th>On air</th><th>Scadenza diritti</th><th>Contratto</th></tr>
+        ${[["Luca Serra", "Padre", ["TV", "Web", "Social"], "14/04/2024", "14/04/2025"], ["Anna Villa", "Madre", ["TV", "Web"], "14/04/2024", "14/04/2025"], ["Pietro Neri", "Nonno", ["TV", "Web", "Social", "Cinema"], "14/04/2024", "14/10/2025"]].map(([n, r, ch, o, d]) => `<tr><td><span style="display:inline-flex;gap:10px;align-items:center"><span class="avatar sm" style="background:#6a6a68">${n.split(" ").map((x) => x[0]).join("")}</span>${n}</span></td><td>${r}</td><td>${ch.map((c) => `<span class="chip" style="margin-right:4px">${c}</span>`).join("")}</td><td><span class="dt">${ic(P.clock, 16)}${o}</span></td><td><span class="dt">${ic(P.clock, 16)}${d}</span></td><td><span class="dt">${ic(P.doc, 18)}contratto.pdf</span></td></tr>`).join("")}</table>
+      </div></div>
+      <div class="acc" style="border:0">${accH(P.spark, "AI Apps", true)}<div class="acc-b">
+        <div class="apps">
+          <div class="app" style="background:linear-gradient(135deg,#9a5a10,#dc8a1d 70%,#f2c069)"><h4>${ic(P.spark, 24)}Aggiorna progetto</h4><p>Estrapola le informazioni da un file per compilare il dettaglio di questo progetto (cliente, scadenze, tag, etc).</p></div>
+          <div class="app" style="background:linear-gradient(135deg,#3d1d4d,#7d1791 60%,#c06bd0)"><h4>${ic(P.spark, 24)}Immagini</h4><p>Cerca un'immagine o creala per rispecchiare il mood che stai cercando.</p></div>
+          <div class="app off"><h4>${ic(P.spark, 24)}Coming soon…</h4></div>
+        </div></div></div>
+    </div></div>`;
+  },
+
+  "erp-storyboard": () => `<div class="erp" style="height:900px;position:relative">${erpNav()}
+    <div class="e-title">La domenica</div><div class="panel" style="height:700px"></div>
+    <div class="scrim"></div>
+    <div class="dialog" style="top:96px;width:900px;background:var(--amber);padding:26px 30px 28px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;gap:10px;align-items:center;font-size:24px;font-weight:600">${ic(P.spark, 24)}Crea immagine</div><div class="seg"><span class="on">Storyboard</span><span>Shootingboard</span></div></div>
+      <div style="margin-top:18px;background:#fff;color:#222;border-radius:10px;padding:14px 16px;font-size:16.5px;line-height:1.5">Campo lungo: un'auto d'epoca percorre una strada di collina nel pomeriggio, la macchina da presa la segue con un carrello laterale da sinistra a destra.</div>
+      <div style="margin-top:18px;border-radius:10px;overflow:hidden;height:470px;box-shadow:0 10px 24px rgba(0,0,0,.25)">${sketch(840, 470)}</div>
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:18px"><span class="btn" style="background:transparent;box-shadow:inset 0 0 0 1.5px #fff">${ic(P.refresh, 18)}Rigenera</span><span class="btn" style="background:#fff;color:var(--amber)">${ic(P.dl, 18)}Scarica</span></div>
+    </div></div>`,
+
+  "erp-brief": () => `<div class="erp" style="height:880px;position:relative">${erpNav()}
+    <div class="e-title">Nuovo progetto</div><div class="panel" style="height:700px"></div>
+    <div class="scrim"></div>
+    <div class="dialog" style="top:110px;width:820px;background:var(--setting);padding:28px 32px 30px">
+      <div style="display:flex;gap:10px;align-items:center;font-size:24px;font-weight:600">${ic(P.spark, 24)}Aggiorna progetto</div>
+      <div style="display:flex;gap:14px;align-items:center;margin-top:18px;padding:14px 16px;border-radius:12px;background:#2c2c2a"><span style="width:44px;height:44px;border-radius:10px;background:var(--amber);display:grid;place-items:center">${ic(P.mic, 22)}</span><div style="flex:1"><div style="font-weight:600;font-size:16.5px">call_agenzia_brief.m4a</div><div style="font-size:14px;color:#bbb">Trascrizione completata · 18 min</div></div>${ic(P.check, 22, 2.6).replace("<svg", '<svg style="color:#7fc96a"')}</div>
+      <div style="margin-top:22px;font-size:17px;color:#ddd">Seleziona i campi da compilare nel progetto:</div>
+      <div style="display:flex;flex-direction:column;gap:2px;margin-top:12px">${[["Cliente", "Orsini Pasta", 1], ["Agenzia", "Studio Ottanta", 1], ["Descrizione", "Spot 30\" e cutdown 15\", pranzo della domenica in famiglia", 1], ["Presentazione regie", "19/01/2024", 1], ["Shooting", "21/03/2024", 1], ["Creativi", "A. Moretti, F. Galli", 0], ["Tags", "food, famiglia, interni, primavera", 1]].map(([k, val, on]) => `<div style="display:flex;gap:14px;align-items:center;padding:12px 4px;border-bottom:1px solid #4a4a48"><span class="check ${on ? "" : "off"}">${on ? ic(P.check, 14, 3) : ""}</span><span style="width:200px;color:#ccc;font-size:16px">${k}</span><span style="font-size:16.5px">${val}</span></div>`).join("")}</div>
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:22px"><span class="btn ghost">Annulla</span><span class="btn">${ic(P.check, 18)}Compila 6 campi</span></div>
+    </div></div>`,
+
+  "ai-home": () => `<div class="ai" style="height:1000px"><div class="waves">${waves(1440, 1000, "#e8792a", "#3fa6c4")}</div><div class="c">
+    <div class="a-nav"><span></span><div class="mid">${wordmark("studio")}</div><span class="r">Logout</span></div>
+    <div class="a-h1">Scopri il potere dell'AI!</div>
+    <div class="a-p">Crea immagini, rielabora documenti e scopri nuovi libri in pochi secondi</div>
+    <div class="a-p" style="margin-top:6px">Semplifica le tue ricerche e lasciati ispirare!</div>
+    <div class="a-h2">AI Tools</div>
+    <div class="tools">${[[P.books, "Scouting", "Ottieni suggerimenti di lettura per creare la tua serie TV o film e visualizza la classifica dei top 100 libri del mese."], [P.collage, "Moodboard", "Crea immagini che ti aiutino a realizzare moodboard perfette per il tuo progetto, facilitando il processo creativo."], [P.docs, "Elaborazione Materiale", "Chiedi al chatbot quali documenti può creare o elaborare per te in modo rapido ed efficiente."]].map(([i, t, d]) => `<div class="tool"><h4>${ic(i, 30)}${t}</h4><p>${d}</p><span class="go"><i>${ic(P.arrowUR, 22, 2.4).replace("<svg", '<svg style="color:#fff"')}</i></span></div>`).join("")}</div>
+  </div></div>`,
+
+  "ai-scouting": () => {
+    const books = [["La casa|sul lago", "Marta Leone", "Giallo · Romanzo contemporaneo", 4.5, "#1f3b4d", "#f2c069", "moon", "#f2c069", "Un'indagine in un paese di lago, dodici personaggi ben distinti e un segreto che attraversa tre generazioni: la struttura regge una stagione da otto episodi."], ["Acqua ferma", "Davide Corsi", "Noir · Provincia", 4, "#7a2e22", "#f4e3c3", "wave", "#5a1e16", "Il protagonista cambia punto di vista a ogni capitolo, una scelta che si presta a episodi con un personaggio guida diverso."], ["Il silenzio|dei campi", "Irene Valli", "Thriller rurale", 4.5, "#e7dcc6", "#2f4a32", "bars", "#2f4a32", "Ambientazione forte e riconoscibile, buona tensione nelle prime cento pagine e una protagonista adatta a un ciclo di serie."]];
+    return `<div class="ai"><div class="waves">${waves(1440, 2000, "#e8792a", "#3fa6c4")}</div><div class="c">
+    <div class="a-nav"><span>← <u>Indietro</u></span><div class="mid">${wordmark("studio")}</div><span></span></div>
+    <div class="tabs"><div class="on">Suggerimenti AI</div><div>Top 100 del mese</div><div>Preferiti</div></div>
+    <div class="prompt" style="margin-top:26px"><div class="q ph">Scrivi una richiesta o allega un file testuale</div><div class="row"><div style="display:flex;gap:8px"><span class="pill on">Serie TV</span><span class="pill">Film</span></div><div style="display:flex;gap:10px"><span class="bt">${ic(P.clip, 16)}Allega</span><span class="bt">${ic(P.send, 16)}</span></div></div></div>
+    <div class="resp"><div class="who"><span class="bot">${ic(P.spark, 24)}</span><div style="flex:1">
+      <div class="ask">${ic(P.search, 16)}Cerco romanzi italiani recenti con un'indagine in provincia, adatti a una serie crime da 8 episodi, tono cupo ma familiare.</div>
+      <div class="ans">Ecco tre titoli con la struttura giusta per una serie:</div>
+      <div class="books">${books.map(([t, a, g, r, bg, fg, sh, au, why], i) => `<div class="book"><div class="top"><div class="cv">${cover(t, a, bg, fg, sh, au)}</div><div class="info"><div class="rk"><b>${i + 1}</b><span class="ic">${ic(P.heart, 26, 1.8).replace("<svg", i === 0 ? '<svg style="color:#ef4444;fill:#ef4444"' : "<svg")}${ic(P.chat, 26, 1.8)}</span></div><h5>${t.replace("|", " ")}</h5><div class="au">${a}</div><div class="ge">${g}</div><div class="st"><div><div style="font-size:15px;color:#ccc;margin-bottom:6px">Recensioni medie:</div><div class="stars">${[1, 2, 3, 4, 5].map((k) => ic(P.star, 20, 1.6).replace("<svg", `<svg style="fill:${k <= Math.floor(r) ? "#f2c069" : k - .5 === r ? "url(#half)" : "none"}"`)).join("")}<span style="color:#fff;margin-left:8px;font-size:15px">${r.toFixed(1)}</span></div></div><span class="bt">Analisi sentiment</span></div></div></div><div class="ft">${why}</div></div>`).join("")}</div>
+    </div></div></div>
+    <svg width="0" height="0"><defs><linearGradient id="half"><stop offset=".5" stop-color="#f2c069"/><stop offset=".5" stop-color="transparent"/></linearGradient></defs></svg>
+  </div></div>`;
+  },
+
+  "ai-moodboard": () => `<div class="ai"><div class="waves">${waves(1440, 1300, "#3fa6c4", "#3fa6c4")}</div><div class="c">
+    <div class="a-nav"><span>← <u>Indietro</u></span><div class="mid">${wordmark("studio")}</div><span></span></div>
+    <div style="font-size:46px;font-weight:600;color:var(--ai-blue);text-align:center">Notturno costiero</div>
+    <div class="prompt" style="margin-top:30px"><div class="q">Luci calde contro il blu della sera, strade vuote, un faro sulla costa. Atmosfera anni '70, grana di pellicola, tagli di luce laterali.</div><div class="row"><div style="display:flex;gap:8px"><span class="pill on">16:9</span><span class="pill">4:5</span><span class="pill">Pellicola</span></div><span class="bt">${ic(P.spark, 16)}Genera</span></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:36px 0 18px"><div style="font-size:28px;color:var(--ai-blue)">Immagini create</div><span class="bt" style="border-radius:999px">${ic(P.dl, 16)}Scarica moodboard</span></div>
+    <div class="mood">${["coast", "lighthouse", "neon", "desert", "diner", "forest"].map((k) => `<div class="im">${still(k, 600, 400)}</div>`).join("")}</div>
+  </div></div>`,
+
+  "ai-chat": () => `<div class="ai" style="height:1250px"><div class="waves">${waves(1440, 1250, "#e8792a", "#e8792a")}</div><div class="c">
+    <div class="a-nav"><span>← <u>Indietro</u></span><div class="mid">${wordmark("studio")}</div><span></span></div>
+    <div style="font-size:42px;font-weight:600;text-align:center">Elaborazione Materiale</div>
+    <div style="font-size:18px;color:#ccc;text-align:center;margin:10px 0 34px">Allega un documento e chiedi cosa creare: sinossi, scalette, schede personaggio.</div>
+    <div class="chat">
+      <div class="msg me"><div class="hd">TU <span>10:42</span></div><div class="att">${ic(P.clip, 16)}soggetto_episodio_01.pdf</div>Ricava dal soggetto una scaletta del primo episodio in scene, con luogo e personaggi per ognuna.</div>
+      <div class="msg"><div class="hd">ASSISTENTE AI <span>10:42 ${ic(P.copy, 14).replace("<svg", '<svg style="display:inline;vertical-align:-2px;margin-left:8px"')}</span></div>Ecco una prima scaletta in 6 scene:
+        <h6>1. Esterno lago, alba</h6>Il corpo viene trovato dal pescatore. Personaggi: Bruno, Commissaria Neri.
+        <h6>2. Interno caserma, giorno</h6>Neri incontra il nuovo vice; prime frizioni. Personaggi: Neri, Sala.
+        <h6>3. Esterno piazza del paese, giorno</h6>La notizia si diffonde al mercato. Personaggi: coro del paese, Lia.
+        <h6>4. Interno villa Ferri, sera</h6>La famiglia della vittima riceve la visita. Personaggi: Neri, Sala, i Ferri.
+        <h6>5–6. …</h6><span style="color:#aaa">Vuoi che la trasformi in una tabella da importare nel piano di lavorazione?</span></div>
+      <div class="msg me"><div class="hd">TU <span>10:44</span></div>Sì, e aggiungi una stima delle giornate di ripresa per location.</div>
+    </div>
+    <div class="prompt" style="margin-top:28px"><div class="q ph">Scrivi qualcosa…</div><div class="row"><span></span><div style="display:flex;gap:10px"><span class="bt">${ic(P.clip, 16)}Allega</span><span class="bt">${ic(P.send, 16)}</span></div></div></div>
+  </div></div>`,
+
+  "storyboard-frame": () => sketch(1600, 900),
+};
+
+const run = async () => {
+  await document.fonts.ready;
+  if (builders[v]) document.getElementById(v).innerHTML = builders[v]();
+  if (HGT[v]) Object.assign(document.getElementById(v).style, { height: HGT[v] + "px", background: v.startsWith("erp") ? "#1d1d1b" : "#1c1c1a" });
+  // ?measure=1 writes the screen height into the DOM, read with chrome --dump-dom to size the cover iframes
+  if (new URLSearchParams(location.search).has("measure")) document.body.setAttribute("data-h", document.getElementById(v).offsetHeight);
+  drawCurtains();
+  drawTitles();
+  buildFlow();
+};
+run();
+
+/* ===================== marquee bulb titles ===================== */
+// Each letter is a set of strokes (lines, arcs, an ellipse) on a 140-unit cap height. Bulbs sit at even steps along
+// every stroke, ends and corners included, so every letter is always complete. All bulbs are lit.
+const GLYPHS = {
+  M: { w: 112, s: [["L", [[0, 140], [0, 0], [56, 84], [112, 0], [112, 140]]]] },
+  A: { w: 104, s: [["L", [[0, 140], [52, 0], [104, 140]]], ["L", [[19, 88], [85, 88]]]] },
+  R: { w: 96, s: [["L", [[0, 140], [0, 0], [56, 0]]], ["A", [56, 36, 36, -90, 90]], ["L", [[56, 72], [0, 72]]], ["L", [[48, 72], [96, 140]]]] },
+  Q: { w: 112, s: [["E", [56, 70, 56, 70]], ["L", [[68, 108], [112, 150]]]] },
+  U: { w: 100, s: [["L", [[0, 0], [0, 90]]], ["A", [50, 90, 50, 180, 0]], ["L", [[100, 90], [100, 0]]]] },
+  E: { w: 88, s: [["L", [[88, 0], [0, 0], [0, 140], [88, 140]]], ["L", [[0, 70], [74, 70]]]] },
+};
+// Points along one stroke, evenly spaced at about `step` units, ends included.
+function strokePoints(kind, d, step) {
+  const pts = [];
+  if (kind === "L") {
+    for (let i = 0; i < d.length - 1; i++) {
+      const [x0, y0] = d[i], [x1, y1] = d[i + 1], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / step));
+      for (let k = i ? 1 : 0; k <= n; k++) pts.push([x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n]);
+    }
+  } else if (kind === "A") { // circle arc: cx, cy, r, from and to angle in degrees
+    const [cx, cy, rr, a0, a1] = d, n = Math.max(1, Math.round(Math.abs(a1 - a0) * Math.PI / 180 * rr / step));
+    for (let k = 0; k <= n; k++) { const a = (a0 + (a1 - a0) * k / n) * Math.PI / 180; pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]); }
+  } else { // closed ellipse: cx, cy, rx, ry, sampled by arc length from the top
+    const [cx, cy, rx, ry] = d, N = 720, acc = [0];
+    const at = (i) => { const t = 2 * Math.PI * i / N - Math.PI / 2; return [cx + Math.cos(t) * rx, cy + Math.sin(t) * ry]; };
+    for (let i = 1; i <= N; i++) { const p0 = at(i - 1), p1 = at(i); acc.push(acc[i - 1] + Math.hypot(p1[0] - p0[0], p1[1] - p0[1])); }
+    const n = Math.round(acc[N] / step);
+    for (let k = 0; k < n; k++) { const target = acc[N] * k / n; pts.push(at(acc.findIndex((x) => x >= target))); }
+  }
+  return pts;
+}
+function strokePath(ctx, kind, d, ox, oy, k) {
+  ctx.beginPath();
+  if (kind === "L") d.forEach(([x, y], i) => (i ? ctx.lineTo(ox + x * k, oy + y * k) : ctx.moveTo(ox + x * k, oy + y * k)));
+  else if (kind === "A") ctx.arc(ox + d[0] * k, oy + d[1] * k, d[2] * k, d[3] * Math.PI / 180, d[4] * Math.PI / 180, d[4] < d[3]);
+  else ctx.ellipse(ox + d[0] * k, oy + d[1] * k, d[2] * k, d[3] * k, 0, 0, 2 * Math.PI);
+  ctx.stroke();
+}
+function drawTitles() {
+  document.querySelectorAll(`#${v} canvas.bulbs-title`).forEach((cv) => {
+    const W = cv.width, H = cv.height, cap = +cv.dataset.size, gap = +cv.dataset.gap, k = cap / 140, track = 34;
+    const chars = [...cv.dataset.text];
+    const total = chars.reduce((a, c) => a + GLYPHS[c].w, 0) + track * (chars.length - 1);
+    let ox = W / 2 - total * k / 2;
+    const oy = H / 2 - cap / 2 - 4 * k;
+    const letters = chars.map((c) => { const g = GLYPHS[c], x = ox; ox += (g.w + track) * k; return [g, x]; });
+    const ctx = cv.getContext("2d");
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // letter channels: warm halo, gold rim, dark inside where the bulbs sit
+    [[gap * 2.1, "rgba(255,140,60,.45)", gap * 1.6], [gap * 1.3, "#d9a24c", 0], [gap * 1.06, "#200a05", 0]].forEach(([lw, col, blur]) => {
+      ctx.save(); ctx.lineWidth = lw; ctx.strokeStyle = col; if (blur) ctx.filter = `blur(${blur}px)`;
+      letters.forEach(([g, x]) => g.s.forEach(([kind, d]) => strokePath(ctx, kind, d, x, oy, k)));
+      ctx.restore();
+    });
+    // bulbs, deduplicated where strokes meet
+    const pts = [];
+    letters.forEach(([g, x]) => g.s.forEach(([kind, d]) => strokePoints(kind, d, gap / k).forEach(([px, py]) => {
+      const X = x + px * k, Y = oy + py * k;
+      if (!pts.some(([qx, qy]) => Math.hypot(qx - X, qy - Y) < gap * .6)) pts.push([X, Y]);
+    })));
+    const r = gap * .3;
+    pts.forEach(([x, y]) => {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3.4);
+      g.addColorStop(0, "rgba(255,220,150,.55)"); g.addColorStop(1, "rgba(255,170,70,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 3.4, 0, 7); ctx.fill();
+    });
+    pts.forEach(([x, y]) => {
+      const b = ctx.createRadialGradient(x - r * .3, y - r * .3, 0, x, y, r);
+      b.addColorStop(0, "#fffef6"); b.addColorStop(.5, "#ffe7aa"); b.addColorStop(1, "#e09a3a");
+      ctx.fillStyle = b; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    });
+  });
+}
+
+/* ===================== closed stage curtains ===================== */
+// Two scarlet silk panels meeting in the middle. Folds are a sum of sines that widen toward the floor; the fold height
+// gives the shade and the fold slope a narrow specular band, the silky sheen.
+function drawCurtains() {
+  const cv = document.querySelector(`#${v} canvas.drape`);
+  if (!cv) return;
+  const W = cv.width, H = cv.height, ctx = cv.getContext("2d"), img = ctx.createImageData(W, H), px = img.data;
+  const folds = [[1, 1, 0], [.42, 2.07, 1.7], [.16, 3.3, 4.1]];
+  const base = Math.max(W, H) / 7.5; // fold width at the top
+  for (let y = 0; y < H; y++) {
+    const t = y / H, spread = 1 + t * .55;
+    for (let x = 0; x < W; x++) {
+      const dx = Math.abs(x - W / 2), right = x >= W / 2;
+      const u = (dx / (base * spread)) * 2 * Math.PI + (right ? .9 : 0) + Math.sin(t * 2.4 + dx * .002) * .35;
+      let h = 0, slope = 0;
+      for (const [a, f, ph] of folds) { h += a * Math.sin(f * u + ph); slope += a * f * Math.cos(f * u + ph); }
+      const n = (right ? 1 : -1) * slope / 2.4;
+      const shade = Math.pow(Math.max(0, .5 + .42 * Math.max(-1, Math.min(1, h / 1.3)) - .16 * n), 1.5);
+      const ripple = .6 + .4 * Math.sin(t * 3.1 + u * .35) ** 2; // the sheen drifts along each fold
+      const spec = (Math.pow(Math.max(0, 1 - Math.abs(n + .45) * 3), 8) * .9 + Math.pow(Math.max(0, 1 - Math.abs(n + .3) * 1.1), 3) * .28) * ripple;
+      let l = Math.max(.03, shade) * (1 - .35 * Math.pow(Math.abs(x / W - .5) * 2, 2));
+      if (dx < 8) l *= .3 + .7 * dx / 8; // seam where the panels meet
+      const i = (y * W + x) * 4;
+      px[i] = Math.min(255, 26 + 205 * l + 90 * spec);
+      px[i + 1] = Math.min(255, 1 + 8 * l + 95 * spec);
+      px[i + 2] = Math.min(255, 4 + 16 * l + 85 * spec);
+      px[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  // stage light: a warm pool behind the title, a shadow under the top edge
+  const g = ctx.createRadialGradient(W / 2, H * .22, 0, W / 2, H * .22, W * .55);
+  g.addColorStop(0, "rgba(255,130,90,.14)"); g.addColorStop(1, "rgba(255,130,90,0)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const top = ctx.createLinearGradient(0, 0, 0, H * .12);
+  top.addColorStop(0, "rgba(20,0,2,.7)"); top.addColorStop(1, "rgba(20,0,2,0)");
+  ctx.fillStyle = top; ctx.fillRect(0, 0, W, H * .12);
+}
+
+/* ===================== screen flows for covers ===================== */
+// Coverflow: one screen facing the camera, the others turned away on both sides, like a row of posters.
+const HGT = { "erp-home": 1221, "erp-project": 1490, "erp-crew": 1370, "erp-storyboard": 900, "erp-brief": 880, "ai-home": 1000, "ai-scouting": 1472, "ai-moodboard": 1063, "ai-chat": 1250 };
+const flows = {
+  hero: { center: 1200, s: .5, items: [["ai-scouting", -3], ["erp-crew", -2], ["ai-home", -1], ["erp-home", 0], ["erp-storyboard", 1], ["ai-moodboard", 2], ["erp-project", 3]], step: 520, angle: 38, depth: 260 },
+  card: { center: 600, s: .6, items: [["ai-home", -1], ["ai-moodboard", 1], ["erp-home", 0]], step: 420, angle: 34, depth: 220 },
+};
+function buildFlow() {
+  const st = document.querySelector(`#${v} .stage3d[data-flow]`);
+  if (!st) return;
+  const name = st.dataset.flow;
+  if (name === "showcase") return buildGrid(st);
+  const cfg = flows[name];
+  cfg.items.forEach(([id, k]) => {
+    const f = document.createElement("iframe");
+    f.className = "shot"; f.src = `?v=${id}`;
+    const w = 1440, h = HGT[id];
+    const x = cfg.center + k * cfg.step - (w / 2);
+    const rot = k === 0 ? 0 : (k < 0 ? cfg.angle : -cfg.angle);
+    const z = -Math.abs(k) * cfg.depth;
+    Object.assign(f.style, { left: x + "px", top: "0px", width: w + "px", height: h + "px", zIndex: 10 - Math.abs(k),
+      transform: `translateZ(${z}px) rotateY(${rot}deg) scale(${cfg.s})`, transformOrigin: `50% 0` });
+    st.appendChild(f);
+  });
+}
+// Showcase: isometric columns of screens covering the canvas, each column cycling from a different start.
+function buildGrid(st) {
+  const order = ["erp-home", "ai-scouting", "erp-storyboard", "ai-moodboard", "erp-project", "ai-chat", "erp-crew", "ai-home", "erp-brief"];
+  const cfg = { x: -1382, y: 432, s: .4, cols: 7, len: 9800 }, gap = 90;
+  const inner = document.createElement("div");
+  Object.assign(inner.style, { position: "absolute", left: cfg.x + "px", top: cfg.y + "px", transformOrigin: "0 0", transform: `scale(${cfg.s}) rotateX(52deg) rotateZ(-38deg)` });
+  for (let c = 0; c < cfg.cols; c++) {
+    let y = -((c * 737) % 1600), k = c * 3;
+    while (y < cfg.len) {
+      const id = order[k++ % order.length];
+      const f = document.createElement("iframe"); f.className = "shot"; f.src = `?v=${id}`;
+      Object.assign(f.style, { left: c * (1440 + gap) + "px", top: y + "px", width: "1440px", height: HGT[id] + "px" });
+      inner.appendChild(f);
+      y += HGT[id] + gap;
+    }
+  }
+  st.style.perspective = "none";
+  st.appendChild(inner);
+}
+</script>
+</body>
+</html>
