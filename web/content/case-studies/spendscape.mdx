@@ -1,0 +1,123 @@
+---
+name: Spendscape
+pillar: lead
+date: "2025-12"
+tags: ["Web App", "Data Visualization", "B2B"]
+role: Design Lead & Project Manager
+blurb: Three analytics dashboards that turn card payment data into decisions, for one of the world's largest payment networks.
+description: >-
+  A family of three analytics web apps for one of the world's largest payment networks: two on tourism spending and
+  one on merchant payment performance. I designed the interfaces and led the team that built and ran them.
+cover:
+  card: /images/case-studies/spendscape/card.webp
+  hero: /images/case-studies/spendscape/hero.webp
+  alt: The title spendscape in white and orange on charcoal, next to tilted dashboard screens with maps, bar charts and trend lines
+kpis:
+  - { value: "500+", caption: "Users" }
+  - { value: "30+", caption: "Markets Covered" }
+---
+
+## Payment data, made readable
+
+Every card payment says something: where it happened, how much was spent, in which category, and whether it was approved. One of the world's largest payment networks wanted to turn that data into products its own business customers could open every morning and act on.
+
+Spendscape is the name I use here for the family of three web dashboards I designed and delivered for them: two on tourism spending and one on merchant payment performance. They serve more than 500 users across more than 30 markets, and they have been updated every week since launch.
+
+## Three products, one team
+
+The dashboards answer different questions for different people. A regional tourism board wants to know who is visiting and what they spend on; a merchant's payment team wants to know why transactions get declined. The work, across a budget of more than €2M, had to:
+
+- **Make dense data readable** for people who are not analysts, with every metric explained where it appears.
+- **Speak one language across products**, so a user moving from one dashboard to another finds the same filters, cards and charts.
+- **Make comparison easy**: against the previous year, between destinations, and against market benchmarks.
+- **Respect data access**: each user sees only the territories or merchants they are entitled to, managed from an admin area.
+- **Ship every week** without breaking the views clients rely on daily.
+- **Run three products in parallel** with teams totalling more than ten people.
+
+<Figure src="/images/case-studies/spendscape/showcase.webp" alt="Tilted grid of dashboard screens: maps of Italy, horizontal bar charts with green and red variation pills, trend lines, a choropleth and an authorization overview" width="1800" height="1013" caption="The three dashboards, rebuilt here with a fictional brand and fictional data." />
+
+## Three dashboards
+
+Each product has its own audience and structure, built on the same set of components.
+
+<Screens layout="trio">
+  <Figure src="/images/case-studies/spendscape/tourism.webp" alt="Tourism dashboard overview: filter bar, map of Europe with one region highlighted, and two KPI cards" width="960" height="720" caption="Cross-border tourism: spending by destination, origin and category, with a map and a comparison view." sizes="(max-width: 640px) 100vw, 380px" />
+  <Figure src="/images/case-studies/spendscape/domestic.webp" alt="Domestic tourism dashboard with a sidebar choropleth map, four KPI cards, stacked bars by province and an area chart" width="960" height="720" caption="Domestic tourism: territory-level insights and trends for regional tourism bodies, in English and Italian." sizes="(max-width: 640px) 100vw, 380px" />
+  <Figure src="/images/case-studies/spendscape/merchant.webp" alt="Merchant payments dashboard on the Authorization page: KPI cards, monthly approval chart, decline reasons donut and approval rates by segment" width="960" height="720" caption="Payment performance: authorization, authentication, fraud and benchmarks for merchants." sizes="(max-width: 640px) 100vw, 380px" />
+</Screens>
+
+## How I led the team
+
+I designed the interfaces myself, working closely with the client's business teams and stakeholders, and led development from the first workshop to the weekly release. Each discipline had a clear place in the process.
+
+<Disciplines>
+  <Discipline label="Product design">
+    I owned the interfaces and the shared component kit: filter bar, KPI cards, chart cards, variation pills. Every new view started from those pieces, so design stayed consistent across the three products.
+  </Discipline>
+  <Discipline label="Full-stack development">
+    The developers built the front ends and the APIs behind each chart. I reviewed every feature against the design before release and kept the backlog ordered by what clients needed next.
+  </Discipline>
+  <Discipline label="Architecture and DevOps">
+    Cloud infrastructure with separate staging and production environments and automated pipelines, the base that made a weekly release routine.
+  </Discipline>
+  <Discipline label="Data analysis">
+    The analysts defined how each metric is calculated. Together we turned those definitions into the tooltips and glossary users read next to every chart.
+  </Discipline>
+  <Discipline label="Quality">
+    Automated tests and code quality checks ran on every change, and each release went through staging before production.
+  </Discipline>
+  <Discipline label="Client and business">
+    I ran the relationship with the client's business teams: workshops, priorities, demos and release notes, translating requests into scoped work for the team.
+  </Discipline>
+</Disciplines>
+
+## From brief to weekly release
+
+<Steps>
+  <Step label="Workshops with the business">
+    Each product started with sessions with the client's business owners: who the users are, which questions they need answered, and which metrics answer them.
+  </Step>
+  <Step label="Wireframes on a shared kit">
+    I sketched the views with the components the products share, so discussions focused on content and order, while the look was already settled.
+  </Step>
+  <Step label="Metrics defined with the analysts">
+    Before building a chart, the team agreed on its formula, period and comparison. The same definition fed the API, the chart and the explanation shown to users.
+  </Step>
+  <Step label="Sprints and weekly releases">
+    Work ran in sprints across the three products. Every week a release went from staging to production, with notes for the client's teams.
+  </Step>
+  <Step label="Feedback into the backlog">
+    Requests from users and business owners went back into a single backlog, ordered with the client and planned into the next sprints.
+  </Step>
+</Steps>
+
+<Figure src="/images/case-studies/spendscape/comparison.webp" alt="Comparison view: Italy and France side by side, with top regions as orange horizontal bars and green and red variation pills" width="1440" height="1240" caption="The comparison view places two destinations side by side on the same scale." />
+
+## Design decisions
+
+The products are used to make decisions quickly, so every choice aims at reading the right number at a glance.
+
+<Principles>
+  <Principle label="Jakob's Law">
+    Users spend most of their time in other products. Inside Spendscape, filters, cards and charts work the same way in every dashboard, so what users learn once applies everywhere.
+  </Principle>
+  <Principle label="Law of Common Region">
+    Every chart lives in its own card, with the period, currency, info and download actions in its header. What belongs together is grouped together.
+  </Principle>
+  <Principle label="Von Restorff Effect">
+    The selection is the only element in full orange: the region on the map, the highlighted bar. Everything else stays muted, so the eye goes straight to it.
+  </Principle>
+  <Principle label="Law of Similarity">
+    Every variation uses the same pill, green and pointing up when it grows, red and pointing down when it falls, wherever it appears.
+  </Principle>
+  <Principle label="Miller's Law">
+    Rankings show the top ten and a "Show more" link, and the map collapses into a thin strip once a destination is chosen, leaving room for the charts.
+  </Principle>
+  <Principle label="Tesler's Law">
+    Some complexity has to live somewhere. Definitions live in tooltips and a glossary, one click away, instead of crowding the charts.
+  </Principle>
+</Principles>
+
+## Three products in production
+
+Today the three dashboards are in production for more than 500 users across more than 30 markets, built on one shared set of components and updated with a release every week. A new view starts from pieces the team already knows, and a new metric goes from definition to chart through a process everyone on the team follows.

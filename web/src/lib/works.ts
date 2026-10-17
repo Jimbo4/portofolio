@@ -56,21 +56,4 @@ export const placeholderWorks: Work[] = [
       { value: "92", caption: "NPS" },
     ],
   },
-  {
-    slug: "northwind",
-    name: "Northwind",
-    tags: ["Web", "SaaS"],
-    date: "2022-01",
-    year: "2022",
-    blurb: "Replatforming a 12-year-old logistics dashboard.",
-    description:
-      "A six-month replatform that consolidated 14 internal tools into a single operations console.",
-    cover: { kind: "art", art: "vox" },
-    pillar: "lead",
-    isPlaceholder: true,
-    kpis: [
-      { value: "−61%", caption: "Time to Resolve" },
-      { value: "3,200", caption: "Daily Operators" },
-    ],
-  },
 ];

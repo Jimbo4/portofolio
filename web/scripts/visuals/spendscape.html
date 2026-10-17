@@ -1,0 +1,528 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Spendscape: anonymized rebuild of three payment-data dashboards. Fictional brand and data, no client marks. -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=block" rel="stylesheet">
+<style>
+  :root {
+    --ink: #141413; --top: #1b1b1a; --nav: #333; --line: #ccc; --box: #efefef; --side: #f6f6f6;
+    --orange: #f28c00; --orange-l: #f8c580; --orange-xl: #fde3bf; --dark-orange: #ff661c; --red: #d1282d; --yellow: #f79e1b;
+    --green: #8cba2d; --green-l: #d4e9a6; --teal: #4fccaf;
+    --pill-g: #1f8f1f; --pill-r: #d62b2b;
+    --ok: #0d9b7d; --ok-l: #e6f8f1; --ko: #b81c25; --ko-l: #f6d9db;
+    --sea: #f6f5f2; --land: #ecebe7;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; font-family: "DM Sans", sans-serif; color: var(--ink); background: #fff; }
+  .view { display: none; position: relative; overflow: hidden; }
+  .view.on { display: block; }
+  .abs { position: absolute; }
+  svg text { font-family: "DM Sans", sans-serif; }
+
+  /* ---------- tourism insights ---------- */
+  .t-top { height: 40px; background: var(--top); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; }
+  .brand b { font-weight: 700; letter-spacing: -.02em; }
+  .brand span { font-weight: 300; }
+  .user { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .t-nav { height: 64px; background: var(--nav); color: #fff; display: flex; gap: 40px; padding: 0 50px; align-items: center; font-size: 15px; }
+  .t-nav div { position: relative; }
+  .t-nav .on::after { content: ""; position: absolute; left: -10px; right: -10px; bottom: -21px; height: 3px; background: #fff; }
+  .t-filters { padding: 30px 40px 20px; border-bottom: 1px solid #e4e4e4; }
+  .row1 { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+  .row1 b { font-weight: 700; margin-right: 2px; }
+  .search { width: 246px; height: 40px; border: 1.5px solid var(--ink); border-radius: 20px; display: flex; align-items: center; gap: 10px; padding: 0 12px; font-size: 14px; }
+  .search span { flex: 1; } .search .ph { color: #555; }
+  .search .sep { width: 1.5px; height: 18px; background: var(--ink); }
+  .toggle { width: 32px; height: 16px; border-radius: 8px; background: #d9481c; position: relative; margin-left: 12px; }
+  .toggle i { position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+  .small { font-size: 12.5px; }
+  .row2 { display: flex; align-items: flex-end; gap: 20px; margin-top: 26px; }
+  .field label { display: block; font-size: 12px; margin-bottom: 6px; }
+  .sel { width: 157px; height: 40px; border: 1px solid #8a8a8a; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 14px; color: #333; }
+  .dlbtn { width: 40px; height: 40px; border: 1px solid #8a8a8a; display: grid; place-items: center; }
+  .mapwrap { position: relative; background: var(--sea); border-bottom: 1px solid #e4e4e4; }
+  .mapwrap svg { display: block; }
+  .mapbtn { position: absolute; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; border: 1px solid #555; background: #fff; display: grid; place-items: center; border-radius: 3px; }
+  .t-body { padding: 30px 40px 40px; display: flex; flex-direction: column; gap: 38px; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .kpi { box-shadow: 0 1px 6px rgba(0,0,0,.2); padding: 22px 28px 20px; border-radius: 2px; }
+  .kl { font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: .01em; }
+  .kv { font-size: 30px; font-weight: 700; margin: 22px 0 26px; }
+  .kd { display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: #333; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; height: 19px; padding: 0 11px; border-radius: 10px; color: #fff; font-size: 12.5px; font-weight: 500; }
+  .pill.g { background: var(--pill-g); } .pill.r { background: var(--pill-r); }
+  .panel { box-shadow: 0 1px 6px rgba(0,0,0,.2); padding: 20px 20px 22px; border-radius: 2px; }
+  .ph { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; }
+  .meta { font-size: 11px; color: #333; }
+  .pt { font-size: 19px; font-weight: 500; margin-top: 4px; display: flex; align-items: center; gap: 16px; }
+  .pic { display: flex; gap: 12px; margin-left: auto; padding-top: 14px; }
+  .showmore { text-align: center; font-size: 12px; margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+  .two { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 26px; margin-top: 20px; }
+  .two .div { background: #e4e4e4; }
+  .hbt { text-align: center; font-size: 13px; font-weight: 500; margin-bottom: 14px; }
+  .hbg { display: grid; grid-template-columns: 86px 1fr 92px; row-gap: 7px; align-items: center; }
+  .hl { font-size: 11.5px; text-align: right; padding-right: 8px; line-height: 1.05; }
+  .htrack { position: relative; height: 18px; border-left: 1px solid #999; }
+  .hbar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--orange); }
+  .hv { position: absolute; top: 1px; margin-left: 4px; font-size: 12px; }
+  .hp { padding-left: 22px; }
+  .hax { position: relative; height: 22px; border-left: 1px solid #999; border-top: 1px solid #999; }
+  .hax span { position: absolute; top: 6px; transform: translateX(-50%); font-size: 10.5px; }
+  .compare-row { display: flex; justify-content: flex-end; align-items: center; gap: 14px; font-size: 14px; }
+  .compare-row b { font-weight: 700; }
+  .alert { display: flex; align-items: center; border: 1px solid var(--orange); height: 56px; }
+  .alert i { width: 40px; height: 100%; background: var(--orange); display: grid; place-items: center; }
+  .alert span { flex: 1; padding-left: 16px; font-size: 15px; }
+  .t-foot { background: var(--top); color: #fff; font-size: 10px; height: 40px; display: flex; align-items: center; padding: 0 20px; gap: 10px; }
+  .t-foot b { font-weight: 600; border-left: 1px solid #fff; padding-left: 10px; }
+
+  /* ---------- domestic tourism ---------- */
+  .d-wrap { display: flex; min-height: 1100px; }
+  .d-side { width: 330px; flex: none; background: var(--side); padding: 32px 28px; display: flex; flex-direction: column; gap: 30px; }
+  .d-side .brand { color: var(--ink); font-size: 18px; }
+  .d-sub { font-size: 12.5px; color: #555; margin-top: 4px; padding-left: 34px; }
+  .d-h { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .d-box { background: #fff; border: 1px solid #ddd; border-radius: 8px; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-size: 14px; }
+  .slider { position: relative; height: 6px; background: #ddd; border-radius: 3px; margin: 22px 6px 8px; }
+  .slider i { position: absolute; top: 0; bottom: 0; background: var(--orange); border-radius: 3px; }
+  .slider b { position: absolute; top: -6px; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--orange); transform: translateX(-50%); }
+  .slabels { display: flex; justify-content: space-between; font-size: 11.5px; color: #666; }
+  .d-chk { display: flex; align-items: center; gap: 8px; font-size: 13.5px; margin-top: 12px; }
+  .d-chk i { width: 16px; height: 16px; border-radius: 4px; background: var(--orange); display: grid; place-items: center; }
+  .legend-grad { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #fde9cc, #f6b04f, #f28c00, #c2410c); margin-top: 10px; }
+  .d-main { flex: 1; padding: 30px 56px 50px; }
+  .d-nav { display: flex; align-items: center; justify-content: space-between; }
+  .d-tabs { display: flex; gap: 34px; font-size: 15px; }
+  .d-tabs div { padding-bottom: 10px; color: #555; }
+  .d-tabs .on { color: var(--ink); font-weight: 600; border-bottom: 3px solid var(--orange); }
+  .seg { display: flex; background: var(--box); border-radius: 8px; padding: 3px; font-size: 13.5px; }
+  .seg div { padding: 7px 16px; border-radius: 6px; color: #555; }
+  .seg .on { background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .d-right { display: flex; gap: 14px; align-items: center; }
+  .lang { border: 1px solid #ddd; border-radius: 8px; height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 13.5px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 14px; font-weight: 600; }
+  .d-title { margin-top: 44px; display: flex; align-items: baseline; gap: 16px; }
+  .d-title h1 { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+  .d-title span { font-size: 14px; color: #666; }
+  .d-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 26px; }
+  .d-kpi { border: 1px solid #e3e3e3; border-radius: 10px; padding: 18px 20px; }
+  .d-kpi .l { font-size: 13px; color: #555; }
+  .d-kpi .v { font-size: 30px; font-weight: 700; margin: 10px 0 12px; letter-spacing: -.01em; }
+  .vbox { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 3px 8px; border-radius: 5px; }
+  .vbox.ok { color: var(--ok); background: var(--ok-l); } .vbox.ko { color: var(--ko); background: var(--ko-l); }
+  .d-card { border: 1px solid #e3e3e3; border-radius: 10px; padding: 22px 24px; margin-top: 22px; }
+  .d-card h3 { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .d-card .cap { font-size: 12.5px; color: #666; margin-top: 3px; }
+  .stack { display: grid; grid-template-columns: 90px 1fr; row-gap: 12px; margin-top: 20px; align-items: center; font-size: 13px; }
+  .stack .bars { display: flex; height: 24px; border-radius: 4px; overflow: hidden; }
+  .stack .bars i { display: block; height: 100%; border-right: 2px solid #fff; }
+  .leg { display: flex; gap: 20px; font-size: 12.5px; margin-top: 18px; color: #333; }
+  .leg span { display: flex; align-items: center; gap: 7px; }
+  .leg i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+  .d-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 22px; }
+  .rank { margin-top: 14px; }
+  .rank div { display: grid; grid-template-columns: 22px 1fr auto auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid #eee; font-size: 13.5px; }
+  .rank div:last-child { border: 0; }
+  .rank em { font-style: normal; color: #888; font-size: 12px; }
+
+  /* ---------- merchant payments ---------- */
+  .m-wrap { display: flex; min-height: 1250px; }
+  .m-side { width: 112px; flex: none; background: var(--side); display: flex; flex-direction: column; align-items: center; padding: 26px 0; gap: 8px; }
+  .m-item { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 0; font-size: 11.5px; color: #555; position: relative; }
+  .m-item.on { color: var(--ink); font-weight: 600; background: #fff; }
+  .m-item.on::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--orange); }
+  .m-main { flex: 1; padding: 34px 48px 50px; }
+  .m-head { display: flex; justify-content: space-between; align-items: center; }
+  .m-head h1 { font-size: 36px; font-weight: 700; letter-spacing: -.02em; }
+  .m-tabs { display: flex; gap: 6px; margin-top: 22px; border-bottom: 1px solid #ddd; }
+  .m-tabs div { padding: 10px 18px; font-size: 14.5px; color: #555; }
+  .m-tabs .on { color: var(--ink); font-weight: 600; border-bottom: 3px solid var(--orange); margin-bottom: -1px; }
+  .m-filter { display: flex; gap: 14px; align-items: flex-end; background: var(--box); padding: 16px 18px; border-radius: 4px; margin-top: 24px; }
+  .m-filter .sel { background: #fff; border-color: #bbb; width: 186px; border-radius: 3px; }
+  .m-filter .dlbtn { background: #fff; border-color: #bbb; border-radius: 3px; }
+  .m-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 26px; }
+  .m-kpi { box-shadow: 0 1px 6px rgba(0,0,0,.18); border-radius: 4px; padding: 18px 24px; }
+  .m-kpi .l { font-size: 13px; color: #444; display: flex; align-items: center; gap: 6px; }
+  .m-kpi .v { font-size: 36px; font-weight: 700; margin: 8px 0 6px; letter-spacing: -.01em; }
+  .m-kpi .d { font-size: 12.5px; color: #555; }
+  .m-kpi .d b { color: var(--ok); font-weight: 600; } .m-kpi .d b.ko { color: var(--ko); }
+  .m-row { display: grid; grid-template-columns: 1.55fr 1fr; gap: 20px; margin-top: 22px; }
+  .m-card { box-shadow: 0 1px 6px rgba(0,0,0,.18); border-radius: 4px; padding: 20px 22px; }
+  .m-card h3 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .m-card .cap { font-size: 12px; color: #666; margin-top: 3px; }
+  .prog { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .prog div { display: grid; grid-template-columns: 120px 1fr 56px; gap: 14px; align-items: center; font-size: 13px; }
+  .prog .t { height: 12px; background: var(--chart, #e1e1e1); border-radius: 6px; overflow: hidden; }
+  .prog .t i { display: block; height: 100%; background: var(--orange); border-radius: 6px; }
+  .prog b { font-weight: 600; text-align: right; }
+  .m-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 22px; }
+  .ring { display: flex; align-items: center; gap: 18px; margin-top: 16px; }
+  .ring .l { font-size: 12.5px; color: #555; line-height: 1.5; }
+  .ring .l b { display: block; font-size: 22px; color: var(--ink); }
+
+  /* ---------- covers ---------- */
+  .stage { position: absolute; transform-origin: 0 0; }
+  .shot { position: absolute; border: 0; background: #fff; box-shadow: 0 40px 60px rgba(20,20,19,.28), 0 6px 14px rgba(20,20,19,.18); }
+  .title { font-weight: 700; letter-spacing: -.045em; line-height: .9; }
+</style>
+</head>
+<body>
+
+<!-- Screens are generated by the builders at the bottom; covers place the screens in tilted iframes. -->
+<section class="view" id="screen-overview" style="width:1440px"></section>
+<section class="view" id="screen-origins" style="width:1440px"></section>
+<section class="view" id="screen-comparison" style="width:1440px"></section>
+<section class="view" id="screen-compare-empty" style="width:1440px"></section>
+<section class="view" id="screen-domestic" style="width:1440px"></section>
+<section class="view" id="screen-merchant" style="width:1440px"></section>
+
+<!-- ============ HERO 2400x1200 ============ -->
+<!-- Title on charcoal, the rebuilt screens tilted on the right, warm glow tinting the screens -->
+<section class="view" id="hero" style="width:2400px;height:1200px;background:#141413">
+  <div class="stage" data-iso="hero"></div>
+  <div class="abs" style="inset:0;background:radial-gradient(55% 75% at 90% 80%, rgba(242,140,0,.42), rgba(255,102,28,.18) 55%, transparent 85%);mix-blend-mode:multiply"></div>
+  <div class="abs" style="inset:0;background:linear-gradient(90deg,#141413 0%,#141413 50%,rgba(20,20,19,.85) 60%,rgba(20,20,19,.3) 72%,rgba(20,20,19,0) 84%)"></div>
+  <div class="abs" style="inset:0;background:radial-gradient(40% 50% at 12% 100%, rgba(255,102,28,.22), transparent 70%)"></div>
+  <div class="abs title" style="left:140px;top:470px;font-size:262px;color:#fff">spend<span style="color:#f79e1b">scape</span></div>
+</section>
+
+<!-- ============ CARD 1200x1500 ============ -->
+<section class="view" id="card" style="width:1200px;height:1500px;background:#141413">
+  <div class="stage" data-iso="card"></div>
+  <div class="abs" style="inset:0;background:radial-gradient(75% 55% at 75% 90%, rgba(242,140,0,.42), rgba(255,102,28,.18) 55%, transparent 85%);mix-blend-mode:multiply"></div>
+  <div class="abs" style="inset:0;background:linear-gradient(180deg,#141413 0%,#141413 22%,rgba(20,20,19,.85) 31%,rgba(20,20,19,.3) 44%,rgba(20,20,19,0) 56%)"></div>
+  <div class="abs title" style="left:92px;top:120px;font-size:196px;color:#fff">spend<span style="color:#f79e1b">scape</span></div>
+</section>
+
+<!-- ============ SHOWCASE 2400x1350 (body) ============ -->
+<section class="view" id="showcase" style="width:2400px;height:1350px;background:#efede8">
+  <div class="stage" data-iso="showcase"></div>
+</section>
+<script>
+  const v = new URLSearchParams(location.search).get("v") || "hero";
+  document.getElementById(v).classList.add("on");
+</script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+/* ===================== shared bits ===================== */
+const I = {
+  search: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>',
+  chev: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>',
+  cal: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4M7 13h10M7 16.5h10"/></svg>',
+  dl: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>',
+  expand: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5M4 4l5 5M20 4l-5 5M20 20l-5-5M4 20l5-5"/></svg>',
+  info: '<svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#141413"/><path d="M12 10.5v6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="7.3" r="1.4" fill="#fff"/></svg>',
+  up2: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 12 6-6 6 6M6 19l6-6 6 6"/></svg>',
+  down2: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 5 6 6 6-6M6 12l6 6 6-6"/></svg>',
+  warn: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>',
+  x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5l14 14M19 5 5 19"/></svg>',
+};
+// Fictional mark: three stacked bars in warm tones
+const mark = (h = 20) => `<svg width="${h * 1.15}" height="${h}" viewBox="0 0 23 20"><rect width="23" height="5.2" rx="2.6" fill="#d1282d"/><rect y="7.4" width="17" height="5.2" rx="2.6" fill="#ff661c"/><rect y="14.8" width="10.5" height="5.2" rx="2.6" fill="#f79e1b"/></svg>`;
+const tri = (up) => `<svg width="8" height="7" viewBox="0 0 8 7"><path d="${up ? "M4 0 8 7H0z" : "M0 0h8L4 7z"}" fill="#fff"/></svg>`;
+const pill = (v, up) => `<span class="pill ${up ? "g" : "r"}">${tri(up)} ${v}%</span>`;
+const fmt = (n) => n.toFixed(1) + "%";
+
+/* ===================== tourism insights ===================== */
+const tTabs = ["Overview", "Origins", "Categories", "Comparison"];
+function tHeader(active) {
+  return `<div class="t-top"><div class="brand">${mark(19)}<b>spendscape</b><span>Tourism Insights</span></div><div class="user">Alex ${I.chev}</div></div>
+  <div class="t-nav">${tTabs.map((t, i) => `<div class="${i === active ? "on" : ""}">${t}</div>`).join("")}</div>`;
+}
+const defaultFields = [["Performance Metric", "Spend Share"], ["Showing", "Weeks"], ["From", "Week 8 / 2024", "cal"], ["To", "Week 2 / 2025", "cal"], ["Compare", "YoY"], ["Data Type", "Cross border"]];
+function tFilters(dest, extra = "") {
+  return `<div class="t-filters"><div class="row1"><b>Destinations</b><div class="search">${I.search}<span class="${dest ? "" : "ph"}">${dest || "Type to search..."}</span><i class="sep"></i>${I.chev}</div><div class="toggle"><i></i></div><span class="small">Show map</span>${extra}</div>
+  <div class="row2">${defaultFields.map(([l, v, ic]) => `<div class="field"><label>${l}</label><div class="sel">${v}${ic ? I.cal : I.chev}</div></div>`).join("")}<div class="dlbtn">${I.dl}</div></div></div>`;
+}
+function tMap(open) {
+  return open
+    ? `<div class="mapwrap"><svg data-map="europe" width="1440" height="500"></svg><div class="mapbtn" style="bottom:16px">${I.up2}</div></div>`
+    : `<div class="mapwrap"><svg data-map="strip" width="1440" height="100"></svg><div class="mapbtn" style="top:30px">${I.down2}</div></div>`;
+}
+const tFoot = `<div class="t-foot">© 2025 Spendscape <b>Terms of Use, Privacy Policy, and Cookie Notice</b></div>`;
+function kpis(items) {
+  return `<div class="kpis">${items.map((k) => `<div class="kpi"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="kd">${pill(k.d, k.up)}<span>${k.n}</span></div></div>`).join("")}</div>`;
+}
+function panel(title, body, extra = "") {
+  return `<div class="panel"><div class="ph"><div><div class="meta">Week 8 / 2024 - Week 2 / 2025, USD ($)</div><div class="pt">${title} ${I.info}</div></div>${extra}<div class="pic">${I.expand}${I.dl}</div></div>${body}</div>`;
+}
+function hbars(title, rows, max = 10) {
+  const ticks = [...Array(max + 1).keys()];
+  return `<div><div class="hbt">${title}</div><div class="hbg">${rows.map(([l, v, d, u]) => `<div class="hl">${l}</div><div class="htrack"><div class="hbar" style="width:${(v / max) * 100}%"></div><span class="hv" style="left:${(v / max) * 100}%">${fmt(v)}</span></div><div class="hp">${pill(d, u)}</div>`).join("")}
+  <div></div><div class="hax">${ticks.map((t) => `<span style="left:${(t / max) * 100}%">${t}%</span>`).join("")}</div><div></div></div></div>`;
+}
+const showMore = `<div class="showmore">Show more ${I.chev}</div>`;
+
+// Vertical bars with optional dashed variation line, as in "Top Subregions"
+function columns({ w = 1340, h = 300, cats, vals, colors, hi, line, legend, tip }) {
+  const L = 50, R = line ? 46 : 14, T = 46, B = 40, pw = w - L - R, ph = h - T - B, max = 10;
+  const y = (v) => T + ph - (v / max) * ph, bw = pw / cats.length;
+  let s = `<svg width="${w}" height="${h}">`;
+  for (let i = 0; i < max; i += 2) s += `<rect x="${L}" y="${y(i + 2)}" width="${pw}" height="${ph / 5}" fill="#f6f5f3"/>`;
+  for (let i = 0; i <= max; i++) {
+    s += `<text x="${L - 10}" y="${y(i) + 4}" font-size="11" text-anchor="end">${i}%</text>`;
+    if (line) s += `<text x="${w - R + 10}" y="${y(i) + 4}" font-size="11">${i}%</text>`;
+  }
+  s += `<line x1="${L}" x2="${L}" y1="${T}" y2="${T + ph}" stroke="#999"/><line x1="${L}" x2="${L + pw}" y1="${T + ph}" y2="${T + ph}" stroke="#999"/>`;
+  if (line) s += `<line x1="${w - R}" x2="${w - R}" y1="${T}" y2="${T + ph}" stroke="#999"/>`;
+  cats.forEach((c, i) => {
+    const x = L + i * bw + 5, isHi = i === hi;
+    s += `<rect x="${x}" y="${y(vals[i])}" width="${bw - 10}" height="${T + ph - y(vals[i])}" fill="${colors ? colors[i] : isHi ? "#b7cf82" : "#e8eedb"}"/>`;
+    s += `<text x="${x + (bw - 10) / 2}" y="${y(vals[i]) - 8}" font-size="12" text-anchor="middle" fill="${isHi ? "#141413" : "#aaa"}">${fmt(vals[i])}</text>`;
+    s += `<text x="${L + i * bw + bw / 2}" y="${T + ph + 22}" font-size="11.5" text-anchor="middle">${c}</text>`;
+  });
+  s += `<line x1="${L}" x2="${L + pw}" y1="${y(5)}" y2="${y(5)}" stroke="#333" stroke-dasharray="3 3"/>`;
+  if (line) {
+    const pts = line.map((v, i) => [L + i * bw + bw / 2, y(v)]);
+    s += `<path d="M${pts.map((p) => p.join(",")).join("L")}" fill="none" stroke="#d9481c" stroke-width="2.5" stroke-dasharray="7 5"/>`;
+    s += `<circle cx="${pts[hi][0]}" cy="${pts[hi][1]}" r="6" fill="#d9481c"/>`;
+  }
+  if (legend) {
+    let lx = w - R - legend.reduce((a, l) => a + l[0].length * 6.4 + 46, 0);
+    legend.forEach(([t, c, dash]) => {
+      s += dash ? `<line x1="${lx}" x2="${lx + 26}" y1="12" y2="12" stroke="${c}" stroke-width="2.5" stroke-dasharray="5 3"/>` : `<rect x="${lx}" y="6" width="12" height="12" fill="${c}"/>`;
+      s += `<text x="${lx + (dash ? 30 : 17)}" y="16" font-size="11.5">${t}</text>`;
+      lx += t.length * 6.4 + 46;
+    });
+  }
+  if (tip) {
+    const x = L + hi * bw + bw / 2 - 52, ty = y(vals[hi]) + 22;
+    s += `<g filter="drop-shadow(0 2px 4px rgba(0,0,0,.2))"><rect x="${x}" y="${ty}" width="${tip.w || 130}" height="${tip.rows.length * 20 + 16}" fill="#fff"/></g>`;
+    tip.rows.forEach(([t, val, c, dash], i) => {
+      const yy = ty + 22 + i * 20;
+      s += dash ? `<line x1="${x + 10}" x2="${x + 26}" y1="${yy - 4}" y2="${yy - 4}" stroke="${c}" stroke-width="2" stroke-dasharray="4 2"/>` : `<rect x="${x + 10}" y="${yy - 10}" width="10" height="10" fill="${c}"/>`;
+      s += `<text x="${x + 30}" y="${yy}" font-size="11.5">${t}</text>${val ? `<text x="${x + (tip.w || 130) - 10}" y="${yy}" font-size="11.5" text-anchor="end">${val}</text>` : ""}`;
+    });
+  }
+  return s + "</svg>";
+}
+
+// Two-period trend lines
+function trend({ w = 1340, h = 330, a, b, labels, legend }) {
+  const L = 50, R = 20, T = 50, B = 40, pw = w - L - R, ph = h - T - B, max = 20;
+  const y = (v) => T + ph - (v / max) * ph, x = (i) => L + (i / (a.length - 1)) * pw;
+  let s = `<svg width="${w}" height="${h}">`;
+  for (let i = 0; i < max; i += 4) s += `<rect x="${L}" y="${y(i + 4)}" width="${pw}" height="${ph / 5}" fill="#f6f5f3"/>`;
+  for (let i = 2; i <= max; i += 2) s += `<text x="${L - 10}" y="${y(i) + 4}" font-size="11" text-anchor="end">${i}%</text><line x1="${L}" x2="${L + pw}" y1="${y(i)}" y2="${y(i)}" stroke="#e8e6e2"/>`;
+  s += `<line x1="${L}" x2="${L}" y1="${T}" y2="${T + ph}" stroke="#999"/><line x1="${L}" x2="${L + pw}" y1="${T + ph}" y2="${T + ph}" stroke="#999"/>`;
+  labels.forEach((l, i) => (s += `<line x1="${x(i)}" x2="${x(i)}" y1="${T + ph}" y2="${T + ph + 5}" stroke="#999"/><text x="${x(i)}" y="${T + ph + 22}" font-size="11.5" text-anchor="middle">${l}</text>`));
+  s += `<path d="M${b.map((v, i) => x(i) + "," + y(v)).join("L")}" fill="none" stroke="#1f7a5c" stroke-width="3" stroke-dasharray="7 6"/>`;
+  s += `<path d="M${a.map((v, i) => x(i) + "," + y(v)).join("L")}" fill="none" stroke="#f28c00" stroke-width="3"/>`;
+  let lx = w - R - 430;
+  s += `<line x1="${lx}" x2="${lx + 26}" y1="14" y2="14" stroke="#f28c00" stroke-width="3"/><text x="${lx + 32}" y="18" font-size="11.5">${legend[0]}</text>`;
+  lx += legend[0].length * 6.4 + 60;
+  s += `<line x1="${lx}" x2="${lx + 26}" y1="14" y2="14" stroke="#1f7a5c" stroke-width="3" stroke-dasharray="5 3"/><text x="${lx + 32}" y="18" font-size="11.5">${legend[1]}</text>`;
+  return s + "</svg>";
+}
+
+const weeks = ["Week 8", "Week 9", "Week 10", "Week 11", "Week 12", "Week 13", "Week 14", "Week 15", "…", "Week 2"];
+const trendA = [7.6, 8.4, 9.9, 9.6, 9.0, 9.3, 7.4, 7.0, 9.4, 11.6];
+const trendB = [4.3, 6.4, 6.1, 10.8, 11.0, 13.2, 12.9, 12.1, 15.8, 15.9];
+const origins = [["Germany", 8.6, 5.1, 1], ["Switzerland", 8.1, 13.2, 1], ["France", 7.7, 2.8, 0], ["UK", 7.2, 10.4, 1], ["US", 6.6, 6.9, 0], ["Belgium", 5.5, 11.3, 0], ["Austria", 4.7, 2.6, 1], ["Netherlands", 4.1, 8.1, 1], ["Australia", 3.3, 1.9, 1], ["Others", 2.4, 0.7, 0]];
+const categories = [["Grocery", 8.4, 4.9, 1], ["Shopping", 8.0, 12.8, 1], ["Apparel", 7.5, 3.6, 0], ["Bars", 7.1, 10.9, 1], ["Rental", 6.4, 7.2, 0], ["Houseware", 5.6, 11.8, 0], ["Jewelry", 4.6, 2.1, 1], ["Utilities", 3.9, 8.4, 1], ["Airlines", 3.1, 1.6, 1], ["Others", 2.6, 0.8, 0]];
+const subregions = { cats: ["Sondrio", "Varese", "Lodi", "Bergamo", "Brescia", "Milano", "Como", "Cremona", "Others"], vals: [3.4, 4.8, 3.9, 5.8, 2.3, 7.4, 6.2, 4.6, 3.7], line: [3.9, 3.9, 4.3, 3.9, 5.1, 4.4, 4.9, 5.3, 4.4] };
+const subPanel = panel("Top Subregions - Spend Share", columns({ ...subregions, hi: 5, legend: [["Week 8 / 2024 - Week 2 / 2025", "#b7cf82"], ["Var % YoY", "#d9481c", 1]], tip: { rows: [["Spend Share", "7.4%", "#b7cf82"], ["Var % YoY", "4.4%", "#d9481c", 1]], w: 140 } }));
+const trendPanel = (extra, legend) => panel("Trend by Period - Spend Share", trend({ a: trendA, b: trendB, labels: weeks, legend }), extra);
+const kpiOverview = kpis([{ l: "Avg. Transaction Value", v: "58 $", d: "17.2", up: 1, n: "from previous period" }, { l: "Yearly Growth", v: "+12% YoY", d: "9.4", up: 0, n: "from Yo2Y" }]);
+
+const builders = {
+  "screen-overview": () => tHeader(0) + tFilters("") + tMap(true) + `<div class="t-body">${kpiOverview}
+    ${panel("Top Origins & Categories - Spend Share", `<div class="two">${hbars("Origins", origins)}<div class="div"></div>${hbars("Categories", categories)}</div>${showMore}`)}
+    ${subPanel}${trendPanel("", ["Week 8 / 2024 - Week 2 / 2025", "Week 8 / 2023 - Week 2 / 2024"])}</div>` + tFoot,
+
+  "screen-origins": () => tHeader(1) + tFilters("", `<div class="field" style="margin-left:150px;margin-top:-28px"><label>Selected tourist origin</label><div class="sel" style="width:128px">Germany${I.chev}</div></div>`) + tMap(false) +
+    `<div class="t-body">${kpis([{ l: "Avg. Ticket Value", v: "61 $", d: "14.8", up: 1, n: "from previous period" }, { l: "Yearly Growth", v: "+9% YoY", d: "6.1", up: 0, n: "from Yo2Y" }])}
+    ${panel("Top Categories - Spend Share", columns({ cats: ["Accommodations", "Restaurants", "Retail", "Grocery Stores", "Entertainment", "Transportation", "Others"], vals: [3.4, 5.1, 4.7, 5.6, 2.4, 7.1, 6.0], colors: ["#cfdcb9", "#fde6a6", "#c1e6de", "#f2c3af", "#e6efcf", "#f28c00", "#bdbdbd"], hi: 5, h: 380, tip: { rows: [["Transportation", "", "#fff"], ["7.1%", "", "#f28c00"]], w: 120 } }) +
+      `<div class="leg" style="justify-content:center">${[["Accommodations", "#1f8f1f"], ["Restaurants", "#ffc61e"], ["Retail", "#4fccaf"], ["Grocery Stores", "#c8401a"], ["Entertainment", "#b5d77a"], ["Transportation", "#f28c00"], ["Others", "#141413"]].map(([t, c]) => `<span><i style="background:${c}"></i>${t}</span>`).join("")}</div>`)}
+    ${subPanel}${trendPanel(`<div class="sel" style="margin:20px 0 0 40px;width:128px;height:34px;font-size:13px">All categories${I.chev}</div>`, ["Week 8 / 2024 - Week 2 / 2025", "Week 8 / 2023 - Week 2 / 2024"])}</div>` + tFoot,
+
+  "screen-comparison": () => tHeader(3) + tFilters("Italy") + tMap(false) + `<div class="t-body">
+    <div class="compare-row"><b>Comparison</b><div class="search">${I.search}<span>France</span><i class="sep"></i>${I.chev}</div></div>
+    ${panel("Top Subregions - Spend Share", `<div class="two">${hbars("Italy", [["Lombardia", 8.5, 5.0, 1], ["Campania", 7.9, 13.6, 1], ["Marche", 7.6, 2.9, 0], ["Lazio", 7.3, 10.8, 1], ["Toscana", 6.5, 7.1, 0], ["Piemonte", 5.6, 11.4, 0], ["Valle d'Aosta", 4.6, 2.2, 1], ["Sardegna", 4.1, 8.3, 1], ["Veneto", 3.3, 1.5, 1], ["Puglia", 2.6, 0.8, 0]])}<div class="div"></div>${hbars("Selection: France", [["Normandie", 8.2, 4.4, 1], ["Bretagne", 7.8, 12.1, 1], ["Occitanie", 7.6, 3.4, 0], ["Corse", 7.0, 9.7, 1], ["Île-de-France", 6.4, 6.8, 0], ["Grand Est", 5.9, 10.2, 0], ["Pays de la Loire", 4.4, 2.7, 1], ["Hauts-de-France", 4.0, 7.9, 1], ["Provence", 3.1, 1.2, 1], ["Auvergne", 2.5, 0.6, 0]])}</div>${showMore}`)}
+    ${panel("Top Origins - Spend Share", `<div class="two">${hbars("Italy", [["Austria", 8.4, 5.2, 1], ["Germany", 7.8, 14.1, 1], ["Slovenia", 7.7, 3.0, 0], ["Switzerland", 7.2, 11.0, 1], ["Croatia", 6.4, 7.4, 0], ["Czech Republic", 5.7, 12.4, 0], ["Hungary", 4.4, 2.5, 1], ["United States", 3.9, 8.6, 1], ["Poland", 3.1, 1.3, 1], ["Australia", 2.6, 0.9, 0]])}<div class="div"></div>${hbars("Selection: France", [["Belgium", 8.3, 5.9, 1], ["Germany", 7.9, 13.0, 1], ["Spain", 7.5, 3.1, 0], ["Switzerland", 7.3, 11.9, 1], ["Italy", 6.2, 7.0, 0], ["UK", 5.9, 12.0, 0], ["Netherlands", 4.6, 2.4, 1], ["Australia", 4.1, 8.9, 1], ["United States", 3.3, 1.6, 1], ["Portugal", 2.4, 0.9, 0]])}</div>${showMore}`)}
+    ${panel("Trend by Period - Spend Share", trend({ a: trendA, b: trendB, labels: weeks.map((w) => (w === "…" ? w : w + (w === "Week 2" ? " / 2025" : " / 2024"))), legend: ["Italy", "France"] }))}</div>` + tFoot,
+
+  "screen-compare-empty": () => tHeader(3) + tFilters("Italy") + tMap(false) + `<div class="t-body" style="min-height:600px">
+    <div class="compare-row"><b>Comparison</b><div class="search">${I.search}<span class="ph">Type to search...</span><i class="sep"></i>${I.chev}</div></div>
+    <div class="alert"><i>${I.warn}</i><span>Select destinations to compare</span><b style="padding:0 18px">${I.x}</b></div></div>` + tFoot,
+
+  "screen-domestic": () => {
+    const stackColors = ["#f28c00", "#f6b04f", "#f8c580", "#fde3bf", "#d9d9d9"];
+    const rows = [["Roma", [41, 27, 14, 11, 7]], ["Latina", [58, 22, 8, 6, 6]], ["Frosinone", [63, 19, 7, 5, 6]], ["Viterbo", [52, 25, 10, 6, 7]], ["Rieti", [67, 17, 6, 4, 6]]];
+    const months = ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const area = (() => {
+      const w = 620, h = 270, L = 40, R = 10, T = 16, B = 30, pw = w - L - R, ph = h - T - B;
+      const series = [[118, 141, 162, 133, 104, 92, 110], [96, 112, 130, 108, 88, 80, 95], [70, 84, 97, 81, 66, 61, 72]];
+      const max = 180, x = (i) => L + (i / 6) * pw, y = (v) => T + ph - (v / max) * ph;
+      let s = `<svg width="${w}" height="${h}"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f28c00" stop-opacity=".35"/><stop offset="1" stop-color="#f28c00" stop-opacity="0"/></linearGradient></defs>`;
+      for (let v = 0; v <= max; v += 45) s += `<line x1="${L}" x2="${L + pw}" y1="${y(v)}" y2="${y(v)}" stroke="#eee"/><text x="${L - 8}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="#777">${v}</text>`;
+      months.forEach((m, i) => (s += `<text x="${x(i)}" y="${h - 8}" font-size="11.5" text-anchor="middle" fill="#555">${m}</text>`));
+      s += `<path d="M${x(0)},${y(0)}L${series[0].map((v, i) => x(i) + "," + y(v)).join("L")}L${x(6)},${y(0)}Z" fill="url(#ag)"/>`;
+      [["#f28c00", 3, ""], ["#ff661c", 2, "6 4"], ["#999", 2, "2 4"]].forEach(([c, sw, d], k) => (s += `<path d="M${series[k].map((v, i) => x(i) + "," + y(v)).join("L")}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-dasharray="${d}"/>`));
+      s += `<circle cx="${x(2)}" cy="${y(162)}" r="5.5" fill="#fff" stroke="#f28c00" stroke-width="3"/>`;
+      return s + "</svg>";
+    })();
+    return `<div class="d-wrap"><aside class="d-side">
+      <div><div class="brand">${mark(20)}<b>spendscape</b></div><div class="d-sub">Tourism &amp; Excursion Dashboard</div></div>
+      <div><div class="d-h">Time Period</div><div class="d-box">Jun 2024 – Dec 2024 ${I.cal}</div>
+        <div class="d-chk"><i><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4"><path d="m4 12 5 5L20 6"/></svg></i>By week</div>
+        <div class="slider"><i style="left:38%;right:8%"></i><b style="left:38%"></b><b style="left:92%"></b></div><div class="slabels"><span>Jan 2023</span><span>Dec 2024</span></div></div>
+      <div><div class="d-h">Data Type</div><div class="d-box">Domestic Tourism ${I.chev}</div></div>
+      <div><div class="d-h">Map ${I.info}</div><svg data-map="italy" width="274" height="320" style="display:block;margin:4px auto 0"></svg>
+        <div class="legend-grad"></div><div class="slabels" style="margin-top:6px"><span>Lower spend</span><span>Higher spend</span></div></div>
+    </aside>
+    <div class="d-main">
+      <div class="d-nav"><div class="d-tabs"><div class="on">Summary</div><div>Origins</div><div>Industries</div><div>Comparison</div></div>
+        <div class="d-right"><div class="seg"><div class="on">Insights</div><div>Trends</div></div><div class="lang">EN ${I.chev}</div><div class="avatar">A</div></div></div>
+      <div class="d-title"><h1>Lazio</h1><span>Domestic tourism · Jun 2024 – Dec 2024</span></div>
+      <div class="d-kpis">${[["Indexed Spend", "128", "+8.4%", 1], ["Average Ticket Value", "€46", "+3.1%", 1], ["Average Tourist Spending", "€212", "−1.7%", 0], ["Var % YoY", "+6.9%", "+2.2 pp", 1]].map(([l, v, d, ok]) => `<div class="d-kpi"><div class="l">${l}</div><div class="v">${v}</div><span class="vbox ${ok ? "ok" : "ko"}">${tri(ok).replace('fill="#fff"', `fill="${ok ? "#0d9b7d" : "#b81c25"}"`)} ${d} YoY</span></div>`).join("")}</div>
+      <div class="d-card"><h3>Spend distribution by province ${I.info}</h3><div class="cap">Share of spend by tourist origin, Spend %</div>
+        <div class="stack">${rows.map(([n, p]) => `<div>${n}</div><div class="bars">${p.map((v, i) => `<i style="width:${v}%;background:${stackColors[i]}"></i>`).join("")}</div>`).join("")}</div>
+        <div class="leg">${["Italy", "Rest of Europe", "Americas", "Asia", "Others"].map((t, i) => `<span><i style="background:${stackColors[i]}"></i>${t}</span>`).join("")}</div></div>
+      <div class="d-grid"><div class="d-card"><h3>Top areas - Indexed spend ${I.info}</h3><div class="cap">Monthly, top three areas</div><div style="margin-top:14px">${area}</div>
+          <div class="leg" style="margin-top:6px"><span><i style="background:#f28c00"></i>Roma</span><span><i style="background:#ff661c"></i>Litorale</span><span><i style="background:#999"></i>Castelli</span></div></div>
+        <div class="d-card"><h3>Ranking ${I.info}</h3><div class="cap">Spend % and Var % YoY</div><div class="rank">${[["Roma", "31.4%", "+7.2%", 1], ["Litorale", "18.9%", "+11.5%", 1], ["Castelli", "12.6%", "−2.4%", 0], ["Tuscia", "9.8%", "+4.0%", 1], ["Ciociaria", "7.1%", "−0.9%", 0], ["Sabina", "5.3%", "+3.3%", 1]].map(([n, s, d, ok], i) => `<div><em>${i + 1}</em><span>${n}</span><b style="font-weight:600">${s}</b><span class="vbox ${ok ? "ok" : "ko"}">${d}</span></div>`).join("")}</div></div></div>
+    </div></div>`;
+  },
+
+  "screen-merchant": () => {
+    const icon = (p) => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+    const nav = [["Analytics", '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'], ["Authorization", '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>'], ["Authentication", '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'], ["Fraud", '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="M12 8v5M12 16v.5"/>'], ["Performance", '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>'], ["Settings", '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>']];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const perf = (() => {
+      const w = 690, h = 290, L = 48, R = 48, T = 20, B = 34, pw = w - L - R, ph = h - T - B;
+      const trx = [1.21, 1.18, 1.34, 1.39, 1.47, 1.52], rate = [89.8, 90.4, 90.1, 91.2, 91.9, 92.6];
+      const bw = pw / 6, y1 = (v) => T + ph - (v / 1.6) * ph, y2 = (v) => T + ph - ((v - 85) / 10) * ph;
+      let s = `<svg width="${w}" height="${h}">`;
+      [0, 0.4, 0.8, 1.2, 1.6].forEach((v) => (s += `<line x1="${L}" x2="${L + pw}" y1="${y1(v)}" y2="${y1(v)}" stroke="#eee"/><text x="${L - 8}" y="${y1(v) + 4}" font-size="11" text-anchor="end" fill="#777">${v.toFixed(1)}M</text>`));
+      [85, 87.5, 90, 92.5, 95].forEach((v) => (s += `<text x="${L + pw + 8}" y="${y2(v) + 4}" font-size="11" fill="#777">${v}%</text>`));
+      trx.forEach((v, i) => (s += `<rect x="${L + i * bw + 14}" y="${y1(v)}" width="${bw - 28}" height="${T + ph - y1(v)}" fill="${i === 5 ? "#f28c00" : "#f8c580"}" rx="2"/><text x="${L + i * bw + bw / 2}" y="${h - 10}" font-size="11.5" text-anchor="middle" fill="#555">${months[i]} 2025</text>`));
+      s += `<path d="M${rate.map((v, i) => L + i * bw + bw / 2 + "," + y2(v)).join("L")}" fill="none" stroke="#8cba2d" stroke-width="3"/>`;
+      rate.forEach((v, i) => (s += `<circle cx="${L + i * bw + bw / 2}" cy="${y2(v)}" r="4.5" fill="#fff" stroke="#8cba2d" stroke-width="2.5"/>`));
+      return s + "</svg>";
+    })();
+    const donut = (() => {
+      const data = [[38, "#ff661c", "Insufficient funds"], [24, "#f28c00", "Do not honor"], [16, "#f8c580", "Invalid card data"], [12, "#ffba5f", "Suspected fraud"], [10, "#ffda99", "Others"]];
+      const r = 74, c = 2 * Math.PI * r;
+      let off = 0, s = `<svg width="190" height="190" viewBox="0 0 190 190"><g transform="rotate(-90 95 95)">`;
+      data.forEach(([v, col]) => { s += `<circle cx="95" cy="95" r="${r}" fill="none" stroke="${col}" stroke-width="30" stroke-dasharray="${(v / 100) * c - 2} ${c}" stroke-dashoffset="${-off}"/>`; off += (v / 100) * c; });
+      s += `</g><text x="95" y="92" text-anchor="middle" font-size="26" font-weight="700">8.2%</text><text x="95" y="113" text-anchor="middle" font-size="11.5" fill="#666">decline rate</text></svg>`;
+      return `<div style="display:flex;align-items:center;gap:22px;margin-top:20px">${s}<div style="display:flex;flex-direction:column;gap:11px;font-size:13px">${data.map(([v, col, t]) => `<span style="display:flex;align-items:center;gap:8px"><i style="width:11px;height:11px;border-radius:3px;background:${col}"></i>${t}<b style="margin-left:auto;padding-left:14px;font-weight:600">${v}%</b></span>`).join("")}</div></div>`;
+    })();
+    const ring = (v, col = "#f28c00") => { const r = 32, c = 2 * Math.PI * r; return `<svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="${r}" fill="none" stroke="#e1e1e1" stroke-width="10"/><circle cx="42" cy="42" r="${r}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(v / 100) * c} ${c}" transform="rotate(-90 42 42)"/></svg>`; };
+    return `<div class="m-wrap"><aside class="m-side"><div style="margin-bottom:22px">${mark(26)}</div>${nav.map(([t, p], i) => `<div class="m-item ${i === 1 ? "on" : ""}">${icon(p)}${t}</div>`).join("")}</aside>
+    <div class="m-main">
+      <div class="m-head"><h1>Authorization</h1><div class="d-right"><div class="lang">All merchants ${I.chev}</div><div class="avatar">A</div></div></div>
+      <div class="m-tabs">${["Home", "Geography", "Benchmark", "Issuers", "Acquirers"].map((t, i) => `<div class="${i ? "" : "on"}">${t}</div>`).join("")}</div>
+      <div class="m-filter">${[["Time Period", "Jan 2025 – Jun 2025", 1], ["Brand", "All brands"], ["Channel", "All channels"], ["Product Type", "All products"], ["Customer Type", "All customers"]].map(([l, v, c]) => `<div class="field"><label>${l}</label><div class="sel">${v}${c ? I.cal : I.chev}</div></div>`).join("")}<div class="dlbtn" style="margin-left:auto">${I.dl}</div></div>
+      <div class="m-kpis">${[["Approval Rate", "92.6%", "+1.4 pp", "vs previous period"], ["Total Transactions", "8.1M", "+6.2%", "vs previous period"], ["Soft Decline Rate", "3.4%", "−0.6 pp", "vs previous period"], ["Average Ticket", "€47.20", "−2.1%", "vs previous period", 1]].map(([l, v, d, n, ko]) => `<div class="m-kpi"><div class="l">${l} ${I.info}</div><div class="v">${v}</div><div class="d"><b class="${ko ? "ko" : ""}">${d}</b> ${n}</div></div>`).join("")}</div>
+      <div class="m-row"><div class="m-card"><h3>Approval performance ${I.info}</h3><div class="cap">Transactions and approval rate by month</div><div style="margin-top:14px">${perf}</div>
+          <div class="leg"><span><i style="background:#f8c580"></i>Transactions</span><span><i style="background:#8cba2d;height:3px"></i>Approval rate</span></div></div>
+        <div class="m-card"><h3>Decline reasons ${I.info}</h3><div class="cap">Share of declined transactions</div>${donut}</div></div>
+      <div class="m-three">
+        <div class="m-card"><h3>By ticket range</h3><div class="cap">Approval rate</div><div class="prog">${[["< €20", 95.1], ["€20 – €50", 93.4], ["€50 – €100", 91.0], ["€100 – €250", 88.2], ["> €250", 83.7]].map(([t, v]) => `<div><span>${t}</span><span class="t"><i style="width:${v}%"></i></span><b>${v}%</b></div>`).join("")}</div></div>
+        <div class="m-card"><h3>By channel</h3><div class="cap">Approval rate</div><div class="ring">${ring(94.8)}<div class="l">Card present<b>94.8%</b></div></div><div class="ring">${ring(90.3, "#ff661c")}<div class="l">Card not present<b>90.3%</b></div></div></div>
+        <div class="m-card"><h3>By tokenization</h3><div class="cap">Approval rate</div><div class="ring">${ring(96.1, "#8cba2d")}<div class="l">Tokenized<b>96.1%</b></div></div><div class="ring">${ring(89.4)}<div class="l">Not tokenized<b>89.4%</b></div></div></div>
+      </div>
+    </div></div>`;
+  },
+};
+
+if (builders[v]) document.getElementById(v).innerHTML = builders[v]();
+// ?measure=1 writes the screen height into the DOM, read with chrome --dump-dom to size the cover iframes
+if (new URLSearchParams(location.search).has("measure")) document.body.setAttribute("data-h", document.getElementById(v).offsetHeight);
+
+/* ===================== maps ===================== */
+// Region seeds (lon, lat, group). Voronoi cells clipped to the country outline stand in for regional borders.
+const seeds = [[7.32, 45.74, "vda"], [7.69, 45.07, "pie"], [9.19, 45.46, "lom"], [11.12, 46.07, "taa"], [12.33, 45.44, "ven"], [13.4, 46.0, "fvg"], [8.93, 44.41, "lig"], [11.34, 44.49, "emr"], [11.25, 43.77, "tos"], [12.39, 43.11, "umb"], [13.52, 43.62, "mar"], [12.5, 41.9, "laz"], [13.9, 42.25, "abr"], [14.66, 41.56, "mol"], [14.27, 40.85, "cam"], [16.6, 41.0, "pug"], [17.9, 40.4, "pug"], [15.8, 40.5, "bas"], [16.4, 39.0, "cal"], [13.36, 37.9, "sic"], [14.9, 37.5, "sic"], [9.0, 39.5, "sar"], [8.8, 40.6, "sar"]];
+const spend = { vda: .25, pie: .5, lom: .95, taa: .55, ven: .85, fvg: .35, lig: .5, emr: .6, tos: .9, umb: .3, mar: .35, laz: 1, abr: .3, mol: .1, cam: .75, pug: .6, bas: .15, cal: .3, sic: .65, sar: .55 };
+const cities = [["Torino", 7.69, 45.07], ["Milano", 9.19, 45.46], ["Genova", 8.93, 44.41], ["Venezia", 12.33, 45.44], ["Trieste", 13.77, 45.65], ["Parma", 10.33, 44.8], ["Livorno", 10.31, 43.55], ["Pesaro", 12.91, 43.91], ["Roma", 12.5, 41.9], ["Napoli", 14.27, 40.85], ["Matera", 16.6, 40.67], ["Lecce", 18.17, 40.35], ["Nuoro", 9.33, 40.32], ["Palermo", 13.36, 38.12]];
+
+async function drawMaps() {
+  const svgs = document.querySelectorAll("svg[data-map]");
+  if (!svgs.length) return;
+  const world = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json").then((r) => r.json());
+  const countries = topojson.feature(world, world.objects.countries).features;
+  const italy = countries.find((f) => f.id === "380");
+  const heat = d3.scaleLinear().domain([0, .5, .8, 1]).range(["#fde9cc", "#f6b04f", "#f28c00", "#c2410c"]);
+
+  svgs.forEach((el, n) => {
+    const kind = el.dataset.map, w = +el.getAttribute("width"), h = +el.getAttribute("height");
+    const svg = d3.select(el);
+    let proj;
+    if (kind === "italy") proj = d3.geoMercator().fitExtent([[6, 6], [w - 6, h - 6]], italy);
+    else {
+      proj = d3.geoMercator().scale(1750).center([12.6, 42.1]).translate([w * 0.6, 250]);
+      if (kind === "strip") { const yy = proj([9, 45.25])[1]; el.setAttribute("viewBox", `0 ${yy - 50} 1440 100`); }
+    }
+    const path = d3.geoPath(proj);
+    if (kind !== "italy") {
+      svg.append("rect").attr("x", -10).attr("y", -10).attr("width", w + 20).attr("height", 600).attr("fill", "#f6f5f2");
+      svg.append("g").selectAll("path").data(countries.filter((f) => f.id !== "380")).join("path").attr("d", path).attr("fill", "#ecebe7").attr("stroke", "#c9c7c2").attr("stroke-width", .8);
+    }
+    const clipId = "clip-" + n;
+    svg.append("clipPath").attr("id", clipId).append("path").attr("d", path(italy));
+    svg.append("path").attr("d", path(italy)).attr("fill", "#cbc8c2");
+    const pts = seeds.map((s) => proj([s[0], s[1]]));
+    const vor = d3.Delaunay.from(pts).voronoi([-500, -500, w + 500, h + 1000]);
+    const g = svg.append("g").attr("clip-path", `url(#${clipId})`);
+    seeds.forEach((s, i) => {
+      const fill = kind === "italy" ? heat(spend[s[2]]) : s[2] === "lom" ? "#f28c00" : "#cbc8c2";
+      g.append("path").attr("d", vor.renderCell(i)).attr("fill", fill).attr("stroke", fill).attr("stroke-width", 1.2);
+    });
+    // borders between different regions only
+    const groups = seeds.map((s) => s[2]);
+    for (const [i, j] of (function* () { for (let i = 0; i < seeds.length; i++) for (const j of vor.neighbors(i)) if (j > i) yield [i, j]; })()) {
+      if (groups[i] === groups[j]) continue;
+      const a = vor.cellPolygon(i), b = vor.cellPolygon(j);
+      const shared = a.filter((p) => b.some((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) < .01));
+      if (shared.length >= 2) g.append("line").attr("x1", shared[0][0]).attr("y1", shared[0][1]).attr("x2", shared[1][0]).attr("y2", shared[1][1]).attr("stroke", "#fff").attr("stroke-width", kind === "italy" ? 1.2 : 1);
+    }
+    svg.append("path").attr("d", path(italy)).attr("fill", "none").attr("stroke", kind === "italy" ? "#fff" : "#b9b6b0").attr("stroke-width", .8);
+    if (kind !== "italy") {
+      cities.forEach(([t, lon, lat]) => {
+        const [x, y] = proj([lon, lat]);
+        svg.append("circle").attr("cx", x).attr("cy", y).attr("r", 2.2).attr("fill", "#141413");
+        svg.append("text").attr("x", x + 5).attr("y", y - 3).attr("font-size", 9.5).attr("font-weight", 600).text(t);
+      });
+      const [mx, my] = proj([9.19, 45.46]);
+      svg.append("circle").attr("cx", mx).attr("cy", my).attr("r", 20).attr("fill", "rgba(248,197,128,.35)").attr("stroke", "#141413").attr("stroke-width", 1.4);
+    }
+  });
+}
+drawMaps();
+
+/* ===================== isometric covers ===================== */
+// Each cover shows the rebuilt screens in tilted iframes, arranged in staggered columns.
+const H = { "screen-overview": 2440, "screen-origins": 2080, "screen-comparison": 2005, "screen-compare-empty": 1022, "screen-domestic": 1100, "screen-merchant": 1250 };
+// Stage local axes after rotateZ(-38deg) rotateX(52deg): columns run up-right, screens stack down-right.
+// x/y place the grid so it covers the whole canvas; each column cycles the screens from a different start.
+const iso = {
+  hero: { x: -1406, y: 444, s: .42, cols: 9, len: 9500 },
+  card: { x: -1134, y: 809, s: .36, cols: 6, len: 7800 },
+  showcase: { x: -1382, y: 432, s: .4, cols: 7, len: 9800 },
+};
+const order = ["screen-overview", "screen-merchant", "screen-domestic", "screen-comparison", "screen-origins", "screen-compare-empty"];
+const stage = document.querySelector(`#${v} .stage[data-iso]`);
+if (stage) {
+  const cfg = iso[stage.dataset.iso], gap = 90;
+  stage.style.left = cfg.x + "px"; stage.style.top = cfg.y + "px";
+  stage.style.transform = `scale(${cfg.s}) rotateX(52deg) rotateZ(-38deg)`;
+  for (let c = 0; c < cfg.cols; c++) {
+    let y = -((c * 737) % 1600), k = c * 2;
+    while (y < cfg.len) {
+      const id = order[k++ % order.length];
+      const f = document.createElement("iframe");
+      f.className = "shot"; f.src = `?v=${id}`;
+      Object.assign(f.style, { left: c * (1440 + gap) + "px", top: y + "px", width: "1440px", height: H[id] + "px" });
+      stage.appendChild(f);
+      y += H[id] + gap;
+    }
+  }
+}
+</script>
+</body>
+</html>
