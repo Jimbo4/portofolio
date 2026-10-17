@@ -11,10 +11,12 @@ const DRAG_THRESHOLD_PX = 6;
 const FRICTION = 0.95;
 /** Below this speed (px/ms) the glide stops */
 const MIN_VELOCITY = 0.02;
-/** Idle drift speed in px/ms (about 18px per second) */
-const AUTO_SPEED = 0.018;
+/** Idle drift: one card every 10 seconds */
+const MS_PER_CARD = 10_000;
 /** The drift waits this long after the last touch, drag, wheel or key press */
 const RESUME_DELAY_MS = 5000;
+/** After a pause the drift eases back to full speed over this time */
+const EASE_IN_MS = 2500;
 /** A scroll position further than this from the drift's own means the user moved the track */
 const USER_SCROLL_TOLERANCE_PX = 2;
 
@@ -22,12 +24,13 @@ export function WorksCarousel({ works }: { works: Work[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ isDown: false, startX: 0, startScroll: 0, didDrag: false, lastX: 0, lastT: 0, velocity: 0 });
   const glideFrameRef = useRef(0);
-  // Fractional drift position (scrollLeft may round it) and the time of the last user interaction
-  const autoRef = useRef({ pos: 0, lastInteraction: -Infinity, isVisible: false });
+  // Fractional drift position, card pitch in px and the time of the last user interaction
+  const autoRef = useRef({ pos: 0, pitch: 0, lastInteraction: -Infinity, isVisible: false });
   const [isDragging, setIsDragging] = useState(false);
 
   const markInteraction = () => {
     autoRef.current.lastInteraction = performance.now();
+    trackRef.current?.style.setProperty("--drift", "0px");
   };
 
   /** Distance between the same card in two consecutive copies. */
@@ -50,8 +53,10 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     const track = trackRef.current;
     if (!track) return;
     const centerOnMiddleCopy = () => {
-      track.scrollLeft = getLoopWidth();
+      const loopWidth = getLoopWidth();
+      track.scrollLeft = loopWidth;
       autoRef.current.pos = track.scrollLeft;
+      autoRef.current.pitch = loopWidth / works.length;
     };
     centerOnMiddleCopy();
     const observer = new ResizeObserver(centerOnMiddleCopy);
@@ -60,9 +65,10 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       observer.disconnect();
       cancelAnimationFrame(glideFrameRef.current);
     };
-  }, [getLoopWidth]);
+  }, [getLoopWidth, works.length]);
 
-  // Idle drift: advance very slowly while the track is on screen and nobody has touched it for a while
+  // Idle drift: advance very slowly while the track is on screen and nobody has touched it for a while.
+  // scrollLeft only takes whole pixels, so the fraction moves the track with a GPU transform instead.
   useEffect(() => {
     const track = trackRef.current;
     if (!track || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -78,15 +84,21 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       const auto = autoRef.current;
       const dt = Math.min(now - lastT, 50); // no jump after a background tab
       lastT = now;
+      const sinceResume = now - auto.lastInteraction - RESUME_DELAY_MS;
       const isIdle =
         auto.isVisible &&
-        now - auto.lastInteraction > RESUME_DELAY_MS &&
+        sinceResume > 0 &&
+        auto.pitch > 0 &&
         !dragRef.current.isDown &&
         glideFrameRef.current === 0 &&
-        !track.contains(document.activeElement);
+        !track.querySelector(":focus-visible"); // keyboard users keep the focused card in place
       if (isIdle) {
-        auto.pos += AUTO_SPEED * dt;
-        track.scrollLeft = auto.pos;
+        const t = Math.min(1, sinceResume / EASE_IN_MS);
+        const ease = t * t * (3 - 2 * t);
+        auto.pos += (auto.pitch / MS_PER_CARD) * ease * dt;
+        const whole = Math.floor(auto.pos);
+        if (track.scrollLeft !== whole) track.scrollLeft = whole;
+        track.style.setProperty("--drift", `${(whole - auto.pos).toFixed(3)}px`);
       }
       frame = requestAnimationFrame(step);
     };
@@ -106,7 +118,7 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     const auto = autoRef.current;
 
     // Native scrolling (touch, trackpad, momentum) moved the track: pause the drift and follow it
-    if (Math.abs(track.scrollLeft - auto.pos) > USER_SCROLL_TOLERANCE_PX) {
+    if (Math.abs(track.scrollLeft - Math.floor(auto.pos)) > USER_SCROLL_TOLERANCE_PX) {
       markInteraction();
       auto.pos = track.scrollLeft;
     }
@@ -223,7 +235,7 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       onTouchStart={markInteraction}
       onKeyDown={markInteraction}
       onClickCapture={handleClickCapture}
-      className={`no-scrollbar relative flex gap-6 overflow-x-auto px-7 pb-7 pt-2 ${
+      className={`no-scrollbar relative flex gap-6 overflow-x-auto px-7 pb-7 pt-2 [transform:translate3d(var(--drift,0px),0,0)] will-change-transform ${
         isDragging ? "cursor-grabbing select-none" : "cursor-grab"
       }`}
     >
