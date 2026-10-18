@@ -19,7 +19,8 @@ export const profile = {
     { name: "Italian", code: "it" },
     { name: "English", code: "en" },
   ],
-  siteUrl: "https://jacopomarcolini.com",
+  /** Primary domain in Vercel: the bare domain and .me, .app, .dev redirect here */
+  siteUrl: "https://www.jacopomarcolini.com",
   yearsOfExperience: "7+",
 } as const;
 

@@ -245,7 +245,8 @@ All placeholders from the design file have been removed: every project on the si
 - `/case-studies` shares `public/og-projects.jpg` (the four philosophy tiles, also from `render-brand.sh`).
 - Case study pages share their hero's JPG twin instead (`generateMetadata` in `case-studies/[slug]/page.tsx`), with
   the title "<project> | Jacopo Marcolini".
-- Canonical domain is `jacopomarcolini.com` (`profile.siteUrl`); `.app`, `.dev` and `.me` redirect to it in Vercel.
+- Canonical domain is `www.jacopomarcolini.com` (`profile.siteUrl`), the primary domain in Vercel: the bare
+  `jacopomarcolini.com` and `.app`, `.dev`, `.me` (with or without www) redirect to it. Keep both in sync.
 
 ## SEO and AI agents
 
