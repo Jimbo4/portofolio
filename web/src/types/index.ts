@@ -49,6 +49,8 @@ export interface WorkCover {
 export interface Work {
   slug: string;
   name: string;
+  /** Search result title; defaults to `name` */
+  seoTitle?: string;
   tags: string[];
   /** "YYYY-MM", used to sort works newest first */
   date: string;
@@ -70,6 +72,8 @@ export interface Work {
  */
 export interface CaseStudyFrontmatter {
   name: string;
+  /** Optional, more descriptive title for search results and browser tabs */
+  seoTitle?: string;
   /** Internal note naming the real client or project, for searching the repo. Never rendered. */
   internalRef?: string;
   pillar: PillarId;

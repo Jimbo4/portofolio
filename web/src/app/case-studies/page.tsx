@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { BackLink } from "@/components/features/BackLink";
 import { CaseStudyCard } from "@/components/features/CaseStudyCard";
+import { JsonLd } from "@/components/features/JsonLd";
 import { PillarIcon } from "@/components/features/PillarIcon";
 import { pillars, profile } from "@/lib/config";
-import { getWorksByPillar } from "@/lib/case-studies";
+import { getAllWorks, getWorksByPillar } from "@/lib/case-studies";
+import { projectsNodes } from "@/lib/structuredData";
 
 const description = "Selected work across product design, team leadership, AI enablement and business growth.";
 // A nested openGraph or twitter object replaces the root one, file-based images included, so they are repeated here
@@ -34,6 +36,7 @@ export const metadata: Metadata = {
 export default function CaseStudiesPage() {
   return (
     <div className="mx-auto min-h-screen max-w-[1240px] px-7 pt-[120px]">
+      <JsonLd nodes={projectsNodes(getAllWorks(), description)} />
       <BackLink href="/" label="Back" />
 
       <div className="mb-14 mt-6 flex flex-col items-start gap-[18px]">

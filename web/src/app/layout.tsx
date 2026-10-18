@@ -4,7 +4,7 @@ import { ClickBurstFx } from "@/components/features/ClickBurstFx";
 import { HashScroll } from "@/components/features/HashScroll";
 import { SiteFooter } from "@/components/features/SiteFooter";
 import { SiteNav } from "@/components/features/SiteNav";
-import { profile } from "@/lib/config";
+import { pillars, profile, siteTitle } from "@/lib/config";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -24,25 +24,33 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const title = `${profile.name} — ${profile.roles.join(" & ")}`;
-
 export const metadata: Metadata = {
   metadataBase: new URL(profile.siteUrl),
-  title: { default: title, template: `%s — ${profile.name}` },
+  title: { default: siteTitle, template: `%s — ${profile.name}` },
   description: profile.description,
-  alternates: { canonical: "/" },
+  applicationName: profile.name,
+  authors: [{ name: profile.name, url: profile.siteUrl }],
+  creator: profile.name,
+  publisher: profile.name,
+  keywords: [profile.name, ...profile.roles, ...pillars.map((pillar) => pillar.title), "Portfolio", "Case studies", profile.location.city],
+  category: "portfolio",
+  // Large previews and full snippets. Index and follow are the default, and setting them here would clash with the
+  // noindex Next.js adds to the 404 page
+  robots: { googleBot: { "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+  formatDetection: { email: false, address: false, telephone: false },
+  // Each page sets its own canonical: one here would leak into pages that don't, like the 404
   // The shared images come from opengraph-image.png and twitter-image.png (scripts/render-brand.sh)
   openGraph: {
     type: "website",
     siteName: profile.name,
     locale: "en_US",
-    title,
+    title: siteTitle,
     description: profile.description,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title,
+    title: siteTitle,
     description: profile.description,
   },
   other: {
@@ -55,29 +63,10 @@ export const viewport: Viewport = {
   themeColor: "#f5f2ee",
 };
 
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: profile.name,
-  jobTitle: profile.roles[0],
-  url: profile.siteUrl,
-  email: `mailto:${profile.email}`,
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: profile.location.city,
-    addressCountry: profile.location.country,
-  },
-  sameAs: [profile.linkedin, profile.github],
-};
-
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="overflow-x-hidden bg-paper font-sans text-ink antialiased">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-        />
         <a
           href="#main"
           className="sr-only z-[70] rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"

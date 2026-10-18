@@ -7,7 +7,7 @@ const CONTENT_DIR = path.join(process.cwd(), "content/case-studies");
 const PILLAR_IDS: PillarId[] = ["design", "lead", "ai", "grow"];
 const KPI_ICONS: KpiIcon[] = ["graduation", "growth"];
 
-interface CaseStudyFile {
+export interface CaseStudyFile {
   work: Work;
   /** MDX body without frontmatter */
   body: string;
@@ -30,6 +30,9 @@ function assertFrontmatter(data: Record<string, unknown>, file: string): asserts
   if (data.kpis !== undefined && (!Array.isArray(data.kpis) || data.kpis.length !== 2)) {
     throw new Error(`${file}: "kpis" must list exactly 2 entries`);
   }
+  if (data.seoTitle !== undefined && (typeof data.seoTitle !== "string" || data.seoTitle === "")) {
+    throw new Error(`${file}: "seoTitle" must be a non-empty string`);
+  }
   if (data.kpiIcon !== undefined && !KPI_ICONS.includes(data.kpiIcon as KpiIcon)) {
     throw new Error(`${file}: unknown kpiIcon "${String(data.kpiIcon)}"`);
   }
@@ -42,6 +45,7 @@ function readCaseStudyFile(fileName: string): CaseStudyFile {
   const work: Work = {
     slug: fileName.replace(/\.mdx$/, ""),
     name: data.name,
+    seoTitle: data.seoTitle,
     tags: data.tags,
     date: data.date,
     year: data.date.slice(0, 4),
@@ -65,11 +69,14 @@ function readAllCaseStudyFiles(): CaseStudyFile[] {
     .map(readCaseStudyFile);
 }
 
+/** All case studies with their MDX body, newest first. */
+export function getAllCaseStudies(): CaseStudyFile[] {
+  return readAllCaseStudyFiles().sort((a, b) => b.work.date.localeCompare(a.work.date));
+}
+
 /** All case studies, newest first. */
 export function getAllWorks(): Work[] {
-  return readAllCaseStudyFiles()
-    .map((file) => file.work)
-    .sort((a, b) => b.date.localeCompare(a.date));
+  return getAllCaseStudies().map((file) => file.work);
 }
 
 export function getWorkBySlug(slug: string): Work | undefined {

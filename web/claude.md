@@ -48,7 +48,10 @@ web/
     │   ├── page.tsx                  # Home: hero, philosophy pillars, projects carousel, skills, tools, contact
     │   ├── case-studies/page.tsx     # Works grouped by pillar, anchors #design #lead #ai #grow
     │   ├── case-studies/[slug]/      # Detail page: header, meta, cover, MDX body
-    │   ├── layout.tsx                # Fonts (Fraunces, Inter, JetBrains Mono), nav, footer
+    │   ├── layout.tsx                # Fonts (Fraunces, Inter, JetBrains Mono), nav, footer, site-wide metadata
+    │   ├── robots.ts, sitemap.ts     # Crawling: AI crawlers allowed by name; sitemap with images and videos
+    │   ├── llms.txt/, llms-full.txt/ # Markdown map of the site and full text of every case study, for AI agents
+    │   ├── md/case-studies/[slug]/   # Markdown twin of a case study, served at /case-studies/<slug>.md
     │   ├── **/loading.tsx            # Route skeletons (home, case studies, case study), mirror each page's layout
     │   └── globals.css               # Design tokens + utilities
     ├── components/features/
@@ -59,6 +62,8 @@ web/
     │   └── WorksCarousel.tsx         # Infinite free-scrolling carousel (renders works ×3), drifts when idle, holds on hover
     ├── lib/
     │   ├── case-studies.ts           # Loader: MDX case studies, sorted newest first
+    │   ├── caseStudyMarkdown.ts      # MDX → Markdown for agents, llms.txt, media list for the sitemap
+    │   ├── structuredData.ts         # JSON-LD graph per page (rendered by components/features/JsonLd.tsx)
     │   ├── config.ts                 # Personal data, pillars, tools (the only place for personal data)
     │   ├── shimmer.ts                # Animated next/image placeholder, removed once the image loads
     │   └── pillarTheme.ts            # Theme classes per pillar
@@ -121,6 +126,7 @@ Modeled on glueglue.com/it/works case studies. Each `##` heading in MDX is a sec
 ```yaml
 ---
 name: Paywall Design System
+seoTitle: "Paywall Design System for Mobile Apps"  # optional, search result and tab title; defaults to name
 internalRef: Bending Spoons # internal only, never rendered: the real client or project, for future searches
 pillar: design
 date: "2025-04"
@@ -164,6 +170,9 @@ Markdown `##`, paragraphs, bullet lists, `**bold**` and links are styled automat
 | `<VideoFeature title src poster label captions? captionsLang? captionsLabel?>` | A vertical video next to its story | White panel, text + 9:16 player; stacked below the text until 1024px; `captions` is a WebVTT file of the spoken audio |
 | `<TokenSlider label><Token name language color bars src alt>` | A collection shown one item at a time (NFTs) | Dark panel slider: 840px square image + name, story, three traits; dots, counter, arrows |
 | `<TokenSlider label><Law name module source use src alt>` | Named principles or laws shown one at a time | Same slider; traits are Module, Source and Use it for |
+
+A new block also needs a case in `renderTag` (`src/lib/caseStudyMarkdown.ts`), or its props are dropped from the
+Markdown that AI agents read (its text still comes through). Opening and closing tags must each sit on their own line.
 
 Text inside `Discipline`, `Step`, `Principle` and `VideoFeature` goes on its own indented lines. If no block fits a
 new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStudyComponents`) instead of repeating one.
@@ -237,6 +246,17 @@ All placeholders from the design file have been removed: every project on the si
 - Case study pages share their hero's JPG twin instead (`generateMetadata` in `case-studies/[slug]/page.tsx`), with
   the title "<project> | Jacopo Marcolini".
 - Canonical domain is `jacopomarcolini.com` (`profile.siteUrl`); `.app`, `.dev` and `.me` redirect to it in Vercel.
+
+## SEO and AI agents
+
+- Each page sets its own `alternates.canonical`; the root layout sets none, so it can't leak into other pages.
+- Every page renders `<JsonLd nodes={…}>`: one schema.org `@graph` with WebSite and Person (`#person`, `#website`)
+  plus the page's nodes (ProfilePage, CollectionPage + ItemList, CreativeWork + BreadcrumbList).
+- Agents get Markdown at `/llms.txt`, `/llms-full.txt` (noindex) and `/case-studies/<slug>.md` (canonical `Link`
+  header to the HTML page). A request with `Accept: text/markdown` on `/`, `/case-studies` or a case study gets the
+  Markdown too (header rewrites in `next.config.ts`, no proxy).
+- `internalRef` never reaches any of these outputs.
+- The sitemap has no `lastModified`: content carries no edit date. Check new routes in it after adding them.
 
 ## Conventions
 

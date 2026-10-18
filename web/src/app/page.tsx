@@ -1,12 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowCircle } from "@/components/features/ArrowCircle";
+import { JsonLd } from "@/components/features/JsonLd";
 import { PillarIcon } from "@/components/features/PillarIcon";
 import { SectionTitle } from "@/components/features/SectionTitle";
 import { ToolsMarquee } from "@/components/features/ToolsMarquee";
 import { WorksCarousel } from "@/components/features/WorksCarousel";
-import { pillars, profile, tools } from "@/lib/config";
+import { pillars, profile, seoFootnote, siteTitle, tools } from "@/lib/config";
 import { pillarTheme } from "@/lib/pillarTheme";
 import { getAllWorks } from "@/lib/case-studies";
+import { homeNodes } from "@/lib/structuredData";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const contactLinks = [
   { label: "LinkedIn", href: profile.linkedin },
@@ -19,6 +26,7 @@ const container = "mx-auto max-w-[1240px] px-7";
 export default function HomePage() {
   return (
     <>
+      <JsonLd nodes={homeNodes(siteTitle)} />
       {/* HERO */}
       <section aria-labelledby="hero-headline" className={`hero-glow relative pt-[140px] text-center ${sectionPad}`}>
         <div className={container}>
@@ -152,7 +160,7 @@ export default function HomePage() {
                   key={link.label}
                   href={link.href}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="me noopener noreferrer"
                   className="inline-flex items-center gap-2.5 rounded-full border border-line bg-white px-[22px] py-3.5 text-[15px] font-medium text-ink transition-[transform,background-color] duration-200 hover:-translate-y-px hover:bg-paper-3"
                 >
                   {link.label}
@@ -162,7 +170,18 @@ export default function HomePage() {
                 </a>
               ))}
             </div>
-            <p className="mt-6 text-sm text-muted">Based in {profile.location.label} · Open to travel and relocation</p>
+            <p className="mt-6 text-sm text-muted">Based in {profile.location.label} · {profile.availability}</p>
+            {/* Easter egg: the plain bio search engines want, folded away (still indexed and read by agents) */}
+            <details className="mt-3 flex max-w-[720px] flex-col items-end">
+              <summary className="inline-flex min-h-6 cursor-pointer list-none items-center rounded font-mono text-[11px] tracking-[.06em] text-muted-2 transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+                {seoFootnote.label}
+              </summary>
+              <div className="mt-3 flex flex-col gap-2.5 text-pretty text-left text-[13px] leading-[1.6] text-muted">
+                {seoFootnote.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </details>
           </div>
         </div>
       </section>

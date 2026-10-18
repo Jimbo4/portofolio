@@ -3,9 +3,12 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { BackLink } from "@/components/features/BackLink";
 import { caseStudyComponents } from "@/components/features/CaseStudyMdx";
+import { JsonLd } from "@/components/features/JsonLd";
 import { WorkCover } from "@/components/features/WorkCover";
 import { getAllWorks, getCaseStudyBody, getWorkBySlug } from "@/lib/case-studies";
+import { pillarTitle, shareImagePath } from "@/lib/caseStudyMarkdown";
 import { profile } from "@/lib/config";
+import { caseStudyNodes } from "@/lib/structuredData";
 import type { KpiIcon, Work, WorkKpi } from "@/types";
 
 export function generateStaticParams() {
@@ -17,13 +20,18 @@ export async function generateMetadata(props: PageProps<"/case-studies/[slug]">)
   const work = getWorkBySlug(slug);
   if (!work) return {};
   // JPG twin of the hero written by scripts/render-og.sh: LinkedIn and some chat apps don't show WebP previews
-  const shareImage = { url: work.cover.hero.replace(/\.webp$/, ".jpg"), width: 1200, height: 600, alt: work.cover.alt };
+  const shareImage = { url: shareImagePath(work), width: 1200, height: 600, alt: work.cover.alt };
   // Shared links carry the name too, so they say whose portfolio they come from
   const shareTitle = `${work.name} | ${profile.name}`;
   return {
-    title: work.name,
+    title: work.seoTitle ?? work.name,
     description: work.description,
-    alternates: { canonical: `/case-studies/${work.slug}` },
+    keywords: work.tags,
+    alternates: {
+      canonical: `/case-studies/${work.slug}`,
+      // Plain Markdown twin for AI agents (src/app/md/case-studies/[slug]/route.ts)
+      types: { "text/markdown": `/case-studies/${work.slug}.md` },
+    },
     // Nested openGraph replaces the root one, so siteName and locale are repeated here
     openGraph: {
       type: "article",
@@ -33,6 +41,11 @@ export async function generateMetadata(props: PageProps<"/case-studies/[slug]">)
       title: shareTitle,
       description: work.description,
       images: [shareImage],
+      // The project's date: the case studies carry no separate publishing date
+      publishedTime: work.date,
+      authors: [profile.siteUrl],
+      section: pillarTitle(work.pillar),
+      tags: work.tags,
     },
     twitter: {
       card: "summary_large_image",
@@ -137,6 +150,7 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
 
   return (
     <article className="mx-auto min-h-screen max-w-[1240px] px-7 pb-24 pt-[120px]">
+      <JsonLd nodes={caseStudyNodes(work)} />
       <BackLink href="/case-studies" label="Selected work" />
 
       <div className="mt-[18px] flex flex-wrap items-center gap-2.5">
