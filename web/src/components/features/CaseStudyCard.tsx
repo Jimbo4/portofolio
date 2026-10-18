@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Work } from "@/types";
 import { ArrowCircle } from "./ArrowCircle";
+import { CardPendingOverlay } from "./CardPendingOverlay";
 import { WorkCover } from "./WorkCover";
 
 interface CaseStudyCardProps {
@@ -20,6 +21,8 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
   return (
     <Link
       href={`/case-studies/${work.slug}`}
+      // Case study pages are static: prefetch the whole page, not only the shared route shell, so a click opens it at once
+      prefetch={true}
       draggable={false}
       aria-hidden={isClone || undefined}
       tabIndex={isClone ? -1 : undefined}
@@ -54,6 +57,7 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
             <span className="text-sm font-medium text-white">View Project →</span>
           </div>
         )}
+        <CardPendingOverlay />
       </div>
 
       <div className="flex items-start justify-between gap-3.5 pt-1.5">
