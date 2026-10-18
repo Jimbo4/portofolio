@@ -148,6 +148,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap justify-end gap-3">
               <a
                 href={`mailto:${profile.email}`}
+                translate="no"
                 className="inline-flex items-center gap-2.5 rounded-full bg-ink px-[22px] py-3.5 text-[15px] font-medium text-white shadow-[0_8px_24px_rgba(26,26,24,.18)] transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[0_12px_28px_rgba(26,26,24,.24)]"
               >
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -161,6 +162,7 @@ export default function HomePage() {
                   href={link.href}
                   target="_blank"
                   rel="me noopener noreferrer"
+                  translate="no"
                   className="inline-flex items-center gap-2.5 rounded-full border border-line bg-white px-[22px] py-3.5 text-[15px] font-medium text-ink transition-[transform,background-color] duration-200 hover:-translate-y-px hover:bg-paper-3"
                 >
                   {link.label}

@@ -52,6 +52,7 @@ export function SiteNav() {
       <div className="mx-auto flex h-[68px] max-w-[1240px] items-center justify-between px-7">
         <Link
           href="/"
+          translate="no"
           className="font-serif text-lg font-semibold tracking-[-0.01em] text-ink"
           onClick={() => setIsMenuOpen(false)}
         >

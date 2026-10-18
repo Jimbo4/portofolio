@@ -33,7 +33,11 @@ export function Token({ name, language, color, bars, src, alt, children }: Token
     { label: "Color", value: color },
     { label: "Bars", value: bars },
   ];
-  return <Slide name={name} src={src} alt={alt} traits={traits}>{children}</Slide>;
+  return (
+    <Slide name={name} isProperName src={src} alt={alt} traits={traits}>
+      {children}
+    </Slide>
+  );
 }
 
 interface LawProps {
@@ -61,13 +65,15 @@ export function Law({ name, module, source, use, src, alt, children }: LawProps)
 
 interface SlideProps {
   name: string;
+  /** Token names are titles, kept as they are by browser translation; law names are plain words and translate */
+  isProperName?: boolean;
   src: string;
   alt: string;
   traits: { label: string; value: string }[];
   children: React.ReactNode;
 }
 
-function Slide({ name, src, alt, traits, children }: SlideProps) {
+function Slide({ name, isProperName = false, src, alt, traits, children }: SlideProps) {
   return (
     <div className="grid h-full items-center gap-7 p-6 md:grid-cols-[minmax(0,400px)_1fr] md:gap-14 md:p-10">
       <Image
@@ -80,7 +86,12 @@ function Slide({ name, src, alt, traits, children }: SlideProps) {
         className="h-auto w-full rounded-xl ring-1 ring-white/10"
       />
       <div>
-        <h3 className="font-serif text-[34px] font-semibold leading-[1.1] tracking-[-0.02em] md:text-[44px]">{name}</h3>
+        <h3
+          translate={isProperName ? "no" : undefined}
+          className="font-serif text-[34px] font-semibold leading-[1.1] tracking-[-0.02em] md:text-[44px]"
+        >
+          {name}
+        </h3>
         <div className={`mt-4 max-w-[460px] text-[15px] leading-[1.65] text-white/70 ${inheritParagraphs}`}>{children}</div>
         <dl className="mt-8 grid max-w-[460px] grid-cols-3 gap-4 border-t border-white/15 pt-5 font-mono">
           {traits.map((trait) => (

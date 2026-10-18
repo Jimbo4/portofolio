@@ -17,7 +17,8 @@ export async function SiteFooter() {
   const year = await getCopyrightYear();
   return (
     <footer className="mt-20 flex flex-col items-center gap-3 border-t border-line-soft py-12 text-[13px] text-muted">
-      <ul aria-label="Contacts" className="flex flex-wrap justify-center gap-x-6 gap-y-1 p-0">
+      {/* Names, handles and addresses stay as they are when the browser translates the page */}
+      <ul aria-label="Contacts" translate="no" className="flex flex-wrap justify-center gap-x-6 gap-y-1 p-0">
         {footerLinks.map((link) => (
           <li key={link.label} className="list-none">
             <a
@@ -30,7 +31,9 @@ export async function SiteFooter() {
           </li>
         ))}
       </ul>
-      <span>© {year} {profile.name}</span>
+      <span>
+        © {year} <span translate="no">{profile.name}</span>
+      </span>
     </footer>
   );
 }

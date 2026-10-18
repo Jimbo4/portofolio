@@ -31,7 +31,7 @@ function ToolTile({ tool, isClone }: { tool: Tool; isClone: boolean }) {
 export function ToolsMarquee({ tools }: { tools: Tool[] }) {
   return (
     <div className="marquee-fade mt-10 overflow-hidden">
-      <ul aria-label="Tools and software" className="flex w-max animate-marquee gap-3.5 py-4 hover:[animation-play-state:paused] motion-reduce:animate-none">
+      <ul aria-label="Tools and software" translate="no" className="flex w-max animate-marquee gap-3.5 py-4 hover:[animation-play-state:paused] motion-reduce:animate-none">
         {[false, true].map((isClone) =>
           tools.map((tool) => <ToolTile key={`${isClone}-${tool.name}`} tool={tool} isClone={isClone} />),
         )}

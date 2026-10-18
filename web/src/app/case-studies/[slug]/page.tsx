@@ -166,7 +166,8 @@ export default async function CaseStudyPage(props: PageProps<"/case-studies/[slu
           {work.year}
         </span>
       </div>
-      <h1 className="mt-3.5 font-serif text-[clamp(48px,7vw,96px)] font-extrabold italic leading-none tracking-[-0.03em]">
+      {/* Project names are proper names: browser translation leaves them alone */}
+      <h1 translate="no" className="mt-3.5 font-serif text-[clamp(48px,7vw,96px)] font-extrabold italic leading-none tracking-[-0.03em]">
         {work.name}
       </h1>
       <p className="mt-[18px] max-w-[680px] text-lg leading-[1.55] text-muted">{work.description}</p>

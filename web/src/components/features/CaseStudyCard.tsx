@@ -67,7 +67,9 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
 
       <div className="flex items-start justify-between gap-3.5 pt-1.5">
         <div>
-          <h3 className="m-0 font-serif text-[22px] font-bold tracking-[-0.01em]">{work.name}</h3>
+          <h3 translate="no" className="m-0 font-serif text-[22px] font-bold tracking-[-0.01em]">
+            {work.name}
+          </h3>
           <p className="mt-1 max-w-[340px] text-[13.5px] leading-[1.45] text-muted">{work.blurb}</p>
         </div>
         {isSlide && <ArrowCircle />}
