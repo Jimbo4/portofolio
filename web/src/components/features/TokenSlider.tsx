@@ -5,8 +5,9 @@ import Image from "next/image";
 import { shimmerPlaceholder } from "@/lib/shimmer";
 
 /*
- * Slider of collectibles for case study MDX: one large item per slide, on a dark panel, with dots, a counter and
- * previous/next buttons. Every prop is a plain string because MDX runs with JavaScript expressions blocked.
+ * Slider for case study MDX, of collectibles (Token) or principles (Law): one large item per slide, on a dark panel,
+ * with dots, a counter and previous/next buttons. Every prop is a plain string because MDX runs with JavaScript
+ * expressions blocked.
  */
 
 /** Plain-text child paragraphs inherit the slide's own type style instead of the body text style. */
@@ -32,6 +33,41 @@ export function Token({ name, language, color, bars, src, alt, children }: Token
     { label: "Color", value: color },
     { label: "Bars", value: bars },
   ];
+  return <Slide name={name} src={src} alt={alt} traits={traits}>{children}</Slide>;
+}
+
+interface LawProps {
+  name: string;
+  /** Course module the principle belongs to */
+  module: string;
+  /** Author and year, e.g. "Köhler, 1929" */
+  source: string;
+  /** Where it applies in reports and dashboards */
+  use: string;
+  src: string;
+  alt: string;
+  children: React.ReactNode;
+}
+
+/** One slide: a named principle or law, with the module that teaches it, its source and where it applies. */
+export function Law({ name, module, source, use, src, alt, children }: LawProps) {
+  const traits = [
+    { label: "Module", value: module },
+    { label: "Source", value: source },
+    { label: "Use it for", value: use },
+  ];
+  return <Slide name={name} src={src} alt={alt} traits={traits}>{children}</Slide>;
+}
+
+interface SlideProps {
+  name: string;
+  src: string;
+  alt: string;
+  traits: { label: string; value: string }[];
+  children: React.ReactNode;
+}
+
+function Slide({ name, src, alt, traits, children }: SlideProps) {
   return (
     <div className="grid h-full items-center gap-7 p-6 md:grid-cols-[minmax(0,400px)_1fr] md:gap-14 md:p-10">
       <Image
@@ -64,16 +100,27 @@ const twoDigits = (n: number) => String(n).padStart(2, "0");
 export function TokenSlider({ label, children }: { label: string; children: React.ReactNode }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  // Slide a smooth scroll is heading to, so quick repeated clicks step from there instead of from mid-animation
-  const targetRef = useRef<number | null>(null);
+  /*
+   * Slide a smooth scroll is heading to, so quick repeated clicks step from there instead of from mid-animation.
+   * It is cleared once the track arrives, after a timeout, or when the user scrolls by hand: relying on `scrollend`
+   * alone left it stale (no event when the scroll is a no-op or the browser lacks it), and the arrows then stepped
+   * from the wrong slide.
+   */
+  const pendingRef = useRef<{ index: number; timer: number } | null>(null);
   const slides = Children.toArray(children).filter(isValidElement);
   const count = slides.length;
+
+  const clearPending = () => {
+    if (pendingRef.current) window.clearTimeout(pendingRef.current.timer);
+    pendingRef.current = null;
+  };
 
   const goTo = (index: number) => {
     const track = trackRef.current;
     if (!track) return;
     const target = (index + count) % count;
-    targetRef.current = target;
+    clearPending();
+    pendingRef.current = { index: target, timer: window.setTimeout(clearPending, 900) };
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     track.scrollTo({ left: target * track.clientWidth, behavior: reduceMotion ? "auto" : "smooth" });
   };
@@ -82,12 +129,19 @@ export function TokenSlider({ label, children }: { label: string; children: Reac
     const track = trackRef.current;
     if (!track || !track.clientWidth) return;
     setActive(Math.round(track.scrollLeft / track.clientWidth));
+    const pending = pendingRef.current;
+    if (pending && Math.abs(track.scrollLeft - pending.index * track.clientWidth) < 2) clearPending();
   };
 
-  const step = (delta: number) => goTo((targetRef.current ?? active) + delta);
+  const step = (delta: number) => {
+    const track = trackRef.current;
+    if (!track || !track.clientWidth) return;
+    // Step from the slide a scroll is heading to, or else from where the track actually is
+    goTo((pendingRef.current?.index ?? Math.round(track.scrollLeft / track.clientWidth)) + delta);
+  };
 
   const slideName = (index: number) => {
-    const props = slides[index]?.props as Partial<TokenProps> | undefined;
+    const props = slides[index]?.props as { name?: string } | undefined;
     return props?.name ?? `slide ${index + 1}`;
   };
 
@@ -99,7 +153,8 @@ export function TokenSlider({ label, children }: { label: string; children: Reac
       <div
         ref={trackRef}
         onScroll={syncActive}
-        onScrollEnd={() => (targetRef.current = null)}
+        onPointerDown={clearPending}
+        onWheel={clearPending}
         className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {slides.map((slide, i) => (

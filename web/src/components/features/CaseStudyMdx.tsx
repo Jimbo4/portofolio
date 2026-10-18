@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { MDXComponents } from "mdx/types";
 import { shimmerPlaceholder } from "@/lib/shimmer";
-import { Token, TokenSlider } from "./TokenSlider";
+import { Law, Token, TokenSlider } from "./TokenSlider";
 
 /*
  * Building blocks available inside content/case-studies/*.mdx.
@@ -175,4 +175,5 @@ export const caseStudyComponents: MDXComponents = {
   VideoFeature,
   TokenSlider,
   Token,
+  Law,
 };

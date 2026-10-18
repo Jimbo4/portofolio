@@ -1,0 +1,689 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@500;600&display=block" rel="stylesheet">
+<style>
+  /*
+   * Design Journey identity: near-black forest green, a vibrant neon green (the course's sage turned up), a coral for
+   * the sharp Takete, an electric blue for the soft Maluma and cream paper. Archivo (wide and heavy for titles), IBM
+   * Plex Mono for labels. The symbol is Takete & Maluma in 3D.
+   */
+  :root {
+    --forest: #07140d; --forest-2: #0e2617; --forest-3: #12321f;
+    --neon: #3dff74; --neon-ink: #0b9e45;
+    --coral: #ff5b3a; --blue: #2f6bff; --blue-deep: #1d3fc4;
+    --cream: #f2efe6; --paper: #f7f5ef; --ink: #07140d; --muted: #56645b; --rule: #d9ddd2;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; font-family: "Archivo", sans-serif; }
+  .view { display: none; position: relative; overflow: hidden; }
+  .view.on { display: block; }
+  .abs { position: absolute; }
+  .forest { background: radial-gradient(120% 120% at 70% 45%, var(--forest-2), var(--forest) 55%, #0d1a13); color: var(--cream); }
+  .paperbg { background: var(--paper); color: var(--ink); }
+  .title { font-weight: 800; font-stretch: 118%; letter-spacing: -.035em; line-height: .9; }
+  .mono { font-family: "IBM Plex Mono", monospace; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .dots { position: absolute; inset: 0; background-image: radial-gradient(rgba(61,255,116,.11) 2px, transparent 2.5px); background-size: 48px 48px; }
+  .glow { position: absolute; border-radius: 50%; filter: blur(110px); }
+
+  /* principle illustrations: 840x840, a colored field with flat cream shapes */
+  .law { width: 840px; height: 840px; }
+  .law svg { display: block; }
+
+  /* rebuilt course slides, 1280x720 */
+  .slide { width: 1280px; height: 720px; background: var(--paper); color: var(--ink); }
+  .slide .tag { position: absolute; left: 80px; top: 64px; font-size: 18px; color: var(--neon-ink); }
+  .slide h2 { position: absolute; left: 80px; top: 104px; font-size: 54px; font-weight: 800; font-stretch: 112%; letter-spacing: -.025em; line-height: 1.02; }
+  .slide .foot { position: absolute; left: 80px; bottom: 48px; font-size: 15px; color: var(--muted); }
+  .slide .mark { position: absolute; right: 64px; bottom: 40px; }
+  .pill { display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 99px; background: #fff; border: 2px solid var(--rule); font-size: 24px; font-weight: 600; }
+
+  /* report pages for the before/after */
+  .page { position: absolute; background: #fff; border-radius: 14px; box-shadow: 0 30px 70px rgba(0,0,0,.35); overflow: hidden; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- Takete and Maluma as flat marks, after Köhler's drawings -->
+    <symbol id="takete" viewBox="-100 -100 200 200">
+      <path d="M62-96 L18-34 L-30-62 L-24-18 L-96-28 L-40 14 L-82 70 L-18 40 L-10 100 L14 44 L66 74 L42 18 L94 8 L34-12 Z"/>
+    </symbol>
+    <symbol id="maluma" viewBox="-100 -100 200 200">
+      <path id="maluma-path"/>
+    </symbol>
+    <symbol id="dj-mark" viewBox="0 0 120 60">
+      <use href="#takete" x="0" y="2" width="56" height="56" fill="#ff5b3a"/>
+      <use href="#maluma" x="62" y="2" width="56" height="56" fill="#2f6bff"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============ HERO 2400x1200 ============ -->
+<section class="view forest" id="hero" style="width:2400px;height:1200px">
+  <div class="dots"></div>
+  <div class="glow" style="left:1380px;top:220px;width:620px;height:620px;background:var(--coral);opacity:.22"></div>
+  <div class="glow" style="left:1800px;top:420px;width:680px;height:680px;background:var(--blue);opacity:.2"></div>
+  <canvas class="three abs" data-layout="hero" width="2400" height="1200" style="left:0;top:0;width:2400px;height:1200px"></canvas>
+  <div class="abs title" style="left:150px;top:330px;font-size:268px">Design<br><span style="color:var(--neon)">Journey</span></div>
+</section>
+
+<!-- ============ CARD 1200x1500 ============ -->
+<section class="view forest" id="card" style="width:1200px;height:1500px">
+  <div class="dots"></div>
+  <div class="glow" style="left:560px;top:620px;width:520px;height:520px;background:var(--coral);opacity:.24"></div>
+  <div class="glow" style="left:80px;top:900px;width:620px;height:620px;background:var(--blue);opacity:.2"></div>
+  <canvas class="three abs" data-layout="card" width="1200" height="1500" style="left:0;top:0;width:1200px;height:1500px"></canvas>
+  <div class="abs title" style="left:96px;top:120px;font-size:178px">Design<br><span style="color:var(--neon)">Journey</span></div>
+</section>
+
+<!-- ============ PRINCIPLES 840x840 ============ -->
+
+<!-- Takete & Maluma: the 3D symbol itself -->
+<section class="view forest law" id="law-takete-maluma">
+  <div class="dots"></div>
+  <div class="glow" style="left:120px;top:220px;width:340px;height:340px;background:var(--coral);opacity:.28"></div>
+  <div class="glow" style="left:400px;top:300px;width:380px;height:380px;background:var(--blue);opacity:.24"></div>
+  <canvas class="three abs" data-layout="law" width="840" height="840" style="left:0;top:0;width:840px;height:840px"></canvas>
+</section>
+
+<!-- Affordance: a button that looks pressable next to a flat shape -->
+<section class="view law" id="law-affordance" style="background:var(--blue)">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <rect x="130" y="250" width="270" height="270" rx="135" fill="none" stroke="#f2efe6" stroke-width="6" stroke-dasharray="4 18" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="582" cy="420" rx="150" ry="150" fill="#102a7a" opacity=".6" transform="translate(0 26)"/>
+    <circle cx="570" cy="400" r="140" fill="#f2efe6"/>
+    <circle cx="570" cy="400" r="104" fill="#ff5b3a"/>
+    <path d="M520 360 a70 70 0 0 1 70 -40" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".55"/>
+    <path d="M610 470 l0 150 l36 -34 l26 58 l26 -12 l-26 -56 l48 -4 z" fill="#f2efe6" stroke="#07140d" stroke-width="8" stroke-linejoin="round"/>
+  </svg>
+</section>
+
+<!-- Framing: the same level of water, framed as a gain or a loss -->
+<section class="view law" id="law-framing" style="background:var(--neon)">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <g stroke="#07140d" stroke-width="10" stroke-linejoin="round" fill="none">
+      <path d="M170 250 L200 640 Q205 670 235 670 L345 670 Q375 670 380 640 L410 250"/>
+      <path d="M430 250 L460 640 Q465 670 495 670 L605 670 Q635 670 640 640 L670 250" transform="translate(30 0)"/>
+    </g>
+    <path d="M185 440 L395 440 L380 640 Q375 662 345 662 L235 662 Q205 662 200 640 Z" fill="#f2efe6"/>
+    <path d="M475 440 L685 440 L670 640 Q665 662 635 662 L525 662 Q495 662 490 640 Z" fill="#f2efe6"/>
+    <path d="M290 210 L290 110 M250 150 L290 106 L330 150" stroke="#07140d" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M580 110 L580 210 M540 170 L580 214 L620 170" stroke="#ff5b3a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</section>
+
+<!-- EAST: easy, attractive, social, timely -->
+<section class="view law" id="law-east" style="background:var(--coral)">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <circle cx="270" cy="270" r="110" fill="#f2efe6"/>
+    <use href="#takete" x="460" y="150" width="240" height="240" fill="#f2efe6"/>
+    <g fill="#f2efe6">
+      <circle cx="210" cy="530" r="34"/><circle cx="290" cy="530" r="34"/><circle cx="250" cy="600" r="34"/>
+      <circle cx="170" cy="610" r="34" opacity=".55"/><circle cx="330" cy="610" r="34" opacity=".55"/>
+    </g>
+    <circle cx="580" cy="570" r="112" fill="none" stroke="#f2efe6" stroke-width="18"/>
+    <path d="M580 490 L580 570 L640 610" stroke="#f2efe6" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</section>
+
+<!-- Readability: dense text against short, spaced lines -->
+<section class="view law" id="law-readability" style="background:var(--paper)">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <rect x="110" y="170" width="290" height="500" rx="24" fill="#07140d" opacity=".12"/>
+    <g fill="#07140d" opacity=".55">
+      <rect x="140" y="205" width="230" height="10" rx="5"/><rect x="140" y="225" width="220" height="10" rx="5"/><rect x="140" y="245" width="232" height="10" rx="5"/>
+      <rect x="140" y="265" width="210" height="10" rx="5"/><rect x="140" y="285" width="230" height="10" rx="5"/><rect x="140" y="305" width="226" height="10" rx="5"/>
+      <rect x="140" y="325" width="232" height="10" rx="5"/><rect x="140" y="345" width="200" height="10" rx="5"/><rect x="140" y="365" width="230" height="10" rx="5"/>
+      <rect x="140" y="385" width="228" height="10" rx="5"/><rect x="140" y="405" width="232" height="10" rx="5"/><rect x="140" y="425" width="216" height="10" rx="5"/>
+      <rect x="140" y="445" width="230" height="10" rx="5"/><rect x="140" y="465" width="224" height="10" rx="5"/><rect x="140" y="485" width="232" height="10" rx="5"/>
+      <rect x="140" y="505" width="190" height="10" rx="5"/><rect x="140" y="525" width="230" height="10" rx="5"/><rect x="140" y="545" width="228" height="10" rx="5"/>
+      <rect x="140" y="565" width="232" height="10" rx="5"/><rect x="140" y="585" width="210" height="10" rx="5"/><rect x="140" y="605" width="230" height="10" rx="5"/>
+      <rect x="140" y="625" width="160" height="10" rx="5"/>
+    </g>
+    <rect x="440" y="170" width="290" height="500" rx="24" fill="#fff" stroke="#d9ddd2" stroke-width="3"/>
+    <rect x="474" y="212" width="190" height="34" rx="10" fill="#07140d"/>
+    <g fill="#07140d" opacity=".7">
+      <rect x="474" y="296" width="200" height="14" rx="7"/><rect x="474" y="326" width="160" height="14" rx="7"/>
+      <rect x="474" y="402" width="210" height="14" rx="7"/><rect x="474" y="432" width="120" height="14" rx="7"/>
+      <rect x="474" y="508" width="190" height="14" rx="7"/><rect x="474" y="538" width="150" height="14" rx="7"/>
+    </g>
+    <rect x="474" y="600" width="110" height="34" rx="17" fill="#ff5b3a"/>
+  </svg>
+</section>
+
+<!-- Gestalt, proximity: the same dots, read as three groups -->
+<section class="view law" id="law-proximity" style="background:var(--blue)">
+  <svg width="840" height="840" viewBox="0 0 840 840" id="proximity-svg"></svg>
+</section>
+
+<!-- Miller's law: a long row broken into chunks of up to five -->
+<section class="view law" id="law-miller" style="background:var(--blue)">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <g fill="#f2efe6" opacity=".45" id="miller-row"></g>
+    <g id="miller-chunks"></g>
+  </svg>
+</section>
+
+<!-- Simultaneous contrast: two identical grey squares on a gradient -->
+<section class="view law" id="law-contrast">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <defs>
+      <linearGradient id="contrast-g" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#07140d"/><stop offset="1" stop-color="#f2efe6"/>
+      </linearGradient>
+    </defs>
+    <rect width="840" height="840" fill="url(#contrast-g)"/>
+    <!-- the two squares and the bar share one fill: only the background changes -->
+    <g fill="#808080">
+      <rect x="130" y="330" width="180" height="180" rx="18"/>
+      <rect x="530" y="330" width="180" height="180" rx="18"/>
+      <rect x="130" y="600" width="580" height="14" rx="7"/>
+    </g>
+  </svg>
+</section>
+
+<!-- Visual variables: position, size, shape, value, color, orientation, texture -->
+<section class="view law" id="law-variables" style="background:var(--neon)">
+  <svg width="840" height="840" viewBox="0 0 840 840" id="variables-svg"></svg>
+</section>
+
+<!-- Pre-attentive processing: one bar pops out among many -->
+<section class="view law" id="law-preattentive" style="background:var(--forest-3)">
+  <svg width="840" height="840" viewBox="0 0 840 840" id="preattentive-svg"></svg>
+</section>
+
+<!-- Lie factor: the same data with a cut and a full axis -->
+<section class="view law" id="law-lie-factor" style="background:var(--coral)">
+  <svg width="840" height="840" viewBox="0 0 840 840">
+    <rect x="90" y="190" width="300" height="460" rx="24" fill="#f2efe6"/>
+    <rect x="450" y="190" width="300" height="460" rx="24" fill="#f2efe6"/>
+    <!-- cut axis: small differences look huge -->
+    <path d="M130 230 L130 600 L360 600" stroke="#07140d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M118 560 l24 -10 M118 574 l24 -10" stroke="#07140d" stroke-width="5"/>
+    <rect x="160" y="520" width="44" height="80" fill="#07140d" opacity=".35"/>
+    <rect x="225" y="430" width="44" height="170" fill="#07140d" opacity=".35"/>
+    <rect x="290" y="250" width="44" height="350" fill="#ff5b3a"/>
+    <!-- full axis: the honest picture -->
+    <path d="M490 230 L490 600 L720 600" stroke="#07140d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="520" y="380" width="44" height="220" fill="#07140d" opacity=".35"/>
+    <rect x="585" y="368" width="44" height="232" fill="#07140d" opacity=".35"/>
+    <rect x="650" y="350" width="44" height="250" fill="#0b9e45"/>
+    <circle cx="240" cy="720" r="26" fill="#07140d"/><path d="M228 708 l24 24 M252 708 l-24 24" stroke="#ff5b3a" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="600" cy="720" r="26" fill="#07140d"/><path d="M587 721 l9 10 l18 -20" stroke="#3dff74" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</section>
+
+<!-- ============ JOURNEY 1920x960 ============ -->
+<!-- The five stages on one line that starts jagged and ends smooth -->
+<section class="view forest" id="journey" style="width:1920px;height:960px">
+  <div class="dots"></div>
+  <svg class="abs" width="1920" height="960" style="left:0;top:0" id="journey-svg"></svg>
+  <div class="abs title" style="left:110px;top:96px;font-size:72px">Design <span style="color:var(--neon)">Journey</span></div>
+  <div id="journey-labels"></div>
+</section>
+
+<!-- ============ PLAYGROUND SLIDES 1280x720 ============ -->
+
+<!-- Simultaneous contrast in a heatmap -->
+<section class="view slide" id="slide-heatmap">
+  <div class="tag mono">Playground · Aesthetic design</div>
+  <h2>Which value<br>is higher?</h2>
+  <div class="abs" style="left:80px;top:290px;width:440px;font-size:24px;line-height:1.45;color:var(--muted)">This heatmap shows a monthly value for eight branches. Compare the two outlined cells.</div>
+  <div class="abs" style="left:80px;top:470px;display:flex;flex-direction:column;gap:14px">
+    <div class="pill"><span style="color:var(--coral)">●</span> Branch B, March</div>
+    <div class="pill"><span style="color:var(--blue)">●</span> Branch G, October</div>
+  </div>
+  <svg class="abs" width="620" height="560" style="left:600px;top:80px" id="heatmap-svg"></svg>
+  <svg class="mark" width="72" height="36"><use href="#dj-mark" width="72" height="36"/></svg>
+</section>
+
+<!-- False memory word list -->
+<section class="view slide" id="slide-memory">
+  <div class="tag mono">Playground · Cognitive ergonomics</div>
+  <h2>Read this list<br>of words.</h2>
+  <div class="abs" style="left:80px;top:290px;width:420px;font-size:24px;line-height:1.45;color:var(--muted)">Take twenty seconds. Then close your eyes: was the word <i>taste</i> there? And <i>sweet</i>?</div>
+  <div class="abs" id="memory-words" style="left:600px;top:96px;width:600px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px"></div>
+  <div class="foot">Source: Roediger &amp; McDermott (1995), Creating false memories</div>
+  <svg class="mark" width="72" height="36"><use href="#dj-mark" width="72" height="36"/></svg>
+</section>
+
+<!-- Framing effect -->
+<section class="view slide" id="slide-framing">
+  <div class="tag mono">Playground · Cognition and language</div>
+  <h2>Which one<br>would you pick?</h2>
+  <div class="abs" style="left:80px;top:290px;width:440px;font-size:24px;line-height:1.45;color:var(--muted)">A rare disease is expected to affect 600 people. Two programs are proposed.</div>
+  <div class="abs" style="left:600px;top:96px;width:600px;display:flex;flex-direction:column;gap:22px">
+    <div style="background:#fff;border:2px solid var(--rule);border-radius:24px;padding:30px 34px">
+      <div class="mono" style="font-size:16px;color:var(--neon-ink)">Program A</div>
+      <div style="margin-top:10px;font-size:30px;font-weight:700;line-height:1.25">200 people will be saved.</div>
+    </div>
+    <div style="background:#fff;border:2px solid var(--rule);border-radius:24px;padding:30px 34px">
+      <div class="mono" style="font-size:16px;color:var(--neon-ink)">Program B</div>
+      <div style="margin-top:10px;font-size:30px;font-weight:700;line-height:1.25">A one-in-three chance that all 600 will be saved, two-in-three that no one will.</div>
+    </div>
+    <div style="display:flex;gap:14px;align-items:center;font-size:22px;color:var(--muted)"><span style="width:44px;height:44px;border-radius:50%;background:var(--coral);display:grid;place-items:center;color:#fff;font-weight:800">?</span>Now read it again, counting the people who will die.</div>
+  </div>
+  <div class="foot">Source: Tversky &amp; Kahneman (1981), The framing of decisions and the psychology of choice</div>
+  <svg class="mark" width="72" height="36"><use href="#dj-mark" width="72" height="36"/></svg>
+</section>
+
+<!-- ============ BEFORE / AFTER 1920x1080 ============ -->
+<!-- A fictional sector report page, before and after the restyle. Every number is invented. -->
+<section class="view forest" id="restyle" style="width:1920px;height:1080px">
+  <div class="dots"></div>
+  <div class="abs mono" style="left:110px;top:70px;font-size:20px;color:var(--neon)">Before</div>
+  <div class="abs mono" style="left:1010px;top:70px;font-size:20px;color:var(--neon)">After</div>
+
+  <!-- BEFORE: dense table, exploded pie in rainbow colors, no message -->
+  <div class="page" style="left:110px;top:120px;width:800px;height:880px;font-family:Arial, sans-serif;color:#222">
+    <div style="background:#5a6a8a;color:#fff;padding:18px 26px;font-size:22px;font-weight:700">SECTOR ANALYSIS – Q3 – CREDIT PORTFOLIO MONITORING – DETAIL BY SECTOR AND RATING CLASS</div>
+    <div style="padding:16px 26px 0;font-size:12.5px;line-height:1.35;color:#444">Values in € millions where not otherwise specified. Data refers to the end of the quarter and includes all the positions of the perimeter, gross of adjustments. The default rate is computed on a 12 month window. See notes at the bottom of the page for definitions.</div>
+    <table id="before-table" style="margin:14px 26px 0;border-collapse:collapse;font-size:12.5px;width:748px"></table>
+    <div style="display:flex;gap:18px;padding:18px 26px 0;align-items:center">
+      <svg width="330" height="250" viewBox="0 0 330 250" id="before-pie"></svg>
+      <div id="before-legend" style="font-size:12px;line-height:1.7;color:#333"></div>
+    </div>
+    <div style="padding:6px 26px;font-size:10.5px;color:#777;line-height:1.35">Notes: (1) Default rate on a 12 month window. (2) Coverage ratio net of collateral. (3) Exposure includes off-balance items. (4) Sector classification as per internal taxonomy. (5) Rating classes 1–10.</div>
+  </div>
+
+  <!-- AFTER: one message, one chart, three numbers and an explicit suggestion -->
+  <div class="page" style="left:1010px;top:120px;width:800px;height:880px;background:var(--paper);color:var(--ink);font-family:'Archivo',sans-serif">
+    <div style="padding:44px 50px 0">
+      <div class="mono" style="font-size:14px;color:var(--neon-ink)">Logistics · Q3</div>
+      <div style="margin-top:12px;font-size:40px;font-weight:800;font-stretch:108%;letter-spacing:-.02em;line-height:1.08">Risk in logistics is falling for the third quarter in a row.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:30px 50px 0">
+      <div style="background:#fff;border-radius:16px;padding:18px 20px"><div style="font-size:15px;color:var(--muted)">Default rate</div><div style="font-size:40px;font-weight:800;margin-top:4px">1.8%</div><div style="font-size:15px;color:var(--neon-ink);font-weight:700">▼ 0.4 pts</div></div>
+      <div style="background:#fff;border-radius:16px;padding:18px 20px"><div style="font-size:15px;color:var(--muted)">Exposure</div><div style="font-size:40px;font-weight:800;margin-top:4px">€412M</div><div style="font-size:15px;color:var(--muted);font-weight:700">▲ 3%</div></div>
+      <div style="background:#fff;border-radius:16px;padding:18px 20px"><div style="font-size:15px;color:var(--muted)">Coverage</div><div style="font-size:40px;font-weight:800;margin-top:4px">54%</div><div style="font-size:15px;color:var(--muted);font-weight:700">stable</div></div>
+    </div>
+    <svg width="800" height="380" viewBox="0 0 800 380" id="after-chart" style="display:block;margin-top:14px"></svg>
+    <div style="margin:0 50px;background:var(--forest);color:var(--cream);border-radius:18px;padding:22px 26px;display:flex;gap:18px;align-items:center">
+      <svg width="44" height="44" viewBox="-100 -100 200 200" style="flex:none"><use href="#maluma" x="-100" y="-100" width="200" height="200" fill="#2f6bff"/></svg>
+      <div style="font-size:21px;line-height:1.35"><b>Suggestion:</b> room to expand lending to the sector, starting from rating classes 1 to 4.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Show the view named in ?v=
+  const view = new URLSearchParams(location.search).get("v") || "hero";
+
+  /*
+   * Maluma's outline as a radius per angle: a round core with seven soft fingers of uneven length (capsules with
+   * round tips), traced by marching along each ray, then smoothed so the valleys between fingers are soft too.
+   * Returns `steps` radii, normalized so the longest finger reaches 1. Shared by the flat mark and the 3D model.
+   */
+  window.malumaRadii = (steps = 720) => {
+    const fingers = [[72, 0.98, 0.2], [122, 0.84, 0.19], [172, 0.92, 0.2], [222, 0.8, 0.18], [268, 0.96, 0.2], [318, 0.82, 0.19], [16, 0.9, 0.2]]
+      .map(([deg, len, w]) => ({ x: Math.cos((deg * Math.PI) / 180) * len, y: Math.sin((deg * Math.PI) / 180) * len, w }));
+    const core = 0.44;
+    const inside = (x, y) => {
+      if (x * x + y * y <= core * core) return true;
+      return fingers.some((f) => {
+        const t = Math.max(0, Math.min(1, (x * f.x + y * f.y) / (f.x * f.x + f.y * f.y)));
+        return (x - f.x * t) ** 2 + (y - f.y * t) ** 2 <= f.w * f.w;
+      });
+    };
+    const raw = [];
+    for (let k = 0; k < steps; k++) {
+      const a = (k / steps) * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
+      let r = core;
+      while (r < 1.4 && inside(c * (r + 0.004), s * (r + 0.004))) r += 0.004;
+      raw.push(r);
+    }
+    const sigma = steps / 140, out = [];
+    for (let k = 0; k < steps; k++) {
+      let sum = 0, wsum = 0;
+      for (let j = -3 * sigma; j <= 3 * sigma; j++) {
+        const w = Math.exp(-(j * j) / (2 * sigma * sigma));
+        sum += w * raw[(k + Math.round(j) + steps) % steps];
+        wsum += w;
+      }
+      out.push(sum / wsum);
+    }
+    const max = Math.max(...out);
+    return out.map((r) => r / max);
+  };
+  {
+    const radii = window.malumaRadii(360);
+    document.getElementById("maluma-path").setAttribute("d", radii.map((r, k) => {
+      const a = (k / radii.length) * Math.PI * 2;
+      return `${k ? "L" : "M"}${(Math.cos(a) * r * 96).toFixed(1)} ${(-Math.sin(a) * r * 96).toFixed(1)}`;
+    }).join(" ") + " Z");
+  }
+  document.getElementById(view)?.classList.add("on");
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent?.appendChild(node);
+    return node;
+  };
+
+  // Proximity: three groups of 3x4 dots
+  {
+    const svg = document.getElementById("proximity-svg");
+    [[120, 250], [345, 250], [570, 250]].forEach(([gx, gy], g) => {
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++)
+        el("circle", { cx: gx + 30 + c * 60, cy: gy + 30 + r * 100, r: 22, fill: g === 1 ? "#3dff74" : "#f2efe6" }, svg);
+    });
+  }
+
+  // Miller: twenty faint squares in a row, then the same squares chunked in groups
+  {
+    const row = document.getElementById("miller-row");
+    for (let i = 0; i < 20; i++) el("rect", { x: 125 + i * 30, y: 236, width: 22, height: 22, rx: 5 }, row);
+    const chunks = document.getElementById("miller-chunks");
+    let x = 58;
+    for (let g = 0; g < 4; g++) {
+      const w = 5 * 30 - 8;
+      el("rect", { x: x - 16, y: 420, width: w + 32, height: 130, rx: 30, fill: g === 0 ? "#07140d" : "#f2efe6" }, chunks);
+      for (let i = 0; i < 5; i++)
+        el("rect", { x: x + i * 30, y: 474, width: 22, height: 22, rx: 5, fill: g === 0 ? "#3dff74" : "#07140d" }, chunks);
+      x += w + 52;
+    }
+    el("path", { d: "M420 300 L420 380 M392 352 L420 382 L448 352", stroke: "#f2efe6", "stroke-width": 12, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, chunks);
+  }
+
+  // Visual variables: a 3x3 grid of cells, one variable per cell
+  {
+    const svg = document.getElementById("variables-svg");
+    const ink = "#07140d", cream = "#f2efe6", coral = "#ff5b3a";
+    const cells = [
+      (g) => { el("circle", { cx: 40, cy: 120, r: 16, fill: ink }, g); el("circle", { cx: 90, cy: 70, r: 16, fill: ink }, g); el("circle", { cx: 140, cy: 30, r: 16, fill: coral }, g); },
+      (g) => { el("circle", { cx: 30, cy: 110, r: 12, fill: ink }, g); el("circle", { cx: 72, cy: 98, r: 24, fill: ink }, g); el("circle", { cx: 132, cy: 80, r: 40, fill: coral }, g); },
+      (g) => { el("circle", { cx: 34, cy: 80, r: 22, fill: ink }, g); el("rect", { x: 70, y: 58, width: 44, height: 44, fill: ink }, g); el("path", { d: "M150 56 L174 102 L126 102 Z", fill: coral }, g); },
+      (g) => { ["#cfd8c9", "#8fa595", "#4f6a58", ink].forEach((f, i) => el("rect", { x: 10 + i * 40, y: 50, width: 34, height: 60, rx: 6, fill: f }, g)); },
+      (g) => { [coral, "#2f6bff", "#0b9e45", cream].forEach((f, i) => el("rect", { x: 10 + i * 40, y: 50, width: 34, height: 60, rx: 6, fill: f }, g)); },
+      (g) => { [0, 30, 60, 90].forEach((a, i) => el("rect", { x: 30 + i * 38, y: 46, width: 10, height: 70, rx: 5, fill: i === 3 ? coral : ink, transform: `rotate(${a} ${35 + i * 38} 81)` }, g)); },
+      (g) => { for (let i = 0; i < 4; i++) for (let k = 0; k <= i * 2; k++) el("line", { x1: 12 + i * 40, y1: 110 - k * 7, x2: 44 + i * 40, y2: 110 - k * 7, stroke: ink, "stroke-width": 3 }, g); },
+      (g) => { el("rect", { x: 10, y: 90, width: 160, height: 10, rx: 5, fill: ink }, g); el("rect", { x: 10, y: 60, width: 110, height: 10, rx: 5, fill: ink }, g); el("rect", { x: 10, y: 30, width: 60, height: 10, rx: 5, fill: coral }, g); },
+      (g) => { el("path", { d: "M10 110 Q60 20 100 70 T170 30", stroke: ink, "stroke-width": 8, fill: "none", "stroke-linecap": "round" }, g); el("circle", { cx: 170, cy: 30, r: 12, fill: coral }, g); },
+    ];
+    cells.forEach((draw, i) => {
+      const x = 110 + (i % 3) * 220, y = 110 + Math.floor(i / 3) * 220;
+      el("rect", { x, y, width: 180, height: 180, rx: 22, fill: cream, opacity: .55 }, svg);
+      draw(el("g", { transform: `translate(${x} ${y + 20})` }, svg));
+    });
+  }
+
+  // Pre-attentive: a field of cream bars with one coral bar
+  {
+    const svg = document.getElementById("preattentive-svg");
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let r = 0; r < 7; r++) for (let c = 0; c < 9; c++) {
+      const x = 120 + c * 75 + (rnd() - .5) * 18, y = 130 + r * 90 + (rnd() - .5) * 18;
+      const hit = r === 4 && c === 6;
+      el("rect", { x, y, width: 16, height: 58, rx: 8, fill: hit ? "#ff5b3a" : "#f2efe6", opacity: hit ? 1 : .92 }, svg);
+    }
+  }
+
+  // Journey: a line that starts jagged (Takete) and ends smooth (Maluma), with five stops
+  {
+    const svg = document.getElementById("journey-svg");
+    const stops = [
+      { x: 230, label: "Cognitive ergonomics", topics: "Perception · memory · personas" },
+      { x: 590, label: "Cognition and language", topics: "Framing · readability · eye movements" },
+      { x: 950, label: "Aesthetic design", topics: "Color theory · Gestalt · dashboard UI" },
+      { x: 1310, label: "Data visualization", topics: "Visual variables · chart choice · pitfalls" },
+      { x: 1670, label: "Walk the talk", topics: "Your own report, redesigned" },
+    ];
+    const y0 = 560;
+    // A straight horizontal line from the first stop to the last, with an arrow head
+    el("line", { x1: 110, y1: y0, x2: 1790, y2: y0, stroke: "#3dff74", "stroke-width": 6, "stroke-linecap": "round" }, svg);
+    el("path", { d: `M1782 ${y0 - 16} L1806 ${y0} L1782 ${y0 + 16}`, stroke: "#3dff74", "stroke-width": 6, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+    const labels = document.getElementById("journey-labels");
+    stops.forEach((s, i) => {
+      el("circle", { cx: s.x, cy: y0, r: 44, fill: i === 4 ? "#ff5b3a" : "#f2efe6" }, svg);
+      const t = el("text", { x: s.x, y: y0 + 13, "text-anchor": "middle", "font-family": "Archivo", "font-weight": 800, "font-size": 36, fill: "#07140d" }, svg);
+      t.textContent = i + 1;
+      const box = document.createElement("div");
+      box.className = "abs";
+      box.style.cssText = `left:${s.x - 190}px;top:${i % 2 ? 660 : 330}px;width:380px;text-align:center`;
+      box.innerHTML = `<div style="font-size:31px;font-weight:800;font-stretch:108%;letter-spacing:-.01em;line-height:1.1">${s.label}</div>
+        <div style="margin-top:12px;font-size:20px;line-height:1.4;color:#3dff74">${s.topics}</div>`;
+      labels.appendChild(box);
+      el("line", { x1: s.x, y1: i % 2 ? y0 + 50 : y0 - 50, x2: s.x, y2: i % 2 ? 648 : 470, stroke: "#3dff74", "stroke-width": 2, "stroke-dasharray": "3 8", "stroke-linecap": "round" }, svg);
+    });
+    const hours = document.createElement("div");
+    hours.className = "abs mono";
+    hours.style.cssText = "left:110px;top:200px;font-size:18px;color:#3dff74";
+    hours.textContent = "Four modules of four hours + hands-on";
+    labels.appendChild(hours);
+  }
+
+  // Heatmap slide: the outlined cells hold the same value; the darker neighbours make one look lighter
+  {
+    const svg = document.getElementById("heatmap-svg");
+    const rows = 8, cols = 12, size = 44, ox = 60, oy = 30;
+    const ramp = (v) => `hsl(${145 - v * 30} ${30 + v * 20}% ${88 - v * 62}%)`;
+    let seed = 3;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let r = 0; r < rows; r++) {
+      const lbl = el("text", { x: ox - 14, y: oy + r * size + 28, "text-anchor": "end", "font-family": "Archivo", "font-size": 17, fill: "#5d6b62" }, svg);
+      lbl.textContent = "ABCDEFGH"[r];
+      for (let c = 0; c < cols; c++) {
+        let v = Math.min(1, Math.max(0, .15 + (c / cols) * .35 + (r / rows) * .35 + (rnd() - .5) * .3));
+        if ((r === 1 && c === 2) || (r === 6 && c === 9)) v = .5;
+        if (r === 1 && c !== 2 && Math.abs(c - 2) <= 1) v = .1;
+        if (r === 6 && c !== 9 && Math.abs(c - 9) <= 1) v = .95;
+        el("rect", { x: ox + c * size, y: oy + r * size, width: size - 3, height: size - 3, rx: 4, fill: ramp(v) }, svg);
+      }
+    }
+    for (let c = 0; c < cols; c++) {
+      const m = el("text", { x: ox + c * size + 20, y: oy + rows * size + 26, "text-anchor": "middle", "font-family": "Archivo", "font-size": 15, fill: "#5d6b62" }, svg);
+      m.textContent = "JFMAMJJASOND"[c];
+    }
+    el("rect", { x: ox + 2 * size - 4, y: oy + 1 * size - 4, width: size + 5, height: size + 5, rx: 7, fill: "none", stroke: "#ff5b3a", "stroke-width": 5 }, svg);
+    el("rect", { x: ox + 9 * size - 4, y: oy + 6 * size - 4, width: size + 5, height: size + 5, rx: 7, fill: "none", stroke: "#2f6bff", "stroke-width": 5 }, svg);
+    for (let i = 0; i <= 10; i++) el("rect", { x: ox + i * 48, y: oy + rows * size + 52, width: 46, height: 18, fill: ramp(i / 10) }, svg);
+  }
+
+  // Memory slide: the fifteen words of the list
+  {
+    const words = ["candy", "sour", "sugar", "bitter", "good", "taste", "tooth", "nice", "honey", "soda", "chocolate", "heart", "cake", "eat", "pie"];
+    const box = document.getElementById("memory-words");
+    words.forEach((w) => {
+      const p = document.createElement("div");
+      p.style.cssText = "background:#fff;border:2px solid #d9ddd2;border-radius:16px;padding:18px 0;text-align:center;font-size:26px;font-weight:600";
+      p.textContent = w;
+      box.appendChild(p);
+    });
+  }
+
+  // Before: dense table and exploded rainbow pie
+  {
+    const sectors = ["Agriculture", "Food", "Textiles", "Chemicals", "Machinery", "Construction", "Logistics", "Retail", "Hospitality", "Energy", "Real estate", "Services"];
+    const table = document.getElementById("before-table");
+    const head = ["Sector", "Exposure", "Δ q/q", "Δ y/y", "Default %", "Δ", "Cover %", "Rating avg", "Positions"];
+    let seed = 11;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    table.innerHTML = `<tr>${head.map((h) => `<th style="border:1px solid #bbb;background:#dde3ee;padding:4px 5px;text-align:left">${h}</th>`).join("")}</tr>` +
+      sectors.map((s) => `<tr>${[s, (100 + rnd() * 600).toFixed(1), (rnd() * 8 - 4).toFixed(2), (rnd() * 12 - 6).toFixed(2), (rnd() * 4 + .5).toFixed(2), (rnd() - .5).toFixed(2), (40 + rnd() * 30).toFixed(1), (3 + rnd() * 4).toFixed(2), Math.round(200 + rnd() * 3000)]
+        .map((v) => `<td style="border:1px solid #ccc;padding:4px 5px">${v}</td>`).join("")}</tr>`).join("");
+    const pie = document.getElementById("before-pie");
+    const vals = [14, 9, 6, 8, 12, 11, 10, 7, 5, 6, 7, 5];
+    const total = vals.reduce((a, b) => a + b, 0);
+    const cx = 165, cy = 100, rx = 140, ry = 80, depth = 30;
+    let a0 = -Math.PI / 2;
+    const slices = vals.map((v, i) => {
+      const a1 = a0 + (v / total) * Math.PI * 2;
+      const mid = (a0 + a1) / 2, off = i === 6 ? 22 : 0;
+      const slice = { i, a0, a1, mid, dx: Math.cos(mid) * off, dy: Math.sin(mid) * off * (ry / rx) };
+      a0 = a1;
+      return slice;
+    });
+    const pt = (s, a, z = 0) => `${cx + s.dx + rx * Math.cos(a)} ${cy + s.dy + z + ry * Math.sin(a)}`;
+    // Slices further back (smaller sin of the mid angle) are painted first
+    [...slices].sort((p, q) => Math.sin(p.mid) - Math.sin(q.mid)).forEach((s) => {
+      // Cut faces of the exploded slice, visible because it is pulled out of the pie
+      if (s.dx || s.dy) for (const a of [s.a0, s.a1]) {
+        el("path", { d: `M${cx + s.dx} ${cy + s.dy} L${pt(s, a)} L${pt(s, a, depth)} L${cx + s.dx} ${cy + s.dy + depth} Z`, fill: `hsl(${s.i * 30} 85% 30%)` }, pie);
+      }
+      // Outer wall: only the part of the arc that faces the viewer (the lower half of the ellipse)
+      const w0 = Math.max(s.a0, 0), w1 = Math.min(s.a1, Math.PI);
+      if (w1 > w0) el("path", { d: `M${pt(s, w0)} A${rx} ${ry} 0 0 1 ${pt(s, w1)} L${pt(s, w1, depth)} A${rx} ${ry} 0 0 0 ${pt(s, w0, depth)} Z`, fill: `hsl(${s.i * 30} 85% 36%)` }, pie);
+      el("path", { d: `M${cx + s.dx} ${cy + s.dy} L${pt(s, s.a0)} A${rx} ${ry} 0 0 1 ${pt(s, s.a1)} Z`, fill: `hsl(${s.i * 30} 85% 52%)`, stroke: "#fff", "stroke-width": 1 }, pie);
+    });
+    document.getElementById("before-legend").innerHTML = sectors.map((s, i) => `<span style="display:inline-block;width:11px;height:11px;background:hsl(${i * 30} 85% 52%);margin-right:6px"></span>${s} ${vals[i]}%`).join("<br>");
+  }
+
+  // After: one line chart with the sector highlighted against the portfolio average
+  {
+    const svg = document.getElementById("after-chart");
+    const q = ["Q3", "Q4", "Q1", "Q2", "Q3"];
+    const sector = [2.9, 2.7, 2.4, 2.2, 1.8], avg = [2.3, 2.3, 2.2, 2.3, 2.2];
+    const X = (i) => 90 + i * 150, Y = (v) => 320 - (v / 3.5) * 270;
+    [0, 1, 2, 3].forEach((v) => {
+      el("line", { x1: 70, y1: Y(v), x2: 730, y2: Y(v), stroke: "#d9ddd2", "stroke-width": 1.5 }, svg);
+      const t = el("text", { x: 60, y: Y(v) + 6, "text-anchor": "end", "font-family": "Archivo", "font-size": 16, fill: "#5d6b62" }, svg);
+      t.textContent = `${v}%`;
+    });
+    q.forEach((l, i) => { const t = el("text", { x: X(i), y: 352, "text-anchor": "middle", "font-family": "Archivo", "font-size": 16, fill: "#5d6b62" }, svg); t.textContent = l; });
+    el("polyline", { points: avg.map((v, i) => `${X(i)},${Y(v)}`).join(" "), fill: "none", stroke: "#9aa79f", "stroke-width": 4, "stroke-dasharray": "2 9", "stroke-linecap": "round" }, svg);
+    el("polyline", { points: sector.map((v, i) => `${X(i)},${Y(v)}`).join(" "), fill: "none", stroke: "#0b9e45", "stroke-width": 7, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    el("circle", { cx: X(4), cy: Y(1.8), r: 10, fill: "#0b9e45" }, svg);
+    const t1 = el("text", { x: X(4) - 8, y: Y(1.8) + 40, "text-anchor": "end", "font-family": "Archivo", "font-weight": 800, "font-size": 20, fill: "#0b9e45" }, svg); t1.textContent = "Logistics 1.8%";
+    const t2 = el("text", { x: X(4) - 8, y: Y(2.2) - 16, "text-anchor": "end", "font-family": "Archivo", "font-size": 18, fill: "#5d6b62" }, svg); t2.textContent = "Portfolio average";
+  }
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+  // Takete & Maluma in 3D: a sharp coral burst and a soft blue lobed blob, semi-transparent
+  import * as THREE from "three";
+  import { MarchingCubes } from "three/addons/objects/MarchingCubes.js";
+
+  const layouts = {
+    // x, y in world units (the camera sees about ±6.6 × ±3.3 on the hero), scale, rotation
+    hero: {
+      takete: { x: 2.7, y: 0.85, s: 1.75, r: [0.45, -0.7, 0.3] },
+      maluma: { x: 4.75, y: -0.85, s: 1.55, r: [0.4, 0.45, 0.1] },
+    },
+    card: {
+      takete: { x: 1.0, y: -0.35, s: 1.45, r: [0.45, -0.7, 0.3] },
+      maluma: { x: -0.9, y: -2.0, s: 1.2, r: [0.4, 0.45, 0.1] },
+    },
+    law: {
+      takete: { x: -1.25, y: 0.75, s: 1.75, r: [0.45, -0.7, 0.3] },
+      maluma: { x: 1.3, y: -0.85, s: 1.45, r: [0.4, 0.45, 0.1] },
+    },
+  };
+
+  const canvas = document.querySelector(".view.on canvas.three");
+  if (canvas) {
+    const width = canvas.width, height = canvas.height;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+    renderer.setSize(width, height, false);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // Environments: light panels in the project palette, so reflections pick up its colors. Takete keeps warm
+    // cream and coral reflections; Maluma reflects the blues and a touch of neon
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const environment = (panels) => {
+      const envScene = new THREE.Scene();
+      envScene.background = new THREE.Color(0x07140d);
+      for (const [color, pos, size, intensity] of panels) {
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(...size),
+          new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(intensity), side: THREE.DoubleSide }),
+        );
+        mesh.position.set(...pos);
+        mesh.lookAt(0, 0, 0);
+        envScene.add(mesh);
+      }
+      return pmrem.fromScene(envScene, 0.03).texture;
+    };
+    const taketeEnv = environment([
+      [0xf2efe6, [-5, 5, 5], [6, 4], 4], [0xffd9b0, [6, 2, 3], [5, 7], 3], [0xff5b3a, [-6, -3, 2], [5, 5], 4],
+      [0xf0b43c, [3, -6, 4], [6, 3], 3], [0xffffff, [0, 8, 6], [4, 2], 3],
+    ]);
+    const malumaEnv = environment([
+      [0xf2efe6, [-5, 5, 5], [6, 4], 4], [0x2f6bff, [6, 2, 3], [5, 7], 5], [0x9db8ff, [-6, -3, 2], [5, 5], 3],
+      [0x3dff74, [3, -6, 4], [6, 3], 0.6], [0xffffff, [0, 8, 6], [4, 2], 3],
+    ]);
+
+    const scene = new THREE.Scene();
+    const key = new THREE.DirectionalLight(0xfff4e6, 1.6);
+    key.position.set(-4, 6, 8);
+    scene.add(key, new THREE.AmbientLight(0xffffff, 0.25));
+    const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 100);
+    camera.position.set(0, 0, 12.3);
+
+    // Takete: a faceted burst of sharp pyramids of uneven length around a small core, the 3D cousin of Köhler's star
+    const taketeParts = [new THREE.IcosahedronGeometry(0.42, 0)];
+    let seed = 5;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const spikes = 16, up = new THREE.Vector3(0, 1, 0);
+    for (let i = 0; i < spikes; i++) {
+      // Fibonacci sphere directions, nudged so the burst looks hand-drawn
+      const yy = 1 - ((i + 0.5) / spikes) * 2, rr = Math.sqrt(1 - yy * yy), th = i * 2.399963 + rnd() * 0.5;
+      const dir = new THREE.Vector3(Math.cos(th) * rr, yy, Math.sin(th) * rr).normalize();
+      const length = 0.85 + rnd() * 0.5;
+      const cone = new THREE.ConeGeometry(0.2 + rnd() * 0.06, length, 4, 1);
+      cone.translate(0, length / 2 + 0.2, 0);
+      cone.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(up, dir));
+      taketeParts.push(cone);
+    }
+    // Maluma: metaballs, a round core and a chain of balls along each finger, so the lobes melt into one soft body
+    const MALUMA_FINGERS = [[72, 1.0], [122, 0.86], [172, 0.94], [222, 0.82], [268, 0.98], [318, 0.84], [16, 0.92]];
+    const buildMaluma = (material) => {
+      const blob = new MarchingCubes(110, material, false, false, 400000);
+      blob.isolation = 80;
+      blob.reset();
+      // A ball alone reaches radius r (in 0..1 cube units) when its strength is r² × (isolation + subtract)
+      const subtract = 12, ball = (r) => r * r * (blob.isolation + subtract);
+      blob.addBall(0.5, 0.5, 0.5, ball(0.13), subtract);
+      for (const [deg, len] of MALUMA_FINGERS) {
+        const a = (deg * Math.PI) / 180;
+        for (let k = 1; k <= 5; k++) {
+          const d = 0.068 * k * len;
+          blob.addBall(0.5 + Math.cos(a) * d, 0.5 + Math.sin(a) * d, 0.5, ball(k === 5 ? 0.07 : 0.056), subtract);
+        }
+      }
+      blob.update();
+      return blob;
+    };
+
+    // Takete stays opaque so its points read cleanly; Maluma is a translucent blue glaze
+    const glass = (color, opacity, flatShading = false) => new THREE.MeshPhysicalMaterial({
+      color, roughness: 0.16, metalness: 0.05, transparent: opacity < 1, opacity, flatShading,
+      clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.8, depthWrite: opacity === 1,
+    });
+
+    const layout = layouts[canvas.dataset.layout];
+    const place = (geometry, material, item) => {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(item.x, item.y, 0);
+      mesh.scale.setScalar(item.s);
+      mesh.rotation.set(...item.r);
+      scene.add(mesh);
+    };
+    const taketeMaterial = glass(0xff5b3a, 1, true);
+    taketeMaterial.envMap = taketeEnv;
+    const takete = new THREE.Group();
+    for (const part of taketeParts) takete.add(new THREE.Mesh(part, taketeMaterial));
+    takete.position.set(layout.takete.x, layout.takete.y, 0);
+    takete.scale.setScalar(layout.takete.s * 0.75);
+    takete.rotation.set(...layout.takete.r);
+    scene.add(takete);
+    const malumaMaterial = glass(0x2f6bff, 1);
+    malumaMaterial.envMap = malumaEnv;
+    const maluma = buildMaluma(malumaMaterial);
+    maluma.position.set(layout.maluma.x, layout.maluma.y, 0);
+    // MarchingCubes spans -1..1 on each axis: scale it to the same size as before and flatten it into a cushion
+    maluma.scale.set(layout.maluma.s * 1.35, layout.maluma.s * 1.35, layout.maluma.s * 0.8);
+    maluma.rotation.set(...layout.maluma.r);
+    scene.add(maluma);
+    renderer.render(scene, camera);
+  }
+</script>
+
+</body>
+</html>
