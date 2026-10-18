@@ -27,11 +27,11 @@ function ToolTile({ tool, isClone }: { tool: Tool; isClone: boolean }) {
   );
 }
 
-/** Infinite tools strip: the list is rendered twice and shifted by -50%. */
+/** Infinite tools strip: the list is rendered twice and shifted by -50%. It holds still under the mouse. */
 export function ToolsMarquee({ tools }: { tools: Tool[] }) {
   return (
-    <div className="marquee-fade mt-10 overflow-hidden" aria-label="Tools and software">
-      <ul className="flex w-max animate-marquee gap-3.5 py-4 motion-reduce:animate-none">
+    <div className="marquee-fade mt-10 overflow-hidden">
+      <ul aria-label="Tools and software" className="flex w-max animate-marquee gap-3.5 py-4 hover:[animation-play-state:paused] motion-reduce:animate-none">
         {[false, true].map((isClone) =>
           tools.map((tool) => <ToolTile key={`${isClone}-${tool.name}`} tool={tool} isClone={isClone} />),
         )}

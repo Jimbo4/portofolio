@@ -48,13 +48,18 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     glideFrameRef.current = 0;
   };
 
-  // Start in the middle copy, and stay there when the viewport resizes
+  // Start in the middle copy, and keep the same card in view when the card width changes
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
+    let lastLoopWidth = 0;
     const centerOnMiddleCopy = () => {
       const loopWidth = getLoopWidth();
-      track.scrollLeft = loopWidth;
+      // Height-only changes (fonts loading, mobile address bar) must not move the track
+      if (loopWidth === 0 || loopWidth === lastLoopWidth) return;
+      const offsetInLoop = lastLoopWidth ? ((track.scrollLeft % lastLoopWidth) / lastLoopWidth) * loopWidth : 0;
+      lastLoopWidth = loopWidth;
+      track.scrollLeft = loopWidth + offsetInLoop;
       autoRef.current.pos = track.scrollLeft;
       autoRef.current.pitch = loopWidth / works.length;
     };

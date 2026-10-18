@@ -97,6 +97,15 @@ function Slide({ name, src, alt, traits, children }: SlideProps) {
 
 const twoDigits = (n: number) => String(n).padStart(2, "0");
 
+/** Drawn as SVG: arrow characters render with uneven size and position across mobile system fonts. */
+function ArrowIcon({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d={direction === "left" ? "M19 12H5M12 19l-7-7 7-7" : "M5 12h14M12 5l7 7-7 7"} />
+    </svg>
+  );
+}
+
 export function TokenSlider({ label, children }: { label: string; children: React.ReactNode }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -146,7 +155,7 @@ export function TokenSlider({ label, children }: { label: string; children: Reac
   };
 
   const arrowButton =
-    "grid size-10 place-items-center rounded-full border border-white/20 text-white transition-colors hover:bg-white hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+    "grid size-10 shrink-0 place-items-center rounded-full border border-white/20 text-white transition-colors hover:bg-white hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
   return (
     <section aria-roledescription="carousel" aria-label={label} className="mt-10 overflow-hidden rounded-3xl bg-[#0d1117] text-white">
@@ -169,8 +178,9 @@ export function TokenSlider({ label, children }: { label: string; children: Reac
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-white/10 px-5 py-4 md:px-10">
-        <div className="flex gap-1.5 sm:gap-2">
+      {/* On narrow screens the dots take their own row, so the arrows are never pushed out of the panel */}
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-4 border-t border-white/10 px-5 py-4 md:px-10">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -178,19 +188,20 @@ export function TokenSlider({ label, children }: { label: string; children: Reac
               onClick={() => goTo(i)}
               aria-label={`Show ${slideName(i)}`}
               aria-current={i === active}
-              className={`h-2 rounded-full transition-all ${i === active ? "w-7 bg-white" : "w-2 bg-white/30 hover:bg-white/60"}`}
+              // The pseudo-element enlarges the touch target without changing the dot
+              className={`relative h-2 rounded-full transition-all before:absolute before:-inset-x-[3px] before:-inset-y-2 before:content-[''] ${i === active ? "w-7 bg-white" : "w-2 bg-white/30 hover:bg-white/60"}`}
             />
           ))}
         </div>
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <span className="mr-1 whitespace-nowrap font-mono text-[13px] tracking-[.12em] text-white/60" aria-live="polite">
             {twoDigits(active + 1)} / {twoDigits(count)}
           </span>
           <button type="button" onClick={() => step(-1)} aria-label="Previous" className={arrowButton}>
-            ←
+            <ArrowIcon direction="left" />
           </button>
           <button type="button" onClick={() => step(1)} aria-label="Next" className={arrowButton}>
-            →
+            <ArrowIcon direction="right" />
           </button>
         </div>
       </div>

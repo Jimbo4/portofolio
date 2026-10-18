@@ -81,7 +81,8 @@ export default function HomePage() {
         </div>
         <WorksCarousel works={getAllWorks()} />
         <p className="mt-8 text-center font-mono text-[11px] tracking-[.32em] text-muted-2">
-          [ &nbsp; DRAG TO EXPLORE &nbsp; ]
+          [ &nbsp;<span className="pointer-coarse:hidden">DRAG</span>
+          <span className="hidden pointer-coarse:inline">SWIPE</span> TO EXPLORE&nbsp; ]
         </p>
       </section>
 

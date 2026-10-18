@@ -118,16 +118,31 @@ interface VideoFeatureProps {
   poster: string;
   /** Accessible description of what the video shows */
   label: string;
+  /** WebVTT captions of the spoken audio */
+  captions?: string;
+  /** Language of the captions, e.g. "it" */
+  captionsLang?: string;
+  /** Name of the captions track in the player menu, e.g. "Italiano" */
+  captionsLabel?: string;
   children: React.ReactNode;
 }
 
-/** Vertical video next to its story. */
-export function VideoFeature({ title, src, poster, label, children }: VideoFeatureProps) {
+/** Vertical video next to its story, stacked below it until the text has room for a comfortable line length. */
+export function VideoFeature({
+  title,
+  src,
+  poster,
+  label,
+  captions,
+  captionsLang = "en",
+  captionsLabel = "English",
+  children,
+}: VideoFeatureProps) {
   return (
-    <div className="mt-20 grid items-center gap-10 rounded-3xl border border-line bg-white p-7 md:grid-cols-[1fr_auto] md:p-10">
+    <div className="mt-20 grid items-center gap-10 rounded-3xl border border-line bg-white p-7 md:p-10 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div>
         <h2 className="mb-[18px] font-serif text-[32px] font-semibold tracking-[-0.02em]">{title}</h2>
-        <div className="flex flex-col gap-3.5 [&_p]:mt-0">{children}</div>
+        <div className="flex max-w-[640px] flex-col gap-3.5 [&_p]:mt-0">{children}</div>
       </div>
       {/* The skeleton frame shows until the poster paints over it */}
       <div className="skeleton mx-auto aspect-[9/16] w-[min(320px,100%)] rounded-[28px]">
@@ -139,7 +154,9 @@ export function VideoFeature({ title, src, poster, label, children }: VideoFeatu
           playsInline
           preload="metadata"
           className="relative z-10 size-full rounded-[28px] object-cover"
-        />
+        >
+          {captions && <track kind="captions" src={captions} srcLang={captionsLang} label={captionsLabel} />}
+        </video>
       </div>
     </div>
   );

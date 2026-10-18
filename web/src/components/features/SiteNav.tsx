@@ -11,13 +11,15 @@ export function SiteNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  /** On the home page, scroll to the section directly: Next.js skips the scroll when the hash is already in the URL. */
+  /**
+   * On the home page, scroll to the section directly and leave the URL as it is: a hash left in the URL would make
+   * the back button jump to that section again when the visitor returns from a case study.
+   */
   const onSectionLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     setIsMenuOpen(false);
     const [path, id] = href.split("#");
     if (pathname !== (path || "/") || !id || !scrollToSection(id)) return;
     event.preventDefault();
-    window.history.pushState(null, "", `#${id}`);
   };
 
   useEffect(() => {
@@ -26,6 +28,16 @@ export function SiteNav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Escape closes the mobile menu
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMenuOpen]);
 
   const isSolid = isScrolled || isMenuOpen;
 

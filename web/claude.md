@@ -159,7 +159,7 @@ Markdown `##`, paragraphs, bullet lists, `**bold**` and links are styled automat
 | `<Disciplines><Discipline label>` | Work broken down by discipline | Boxed white cards, 2 cols |
 | `<Steps><Step label>` | A process in order | Numbered rows 01, 02… with dividers |
 | `<Principles><Principle label>` | Named principles, laws, decisions | Open 3-col grid, heavy top rule, italic names |
-| `<VideoFeature title src poster label>` | A vertical video next to its story | White panel, text + 9:16 player |
+| `<VideoFeature title src poster label captions? captionsLang? captionsLabel?>` | A vertical video next to its story | White panel, text + 9:16 player; stacked below the text until 1024px; `captions` is a WebVTT file of the spoken audio |
 | `<TokenSlider label><Token name language color bars src alt>` | A collection shown one item at a time (NFTs) | Dark panel slider: 840px square image + name, story, three traits; dots, counter, arrows |
 | `<TokenSlider label><Law name module source use src alt>` | Named principles or laws shown one at a time | Same slider; traits are Module, Source and Use it for |
 
@@ -175,7 +175,8 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
 - Images: convert to WebP, `ffmpeg -i in.png -vf "scale=720:-1:flags=lanczos" -c:v libwebp -quality 82 out.webp`
   (720 wide for posts, 660 for phone screens; keep source size when already ≤ 750 wide).
 - Video: 720p H.264, `-vf scale=720:-2 -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k`,
-  plus a JPG poster. Check music licenses in the source project before publishing.
+  plus a JPG poster. Check music licenses in the source project before publishing. A video with speech ships with a
+  WebVTT captions file next to it (`trailer.it.vtt`), passed to `VideoFeature` as `captions`.
 - **Hero and card** follow the Matcha model (look at `public/images/case-studies/matcha/` first):
   - Each project gets its own visual identity (fonts, palette, shapes), used **only in its images**; the rest of the
     page stays in the portfolio identity. If the project has a brand kit, use it; otherwise invent one that fits.
@@ -233,6 +234,11 @@ All placeholders from the design file have been removed: every project on the si
   without its own placeholder (e.g. a video) sits in a `skeleton` frame
 - **Tailwind only:** no CSS modules, no inline styles; tokens only in `globals.css`
 - **Mobile-first**, no horizontal page scroll
+- **Accessibility:** text meets WCAG AA contrast (`muted-2` is the lightest grey allowed for text), icon-only buttons
+  have an `aria-label` and SVG icons instead of arrow characters, touch targets are at least 24px (enlarge with a
+  pseudo-element when the visual must stay small), motion stops for reduced motion and on hover
+- **Scroll:** never leave a hash in the URL after scrolling to a section (`HashScroll` and `SiteNav` remove it), or the
+  back button jumps there again
 - **No `any`** in TypeScript
 
 ## Boundaries

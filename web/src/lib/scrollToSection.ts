@@ -5,7 +5,8 @@
 export function scrollToSection(id: string, behavior: ScrollBehavior = "smooth"): boolean {
   const section = document.getElementById(id);
   if (!section) return false;
-  const headerHeight = document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+  // The bar only: the mobile menu is still open (and taller) at the moment its link is tapped
+  const headerHeight = document.querySelector("header > div")?.getBoundingClientRect().height ?? 0;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({
     top: section.getBoundingClientRect().top + window.scrollY - headerHeight,
