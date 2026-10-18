@@ -233,7 +233,9 @@ All placeholders from the design file have been removed: every project on the si
   renders `src/app/favicon.ico` (16/32/48), `icon.png`, `apple-icon.png`, `public/icon-192.png` / `icon-512.png`
   (used by `src/app/manifest.ts`) and `src/app/opengraph-image.png` / `twitter-image.png`, the default link preview
   (the home hero). Next.js adds the `<head>` tags from these files.
-- Case study pages share their hero's JPG twin instead (`generateMetadata` in `case-studies/[slug]/page.tsx`).
+- `/case-studies` shares `public/og-projects.jpg` (the four philosophy tiles, also from `render-brand.sh`).
+- Case study pages share their hero's JPG twin instead (`generateMetadata` in `case-studies/[slug]/page.tsx`), with
+  the title "<project> | Jacopo Marcolini".
 - Canonical domain is `jacopomarcolini.com` (`profile.siteUrl`); `.app`, `.dev` and `.me` redirect to it in Vercel.
 
 ## Conventions

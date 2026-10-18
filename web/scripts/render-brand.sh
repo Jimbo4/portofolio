@@ -8,6 +8,7 @@
 #   src/app/apple-icon.png         180px full-bleed square, iOS home screen (iOS rounds the corners)
 #   public/icon-192.png, -512.png  rounded tile with transparent corners, web app manifest
 #   src/app/opengraph-image.png    1200x630 link preview, also copied to twitter-image.png
+#   public/og-projects.jpg         1200x630 link preview of /case-studies (the four philosophy tiles)
 set -euo pipefail
 
 chrome="${CHROME:-/c/Program Files/Google/Chrome/Application/chrome.exe}"
@@ -29,6 +30,7 @@ shot icon-sm 512 512 "$tmp/sm.png"
 shot icon 512 512 "$tmp/icon.png"
 shot apple 512 512 "$tmp/apple.png"
 shot og 1200 630 "$tmp/og@2x.png" 2
+shot og-projects 1200 630 "$tmp/og-projects@2x.png" 2
 
 for size in 16 32 48; do resize "$tmp/sm.png" "$size" "$tmp/sm-$size.png"; done
 cp "$tmp/sm-32.png" src/app/icon.png
@@ -37,6 +39,7 @@ resize "$tmp/icon.png" 192 public/icon-192.png
 resize "$tmp/icon.png" 512 public/icon-512.png
 "$ffmpeg" -v error -y -i "$tmp/og@2x.png" -vf "scale=1200:630:flags=lanczos,format=rgb24" src/app/opengraph-image.png
 cp src/app/opengraph-image.png src/app/twitter-image.png
+"$ffmpeg" -v error -y -i "$tmp/og-projects@2x.png" -vf "scale=1200:630:flags=lanczos,format=rgb24" -q:v 3 public/og-projects.jpg
 
 # Pack the three PNGs into one .ico (PNG-compressed entries, supported by every current browser)
 python - "$tmp/sm-16.png" "$tmp/sm-32.png" "$tmp/sm-48.png" src/app/favicon.ico <<'PY'
@@ -54,4 +57,4 @@ open(out, "wb").write(header + entries + b"".join(data))
 PY
 
 rm -rf "$tmp"
-ls -la src/app/favicon.ico src/app/icon.png src/app/apple-icon.png src/app/opengraph-image.png public/icon-*.png
+ls -la src/app/favicon.ico src/app/icon.png src/app/apple-icon.png src/app/opengraph-image.png public/icon-*.png public/og-projects.jpg

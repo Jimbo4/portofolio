@@ -7,7 +7,13 @@ import { getWorksByPillar } from "@/lib/case-studies";
 
 const description = "Selected work across product design, team leadership, AI enablement and business growth.";
 // A nested openGraph or twitter object replaces the root one, file-based images included, so they are repeated here
-const shareImage = { url: "/opengraph-image.png", width: 1200, height: 630, alt: `${profile.name}, selected work` };
+const shareImage = {
+  url: "/og-projects.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Selected work by Jacopo Marcolini: Product Design, Team Leadership, AI Enablement and Business & Growth",
+};
+const shareTitle = `Projects | ${profile.name}`;
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -18,11 +24,11 @@ export const metadata: Metadata = {
     siteName: profile.name,
     locale: "en_US",
     url: "/case-studies",
-    title: `Projects — ${profile.name}`,
+    title: shareTitle,
     description,
     images: [shareImage],
   },
-  twitter: { card: "summary_large_image", title: `Projects — ${profile.name}`, description, images: [shareImage] },
+  twitter: { card: "summary_large_image", title: shareTitle, description, images: [shareImage] },
 };
 
 export default function CaseStudiesPage() {

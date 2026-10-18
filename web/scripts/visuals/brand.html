@@ -2,7 +2,8 @@
 <!--
   Site icons and the default link preview, rendered by scripts/render-brand.sh. Not part of the site build.
   Views (?v=): icon (rounded tile, 512), icon-sm (bolder tile for 16-48px), apple (full-bleed square, iOS rounds it),
-  og (1200x630 link preview).
+  og (1200x630 link preview of the home), og-projects (1200x630 preview of /case-studies: the four philosophy tiles,
+  rebuilt from PillarIcon.tsx and the icon-* utilities in globals.css, so update them together).
 -->
 <html lang="en">
 <head>
@@ -78,6 +79,33 @@
   #og h1 em { font-style: italic; font-weight: 800; font-variation-settings: "opsz" 144; color: var(--ink); }
   #og .url { position: absolute; bottom: 60px; left: 96px; font-family: "JetBrains Mono", monospace; font-size: 20px; letter-spacing: 0.08em; color: var(--muted-2); }
   #og .dot { color: var(--accent); }
+
+  /* Projects preview: same header, "Selected work" and the four pillar tiles */
+  #og-projects { position: relative; flex-direction: column; padding: 60px 96px 0; background: var(--paper); color: var(--ink); font-family: "Inter", sans-serif; }
+  #og-projects .top { display: flex; align-items: center; gap: 18px; }
+  #og-projects .mark {
+    display: flex; align-items: center; justify-content: center;
+    width: 64px; height: 64px; border-radius: 14px;
+    background: var(--ink); color: var(--paper);
+    font-family: "Fraunces", serif; font-style: italic; font-weight: 800; font-size: 30px;
+    font-variation-settings: "opsz" 144; letter-spacing: -0.045em;
+  }
+  #og-projects .name { font-family: "Fraunces", serif; font-weight: 800; font-size: 30px; letter-spacing: -0.01em; }
+  #og-projects h1 { margin-top: 30px; font-family: "Fraunces", serif; font-style: italic; font-weight: 800; font-size: 76px; line-height: 1; letter-spacing: -0.03em; }
+  #og-projects .tiles { margin-top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  #og-projects .pillar h2 { margin-top: 14px; font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; letter-spacing: -0.015em; }
+  .ptile { position: relative; aspect-ratio: 1; border-radius: 24px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 14px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.25); }
+  .ptile > svg, .ptile > span { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ptile > svg.glyph { position: relative; inset: auto; width: 52%; height: 52%; filter: drop-shadow(0 2px 6px rgba(0,0,0,.14)); }
+  .icon-blue { background: radial-gradient(140% 100% at 30% 20%, #5aa9ff 0%, #2563eb 55%, #0f1e5a 100%); }
+  .icon-orange { background: radial-gradient(140% 100% at 30% 20%, #ff7a4d 0%, #e84b2a 50%, #b8341a 100%); }
+  .icon-purple { background: radial-gradient(140% 100% at 30% 20%, #b690ff 0%, #6d3fd6 55%, #2e1b6e 100%); }
+  .icon-yellow { background: radial-gradient(140% 100% at 30% 20%, #ffe45c 0%, #ffbf00 55%, #b37800 100%); }
+  .gloss { background: radial-gradient(120% 80% at 20% 10%, rgba(255,255,255,.35), transparent 50%), radial-gradient(120% 80% at 80% 90%, rgba(0,0,0,.18), transparent 50%); }
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px; mix-blend-mode: soft-light; opacity: .8;
+  }
 </style>
 </head>
 <body>
@@ -90,7 +118,54 @@
     <h1>I design <span class="mono">digital</span> products<br />and <em>amazing</em> experiences.</h1>
     <p class="url">jacopomarcolini<span class="dot">.</span>com</p>
   </section>
+  <section id="og-projects">
+    <div class="top"><div class="mark">JM</div><div class="name">Jacopo Marcolini</div></div>
+    <h1>Selected work</h1>
+    <div class="tiles"></div>
+  </section>
   <script>
+    // Pillar tiles: same gradients, wave ribbons and glyphs as PillarIcon.tsx. Layers: [path, light?, width, opacity]
+    const pillars = [
+      {
+        title: "Product Design", icon: "icon-blue", light: "#9fe7ff", deep: "#0e1660", blur: 4.5,
+        layers: [["M70 -14 C 46 14, 26 30, -14 48", 1, 16, 0.6], ["M118 0 C 78 34, 52 56, -6 106", 0, 26, 0.7], ["M124 38 C 92 64, 70 82, 30 118", 1, 20, 0.65], ["M130 84 C 112 96, 100 104, 82 120", 0, 16, 0.5]],
+        glyph: '<path d="M24 20 L47 38 L35.5 40.5 L41.5 51.5 L36 54.5 L30 43 L22 49.5 Z" fill="rgba(255,255,255,.3)"/><path d="M17 21 L11 19.5 M20.5 15 L18.5 9 M26 14 L29 8.5"/>',
+      },
+      {
+        title: "Team Leadership", icon: "icon-orange", light: "#ffbf73", deep: "#a8290a", blur: 4,
+        layers: [["M-12 18 C 22 2, 54 30, 112 6", 0, 14, 0.45], ["M-12 46 C 24 26, 56 60, 112 34", 1, 20, 0.6], ["M-12 78 C 26 58, 58 92, 112 64", 0, 26, 0.6], ["M-12 108 C 30 90, 60 118, 112 96", 1, 18, 0.5]],
+        glyph: '<path d="M32 9 L52 20.5 L32 32 L12 20.5 Z" fill="rgba(255,255,255,.42)"/><path d="M12 20.5 V43.5 L32 55 V32 Z M52 20.5 V43.5 L32 55 V32 Z" fill="rgba(255,255,255,.18)"/>',
+      },
+      {
+        title: "AI Enablement", icon: "icon-purple", light: "#e6d6ff", deep: "#1d0b52", blur: 4,
+        layers: [["M104 70 A 34 34 0 0 0 70 104", 1, 16, 0.55], ["M104 38 A 66 66 0 0 0 38 104", 0, 22, 0.6], ["M104 4 A 100 100 0 0 0 4 104", 1, 16, 0.5], ["M-8 34 A 42 42 0 0 0 34 -8", 0, 16, 0.45]],
+        glyph: '<path d="M28 12 C29.4 25.4 36.6 32.6 50 34 C36.6 35.4 29.4 42.6 28 56 C26.6 42.6 19.4 35.4 6 34 C19.4 32.6 26.6 25.4 28 12 Z" fill="rgba(255,255,255,.3)"/><path d="M48 6 C48.6 11.6 51.4 14.4 57 15 C51.4 15.6 48.6 18.4 48 24 C47.4 18.4 44.6 15.6 39 15 C44.6 14.4 47.4 11.6 48 6 Z" fill="#fff"/>',
+      },
+      {
+        title: "Business &amp; Growth", icon: "icon-yellow", light: "#fff6b8", deep: "#b87400", blur: 2,
+        layers: [8, 34, 60, 86, 112, 138].map((y, i) => [`M-10 ${y} C 26 ${y - 18}, 58 ${y - 6}, 110 ${y - 42}`, i % 2 === 0 ? 1 : 0, 11, i % 2 === 0 ? 0.6 : 0.4]),
+        glyph: '<path d="M36 8 L19 36 L31 36 L27 56 L46 27 L34 27 Z" fill="rgba(255,255,255,.3)"/>',
+      },
+    ];
+    const ribbons = (p) =>
+      p.layers.map(([d, light, w, o]) => `<path d="${d}" stroke="${light ? p.light : p.deep}" stroke-width="${w}" stroke-opacity="${o}"/>`).join("");
+    document.querySelector("#og-projects .tiles").innerHTML = pillars
+      .map(
+        (p, n) => `
+      <div class="pillar">
+        <div class="ptile ${p.icon}">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+            <filter id="blur${n}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${p.blur}"/></filter>
+            <g filter="url(#blur${n})" stroke-linecap="round">${ribbons(p)}</g>
+          </svg>
+          <span class="gloss"></span><span class="grain"></span>
+          <svg class="glyph" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${p.glyph}</svg>
+        </div>
+        <h2>${p.title}</h2>
+      </div>`,
+      )
+      .join("");
+
     const view = new URLSearchParams(location.search).get("v") || "icon";
     document.getElementById(view)?.classList.add("on");
   </script>

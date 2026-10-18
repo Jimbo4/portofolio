@@ -18,6 +18,8 @@ export async function generateMetadata(props: PageProps<"/case-studies/[slug]">)
   if (!work) return {};
   // JPG twin of the hero written by scripts/render-og.sh: LinkedIn and some chat apps don't show WebP previews
   const shareImage = { url: work.cover.hero.replace(/\.webp$/, ".jpg"), width: 1200, height: 600, alt: work.cover.alt };
+  // Shared links carry the name too, so they say whose portfolio they come from
+  const shareTitle = `${work.name} | ${profile.name}`;
   return {
     title: work.name,
     description: work.description,
@@ -28,13 +30,13 @@ export async function generateMetadata(props: PageProps<"/case-studies/[slug]">)
       siteName: profile.name,
       locale: "en_US",
       url: `/case-studies/${work.slug}`,
-      title: work.name,
+      title: shareTitle,
       description: work.description,
       images: [shareImage],
     },
     twitter: {
       card: "summary_large_image",
-      title: work.name,
+      title: shareTitle,
       description: work.description,
       images: [shareImage],
     },
