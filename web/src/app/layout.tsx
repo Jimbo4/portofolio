@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import { ClickBurstFx } from "@/components/features/ClickBurstFx";
 import { HashScroll } from "@/components/features/HashScroll";
@@ -31,8 +31,11 @@ export const metadata: Metadata = {
   title: { default: title, template: `%s — ${profile.name}` },
   description: profile.description,
   alternates: { canonical: "/" },
+  // The shared images come from opengraph-image.png and twitter-image.png (scripts/render-brand.sh)
   openGraph: {
     type: "website",
+    siteName: profile.name,
+    locale: "en_US",
     title,
     description: profile.description,
     url: "/",
@@ -46,6 +49,10 @@ export const metadata: Metadata = {
     "geo.region": "IT-MI",
     "geo.placename": profile.location.label,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f5f2ee",
 };
 
 const personJsonLd = {

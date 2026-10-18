@@ -2,13 +2,27 @@ import type { Metadata } from "next";
 import { BackLink } from "@/components/features/BackLink";
 import { CaseStudyCard } from "@/components/features/CaseStudyCard";
 import { PillarIcon } from "@/components/features/PillarIcon";
-import { pillars } from "@/lib/config";
+import { pillars, profile } from "@/lib/config";
 import { getWorksByPillar } from "@/lib/case-studies";
+
+const description = "Selected work across product design, team leadership, AI enablement and business growth.";
+// A nested openGraph or twitter object replaces the root one, file-based images included, so they are repeated here
+const shareImage = { url: "/opengraph-image.png", width: 1200, height: 630, alt: `${profile.name}, selected work` };
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Selected work across product design, team leadership, AI enablement and business growth.",
+  description,
   alternates: { canonical: "/case-studies" },
+  openGraph: {
+    type: "website",
+    siteName: profile.name,
+    locale: "en_US",
+    url: "/case-studies",
+    title: `Projects — ${profile.name}`,
+    description,
+    images: [shareImage],
+  },
+  twitter: { card: "summary_large_image", title: `Projects — ${profile.name}`, description, images: [shareImage] },
 };
 
 export default function CaseStudiesPage() {

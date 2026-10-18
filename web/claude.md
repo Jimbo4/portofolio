@@ -40,7 +40,9 @@ web/
 │   ├── images/case-studies/<slug>/ # hero.webp, card.webp, body images
 │   └── videos/case-studies/<slug>/ # optional videos
 ├── scripts/                        # Visual tooling, not part of the build: visuals/<slug>.html, render-visual.sh,
-│                                   # pdf-contact-sheet.py, case-study-cover.html (old abstract covers)
+│                                   # render-og.sh (JPG link previews of the heroes), render-brand.sh (site icons and
+│                                   # default link preview from visuals/brand.html), pdf-contact-sheet.py,
+│                                   # case-study-cover.html (old abstract covers)
 └── src/
     ├── app/
     │   ├── page.tsx                  # Home: hero, philosophy pillars, projects carousel, skills, tools, contact
@@ -192,6 +194,8 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
     `spendscape.html` culls off-canvas slots and reports `data-slots` / `data-overflow` via `--dump-dom`.
   - When replacing an image that has already been published, give it a new file name (`hero-v2.webp`): next/image
     caches by URL.
+  - After adding or replacing a hero, run `scripts/render-og.sh`: it writes the 1200x600 JPG twin (`hero-v2.jpg`)
+    that the page uses as its link preview image (LinkedIn and some chat apps don't show WebP).
   - `scripts/case-study-cover.html` (abstract pillar gradients) is the old approach, kept only as a fallback.
 - **Reading source decks**: `pdftotext -layout` (ships with Git for Windows) for text; `scripts/pdf-contact-sheet.py`
   renders every page into one PNG to study the style (needs PyMuPDF in a throwaway venv, see its header). Never show
@@ -222,6 +226,15 @@ new section, add a new layout to `CaseStudyMdx.tsx` (and register it in `caseStu
 | `design-journey` | 2023-11 | design | A real name: the design course (cognitive ergonomics, cognition and language, aesthetic design, data visualization, plus the hands-on stage Walk the talk; four modules of 4h + hands-on; a short format called Design Pills) for "one of Italy's largest banking groups" (BPER, never named; the user wrote "the largest", copy says "one of the largest"). Role: Design Lead & Trainer, delivered with a designer from the team (never name her). Sources: OneDrive `bid/202311_bper_uiux/2_corso_design` (decks, Walk the talk restyles and design-process sheets). Decks use copyrighted photos and the restyles hold client data: nothing is shown as is. No payoff, no KPIs, no links (the user asked not to cite Laws of UX explicitly). Carousel sources checked online: Takete and Maluma is "Köhler, 1929 and 1947" (maluma is the 1947 word), proximity Wertheimer 1923, pre-attentive Treisman & Gelade 1980. Visuals in `scripts/visuals/design-journey.html`: identity is near-black forest `#07140d`, neon green `#3dff74` (asked by the user, darker `#0b9e45` for text on light), coral `#ff5b3a` (Takete), electric blue `#2f6bff` (Maluma) and cream, Archivo wide and heavy for titles, IBM Plex Mono labels; the symbol is Takete & Maluma in three.js: a faceted burst of coral pyramids (approved, keeps its own warm env map) and a blue Maluma made of metaballs (`MarchingCubes`, a core plus a chain of balls per finger, after a reference with seven rounded lobes). The flat marks follow the same reference (`malumaRadii` builds the Maluma outline). The roadmap line is straight and horizontal; in `law-contrast` the squares and bar share one fill; the before pie paints slices back to front. Hero, card and `law-takete-maluma` need WebGL (`BUDGET=25000`, the law card may need 40000); the other `law-*` cards (840 square, flat SVG on colored fields), `journey`, `slide-*` (1280x720 playground slides, English, generic content) and `restyle` (before/after of a sector page with invented sectors and numbers) render with `SWIFTSHADER=0`. The body uses `TokenSlider` with the `Law` slide, made for this page. |
 
 All placeholders from the design file have been removed: every project on the site is an MDX case study.
+
+## Icons and link previews
+
+- Monogram "JM" in Fraunces black italic on an ink tile (`scripts/visuals/brand.html`). `scripts/render-brand.sh`
+  renders `src/app/favicon.ico` (16/32/48), `icon.png`, `apple-icon.png`, `public/icon-192.png` / `icon-512.png`
+  (used by `src/app/manifest.ts`) and `src/app/opengraph-image.png` / `twitter-image.png`, the default link preview
+  (the home hero). Next.js adds the `<head>` tags from these files.
+- Case study pages share their hero's JPG twin instead (`generateMetadata` in `case-studies/[slug]/page.tsx`).
+- Canonical domain is `jacopomarcolini.com` (`profile.siteUrl`); `.app`, `.dev` and `.me` redirect to it in Vercel.
 
 ## Conventions
 

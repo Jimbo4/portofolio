@@ -5,6 +5,7 @@ import { BackLink } from "@/components/features/BackLink";
 import { caseStudyComponents } from "@/components/features/CaseStudyMdx";
 import { WorkCover } from "@/components/features/WorkCover";
 import { getAllWorks, getCaseStudyBody, getWorkBySlug } from "@/lib/case-studies";
+import { profile } from "@/lib/config";
 import type { KpiIcon, Work, WorkKpi } from "@/types";
 
 export function generateStaticParams() {
@@ -15,11 +16,28 @@ export async function generateMetadata(props: PageProps<"/case-studies/[slug]">)
   const { slug } = await props.params;
   const work = getWorkBySlug(slug);
   if (!work) return {};
+  // JPG twin of the hero written by scripts/render-og.sh: LinkedIn and some chat apps don't show WebP previews
+  const shareImage = { url: work.cover.hero.replace(/\.webp$/, ".jpg"), width: 1200, height: 600, alt: work.cover.alt };
   return {
     title: work.name,
     description: work.description,
     alternates: { canonical: `/case-studies/${work.slug}` },
-    openGraph: { title: work.name, description: work.description, images: [{ url: work.cover.hero, alt: work.cover.alt }] },
+    // Nested openGraph replaces the root one, so siteName and locale are repeated here
+    openGraph: {
+      type: "article",
+      siteName: profile.name,
+      locale: "en_US",
+      url: `/case-studies/${work.slug}`,
+      title: work.name,
+      description: work.description,
+      images: [shareImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: work.name,
+      description: work.description,
+      images: [shareImage],
+    },
   };
 }
 

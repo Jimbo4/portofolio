@@ -1,0 +1,98 @@
+<!doctype html>
+<!--
+  Site icons and the default link preview, rendered by scripts/render-brand.sh. Not part of the site build.
+  Views (?v=): icon (rounded tile, 512), icon-sm (bolder tile for 16-48px), apple (full-bleed square, iOS rounds it),
+  og (1200x630 link preview).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,800;1,9..144,800;1,9..144,900&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block"
+  rel="stylesheet"
+/>
+<style>
+  :root {
+    --paper: #f5f2ee;
+    --paper-glow: #ece5da;
+    --ink: #1a1a18;
+    --ink-2: #2a2a26;
+    --muted: #6b6b67;
+    --muted-2: #716d66;
+    --accent: #e84b2a;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; background: transparent; overflow: hidden; }
+  section { display: none; width: 100vw; height: 100vh; }
+  section.on { display: flex; }
+
+  /* Monogram tile: ink square, JM in Fraunces black italic, sized from the viewport */
+  .tile {
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 800;
+    font-variation-settings: "opsz" 144;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  .tile span { transform: translateX(-0.03em); }
+  #icon { border-radius: 22vw; font-size: 46vw; }
+  #icon-sm { border-radius: 18vw; font-size: 58vw; font-weight: 900; letter-spacing: -0.06em; }
+  #apple { font-size: 42vw; }
+
+  /* Link preview: the home hero, with the monogram and the domain */
+  #og {
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 96px;
+    background: radial-gradient(900px 420px at 50% 0%, var(--paper-glow) 0%, transparent 65%), var(--paper);
+    color: var(--ink);
+    font-family: "Inter", sans-serif;
+  }
+  #og .top { position: absolute; top: 64px; left: 96px; right: 96px; display: flex; align-items: center; gap: 18px; }
+  #og .mark {
+    display: flex; align-items: center; justify-content: center;
+    width: 64px; height: 64px; border-radius: 14px;
+    background: var(--ink); color: var(--paper);
+    font-family: "Fraunces", serif; font-style: italic; font-weight: 800; font-size: 30px;
+    font-variation-settings: "opsz" 144; letter-spacing: -0.045em;
+  }
+  #og .name { font-family: "Fraunces", serif; font-weight: 800; font-size: 30px; letter-spacing: -0.01em; }
+  #og .roles { font-size: 22px; color: var(--ink-2); margin-top: 44px; }
+  #og .roles i { font-style: normal; color: var(--muted-2); margin: 0 12px; }
+  #og h1 {
+    margin-top: 22px;
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 92px;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--muted);
+  }
+  #og h1 .mono { font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 0.82em; letter-spacing: -0.04em; color: var(--ink); }
+  #og h1 em { font-style: italic; font-weight: 800; font-variation-settings: "opsz" 144; color: var(--ink); }
+  #og .url { position: absolute; bottom: 60px; left: 96px; font-family: "JetBrains Mono", monospace; font-size: 20px; letter-spacing: 0.08em; color: var(--muted-2); }
+  #og .dot { color: var(--accent); }
+</style>
+</head>
+<body>
+  <section id="icon" class="tile"><span>JM</span></section>
+  <section id="icon-sm" class="tile"><span>JM</span></section>
+  <section id="apple" class="tile"><span>JM</span></section>
+  <section id="og">
+    <div class="top"><div class="mark">JM</div><div class="name">Jacopo Marcolini</div></div>
+    <p class="roles">Deployment Strategist<i>|</i>Product Design Lead</p>
+    <h1>I design <span class="mono">digital</span> products<br />and <em>amazing</em> experiences.</h1>
+    <p class="url">jacopomarcolini<span class="dot">.</span>com</p>
+  </section>
+  <script>
+    const view = new URLSearchParams(location.search).get("v") || "icon";
+    document.getElementById(view)?.classList.add("on");
+  </script>
+</body>
+</html>
