@@ -178,7 +178,9 @@ export default function HomePage() {
               </summary>
               <div className="mt-3 flex flex-col gap-2.5 text-pretty text-left text-[13px] leading-[1.6] text-muted">
                 {seoFootnote.paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                  <p key={paragraph} className="whitespace-pre-line">
+                    {paragraph}
+                  </p>
                 ))}
               </div>
             </details>
