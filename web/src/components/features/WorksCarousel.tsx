@@ -19,11 +19,15 @@ const RESUME_DELAY_MS = 5000;
 const EASE_IN_MS = 2500;
 /** A scroll position further than this from the drift's own means the user moved the track */
 const USER_SCROLL_TOLERANCE_PX = 2;
+/** Native scrolling counts as settled after this long without scroll events */
+const SCROLL_SETTLE_MS = 150;
 
 export function WorksCarousel({ works }: { works: Work[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ isDown: false, startX: 0, startScroll: 0, didDrag: false, lastX: 0, lastT: 0, velocity: 0 });
   const glideFrameRef = useRef(0);
+  // Native scrolling (touch, trackpad, momentum) in progress, a finger on the track, and the timer that loops after it
+  const nativeRef = useRef({ isScrolling: false, isTouching: false, settleTimer: 0 });
   // Fractional drift position, card pitch in px, the time of the last user interaction and whether a mouse is over the track
   const autoRef = useRef({ pos: 0, pitch: 0, lastInteraction: -Infinity, isVisible: false, isHovered: false });
   const [isDragging, setIsDragging] = useState(false);
@@ -66,14 +70,17 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     centerOnMiddleCopy();
     const observer = new ResizeObserver(centerOnMiddleCopy);
     observer.observe(track);
+    const native = nativeRef.current;
     return () => {
       observer.disconnect();
       cancelAnimationFrame(glideFrameRef.current);
+      window.clearTimeout(native.settleTimer);
     };
   }, [getLoopWidth, works.length]);
 
   // Idle drift: advance very slowly while the track is on screen and nobody has touched it for a while.
-  // scrollLeft only takes whole pixels, so the fraction moves the track with a GPU transform instead.
+  // scrollLeft only takes whole pixels, so with a mouse the fraction moves the track with a GPU transform instead;
+  // phones step whole pixels and skip the extra compositing layer.
   useEffect(() => {
     const track = trackRef.current;
     if (!track || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -117,17 +124,11 @@ export function WorksCarousel({ works }: { works: Work[] }) {
   }, []);
 
   // Teleport by one copy when drifting into the outer copies → seamless loop
-  const handleScroll = () => {
+  const loopToMiddleCopy = () => {
     const track = trackRef.current;
     const loopWidth = getLoopWidth();
     if (!track || loopWidth === 0) return;
     const auto = autoRef.current;
-
-    // Native scrolling (touch, trackpad, momentum) moved the track: pause the drift and follow it
-    if (Math.abs(track.scrollLeft - Math.floor(auto.pos)) > USER_SCROLL_TOLERANCE_PX) {
-      markInteraction();
-      auto.pos = track.scrollLeft;
-    }
 
     let shift = 0;
     if (track.scrollLeft < loopWidth * 0.5) shift = loopWidth;
@@ -138,6 +139,51 @@ export function WorksCarousel({ works }: { works: Work[] }) {
     auto.pos += shift;
     // Keep an in-progress mouse drag consistent with the jump
     dragRef.current.startScroll += shift;
+  };
+
+  // Loop once native scrolling has settled and no finger is on the track
+  const scheduleNativeLoop = () => {
+    const native = nativeRef.current;
+    window.clearTimeout(native.settleTimer);
+    native.settleTimer = window.setTimeout(() => {
+      if (native.isTouching) return; // touchend schedules again
+      native.isScrolling = false;
+      loopToMiddleCopy();
+    }, SCROLL_SETTLE_MS);
+  };
+
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const auto = autoRef.current;
+    const native = nativeRef.current;
+
+    // The user moved the track: pause the drift and follow it
+    if (Math.abs(track.scrollLeft - Math.floor(auto.pos)) > USER_SCROLL_TOLERANCE_PX) {
+      markInteraction();
+      auto.pos = track.scrollLeft;
+      // Mouse drags and glides set scrollLeft themselves; anything else is the browser scrolling natively
+      if (!dragRef.current.isDown && glideFrameRef.current === 0) native.isScrolling = true;
+    }
+
+    // Moving scrollLeft under a native scroll stops touch momentum and repaints the jumped-to cards from scratch,
+    // which flashes the page white on phones: wait for the scroll to settle before looping
+    if (native.isScrolling) {
+      scheduleNativeLoop();
+      return;
+    }
+    loopToMiddleCopy();
+  };
+
+  const handleTouchStart = () => {
+    markInteraction();
+    nativeRef.current.isTouching = true;
+  };
+
+  const handleTouchEnd = () => {
+    const native = nativeRef.current;
+    native.isTouching = false;
+    if (native.isScrolling) scheduleNativeLoop();
   };
 
   // Mouse drag-to-scroll with momentum (touch and trackpads scroll natively)
@@ -252,10 +298,12 @@ export function WorksCarousel({ works }: { works: Work[] }) {
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       onWheel={handleWheel}
-      onTouchStart={markInteraction}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       onKeyDown={markInteraction}
       onClickCapture={handleClickCapture}
-      className={`no-scrollbar relative flex gap-6 overflow-x-auto px-7 pb-7 pt-2 [transform:translate3d(var(--drift,0px),0,0)] will-change-transform ${
+      className={`no-scrollbar relative flex gap-6 overflow-x-auto px-7 pb-7 pt-2 pointer-fine:[transform:translate3d(var(--drift,0px),0,0)] ${
         isDragging ? "cursor-grabbing select-none" : "cursor-grab"
       }`}
     >

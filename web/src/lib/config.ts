@@ -2,13 +2,13 @@ import type { Pillar, Tool } from "@/types";
 
 /**
  * Single source of personal data for the site.
- * Content mirrors cv_master.md — update both together.
+ * Content mirrors cv_master.md: update both together.
  */
 export const profile = {
   name: "Jacopo Marcolini",
   roles: ["Deployment Strategist", "Product Design Lead"],
   description:
-    "Jacopo Marcolini — Deployment Strategist and Product Design Lead based in Milan. 7+ years across product design, team leadership and generative AI adoption for enterprise clients.",
+    "Jacopo Marcolini, Deployment Strategist and Product Design Lead based in Milan. 7+ years across product design, team leadership and generative AI adoption for enterprise clients.",
   email: "jacopomma@gmail.com",
   linkedin: "https://www.linkedin.com/in/jacopo-marcolini",
   github: "https://github.com/Jimbo4",
@@ -25,7 +25,7 @@ export const profile = {
 } as const;
 
 /** Default page title, also the name of the home page in structured data */
-export const siteTitle = `${profile.name} — ${profile.roles.join(" & ")}`;
+export const siteTitle = `${profile.name} | ${profile.roles.join(" & ")}`;
 
 /**
  * Easter egg under the contact line on the home: a plain bio for search engines and AI agents, behind a toggle so it
@@ -135,7 +135,7 @@ export const pillars: Pillar[] = [
 ];
 
 /**
- * Tools marquee — a visual digest of tools already listed in the skills pool.
+ * Tools marquee: a visual digest of tools already listed in the skills pool.
  * Tile classes are literal strings so Tailwind can pick them up.
  */
 export const tools: Tool[] = [

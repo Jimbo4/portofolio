@@ -34,7 +34,12 @@ export function CaseStudyCard({ work, variant, isTall = false, isClone = false }
       <div
         className={`relative w-full overflow-hidden rounded-card border border-line-soft ${aspect} bg-paper-2`}
       >
-        <span className="absolute left-3.5 top-3.5 z-10 rounded-full bg-white/85 px-2.5 py-[5px] font-mono text-[11px] text-ink backdrop-blur-[6px]">
+        {/* No backdrop blur in the carousel: one per card, times three copies, is too heavy for phones */}
+        <span
+          className={`absolute left-3.5 top-3.5 z-10 rounded-full px-2.5 py-[5px] font-mono text-[11px] text-ink ${
+            isSlide ? "bg-white/90" : "bg-white/85 backdrop-blur-[6px]"
+          }`}
+        >
           {work.year}
         </span>
         <WorkCover

@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import { ClickBurstFx } from "@/components/features/ClickBurstFx";
@@ -26,7 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(profile.siteUrl),
-  title: { default: siteTitle, template: `%s — ${profile.name}` },
+  title: { default: siteTitle, template: `%s | ${profile.name}` },
   description: profile.description,
   applicationName: profile.name,
   authors: [{ name: profile.name, url: profile.siteUrl }],
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteFooter />
         <ClickBurstFx />
         <HashScroll />
+        <Analytics />
       </body>
     </html>
   );
