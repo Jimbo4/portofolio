@@ -52,12 +52,10 @@ web/
     │   ├── robots.ts, sitemap.ts     # Crawling: AI crawlers allowed by name; sitemap with images and videos
     │   ├── llms.txt/, llms-full.txt/ # Markdown map of the site and full text of every case study, for AI agents
     │   ├── md/case-studies/[slug]/   # Markdown twin of a case study, served at /case-studies/<slug>.md
-    │   ├── **/loading.tsx            # Route skeletons (home, case studies, case study), mirror each page's layout
     │   └── globals.css               # Design tokens + utilities
     ├── components/features/
     │   ├── CaseStudyCard.tsx         # Card for carousel ("slide") and grid ("masonry")
     │   ├── CaseStudyMdx.tsx          # Blocks available inside case study MDX
-    │   ├── Skeleton.tsx              # Skeleton block, SkeletonPage wrapper, CaseStudyCardSkeleton
     │   ├── WorkCover.tsx             # Cover image (card 4:5 or hero 2:1)
     │   └── WorksCarousel.tsx         # Infinite free-scrolling carousel (renders works ×3), drifts when idle, holds on hover
     ├── lib/
@@ -266,8 +264,11 @@ All placeholders from the design file have been removed: every project on the si
 - **Content files:** kebab-case slugs → `paywall-design-system.mdx`
 - **Images:** always Next.js `<Image>` with explicit width/height (or `fill` inside a sized frame), and
   `placeholder={shimmerPlaceholder}` so a slow image shows a shimmer instead of an empty box
-- **Loading states:** a new route gets a `loading.tsx` built from `Skeleton` that mirrors its layout; a slow element
-  without its own placeholder (e.g. a video) sits in a `skeleton` frame
+- **Loading states:** media carry the loading state: images get the shimmer placeholder, and a slow element without
+  its own placeholder (e.g. a video) sits in a `skeleton` frame. Static routes get no `loading.tsx`: its Suspense
+  boundary makes the prerendered HTML ship the skeleton first and the real content in a hidden div, which text
+  extractors and agents read as "Loading…". Only a route that waits on request-time data gets a skeleton, wrapped
+  in `<Suspense>` around the slow part instead of the whole page
 - **Tailwind only:** no CSS modules, no inline styles; tokens only in `globals.css`
 - **Mobile-first**, no horizontal page scroll
 - **Accessibility:** text meets WCAG AA contrast (`muted-2` is the lightest grey allowed for text), icon-only buttons

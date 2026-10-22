@@ -14,7 +14,7 @@ function clearHash() {
 
 /**
  * After a navigation to a URL with a hash (e.g. /#skills from a case study), scrolls to that section once it is in
- * the DOM: Next.js skips the scroll when the page streams in behind its loading skeleton. Then the hash is removed,
+ * the DOM: Next.js skips the scroll when the section isn't rendered yet on arrival. Then the hash is removed,
  * otherwise coming back to this page with the back button would jump to that section again instead of where the
  * visitor had scrolled to.
  */
