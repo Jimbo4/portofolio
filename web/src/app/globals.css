@@ -126,3 +126,18 @@
     }
   }
 }
+
+/* 404 strip: slides in from --enter-x at the loop's own speed, then loops (values set by NotFoundStrip) */
+@utility strip-enter {
+  animation:
+    strip-enter var(--enter-ms) linear both,
+    marquee var(--loop-ms) linear var(--enter-ms) infinite;
+}
+@keyframes strip-enter {
+  from {
+    transform: translateX(var(--enter-x));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
